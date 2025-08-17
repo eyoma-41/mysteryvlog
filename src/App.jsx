@@ -170,16 +170,12 @@ export default function App(){
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-pink-400" />
-            <span className="font-black">mysteryvlog.fail</span>
+            <span className="font-black">『미스터리 브이로그』</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#about" className="hover:underline">About 미브</a>
             <a href="#meme" className="hover:underline">미브 밈 파헤치기</a>
           </nav>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full border border-neutral-300 text-sm">구독</button>
-            <button className="px-3 py-1.5 rounded-full bg-neutral-900 text-white text-sm">최신 보기</button>
-          </div>
         </div>
       </header>
 
@@ -200,9 +196,30 @@ export default function App(){
         </div>
       </section>
 
-      {/* Rows */}
-      <div id="about"><Row title="About 미브" items={playlists.about} onOpen={onOpen} /></div>
-      <div id="meme"><Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} /></div>
+      {/* About 미브 (영상 그리드 → 이미지+텍스트 블록) */}
+      <div id="about" className="max-w-7xl mx-auto px-4 py-10">
+        <h3 className="text-xl md:text-2xl font-extrabold mb-6">About 미브</h3>
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          <div className="aspect-square rounded-2xl border-2 border-dashed border-neutral-300 overflow-hidden bg-white grid place-items-center">
+            {/* /public 폴더에 about-miv.jpg 추가해 주세요 */}
+            <img src="/about-miv.jpg" alt="About 미브" className="w-full h-full object-cover" onError={(e)=>{e.currentTarget.replaceWith(Object.assign(document.createElement('div'),{className:'text-neutral-400',innerText:'이미지 자리 (about-miv.jpg)'}));}} />
+          </div>
+          <div>
+            <h4 className="text-2xl font-bold mb-3">사소한 실패에서 시작하는 미스터리</h4>
+            <p className="text-neutral-600 leading-relaxed">
+              키치한 톤과 진지한 집요함으로, 실패를 단서 삼아 세계를 의심합니다.
+              <br /><br />
+              미스터리 브이로그는 일상의 웃픈 실패와 도시전설을 뒤섞어
+              새로운 시선으로 이야기를 풀어냅니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* 미브 밈 파헤치기 (비디오 그리드 유지) */}
+      <div id="meme">
+        <Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} />
+      </div>
 
       {/* 소개 */}
       <section className="max-w-7xl mx-auto px-4 py-10">
