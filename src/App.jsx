@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useState, useRef, useEffect } from "react";
 
 // --- 상수/링크 ---
@@ -15,8 +16,10 @@ const baseVideos = [
 ];
 
 const playlistsTemplate = (videos) => ({
-  about: [videos[0], videos[2], videos[1]],
+  // 세 섹션 모두 동일한 Row(비디오 카드 그리드) 레이아웃 사용
+  about: [videos[0], videos[2], videos[1], videos[3]],
   meme: [videos[3], videos[1], videos[0]],
+  reference: [videos[2], videos[0], videos[3]],
 });
 
 // --- 유틸 ---
@@ -163,6 +166,12 @@ export default function App(){
     })();
   },[]);
 
+  // 간단 런타임 테스트
+  if (typeof window !== 'undefined'){
+    console.assert(formatViews(1000) === '1K', 'formatViews: 1K');
+    console.assert(metaText({views:null, age:null}) === null, 'metaText null');
+  }
+
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       {/* Header */}
@@ -176,6 +185,10 @@ export default function App(){
             <a href="#about" className="hover:underline">About 미브</a>
             <a href="#meme" className="hover:underline">미브 밈 파헤치기</a>
           </nav>
+          <div className="flex items-center gap-2">
+            <button className="px-3 py-1.5 rounded-full border border-neutral-300 text-sm">구독</button>
+            <button className="px-3 py-1.5 rounded-full bg-neutral-900 text-white text-sm">최신 보기</button>
+          </div>
         </div>
       </header>
 
@@ -196,44 +209,20 @@ export default function App(){
         </div>
       </section>
 
-      {/* About 미브 (영상 그리드 → 이미지+텍스트 블록) */}
-      <div id="about" className="max-w-7xl mx-auto px-4 py-10">
-        <h3 className="text-xl md:text-2xl font-extrabold mb-6">About 미브</h3>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="aspect-square rounded-2xl border-2 border-dashed border-neutral-300 overflow-hidden bg-white grid place-items-center">
-            {/* /public 폴더에 about-miv.jpg 추가해 주세요 */}
-            <img src="/about-miv.jpg" alt="About 미브" className="w-full h-full object-cover" onError={(e)=>{e.currentTarget.replaceWith(Object.assign(document.createElement('div'),{className:'text-neutral-400',innerText:'이미지 자리 (about-miv.jpg)'}));}} />
-          </div>
-          <div>
-            <h4 className="text-2xl font-bold mb-3">사소한 실패에서 시작하는 미스터리</h4>
-            <p className="text-neutral-600 leading-relaxed">
-              키치한 톤과 진지한 집요함으로, 실패를 단서 삼아 세계를 의심합니다.
-              <br /><br />
-              미스터리 브이로그는 일상의 웃픈 실패와 도시전설을 뒤섞어
-              새로운 시선으로 이야기를 풀어냅니다.
-            </p>
-          </div>
-        </div>
+      {/* Row 1: About 미브 (비디오 카드 그리드) */}
+      <div id="about">
+        <Row title="About 미브" items={playlists.about} onOpen={onOpen} />
       </div>
 
-      {/* 미브 밈 파헤치기 (비디오 그리드 유지) */}
+      {/* Row 2: 미브 밈 파헤치기 */}
       <div id="meme">
         <Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} />
       </div>
 
-      {/* 소개 */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-3 gap-6 items-start">
-          <div className="h-32 rounded-2xl border-2 border-dashed border-neutral-300 bg-white grid place-items-center">
-            <span className="text-neutral-400">프로필</span>
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-xl md:text-2xl font-extrabold">MysteryVlog.fail</h3>
-            <p className="mt-2 text-neutral-600">키치한 톤과 진지한 집요함으로, 실패를 단서 삼아 세계를 의심합니다.</p>
-            <div className="mt-3 text-sm text-neutral-600">구독자 123K · 영상 56개 · 2021-01 개설</div>
-          </div>
-        </div>
-      </section>
+      {/* Row 3: 레퍼런스 (하단 섹션 대체) */}
+      <div id="reference">
+        <Row title="레퍼런스" items={playlists.reference} onOpen={onOpen} />
+      </div>
 
       {/* Footer */}
       <footer className="bg-white border-t border-neutral-200">
