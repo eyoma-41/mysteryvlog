@@ -205,7 +205,7 @@ export default function App(){
           <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl overflow-hidden bg-white grid place-items-center">
             {/* /src/hero-book.jpg 로 이미지 파일을 추가하세요 (책표지) */}
             <img
-              src="/hero-book.jpg"
+              src="src/hero-book.jpg"
               alt="미스터리 브이로그 책 표지"
               className="w-full h-full object-cover"
               onError={(e)=>{
