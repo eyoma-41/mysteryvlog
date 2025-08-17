@@ -203,7 +203,7 @@ export default function App(){
 
           {/* ▶︎ 채널 트레일러 자리 → 책 표지 이미지로 교체 */}
           <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl overflow-hidden bg-white grid place-items-center">
-            {/* /public/hero-book.jpg 로 이미지 파일을 추가하세요 (책표지) */}
+            {/* /src/hero-book.jpg 로 이미지 파일을 추가하세요 (책표지) */}
             <img
               src="/hero-book.jpg"
               alt="미스터리 브이로그 책 표지"
