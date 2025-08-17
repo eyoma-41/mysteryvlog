@@ -1,17 +1,17 @@
 // src/App.jsx
 import { useState, useRef, useEffect } from "react";
 
-// --- 상수/링크 ---
-const YT_ID_EP4 = "MZcAnvE4gQ4"; // 사용자가 준 링크의 YouTube ID
+/* -------------------- 상수/링크 -------------------- */
+const YT_ID_EP4 = "MZcAnvE4gQ4";
 const YT_URL_EP4 = `https://www.youtube.com/watch?v=${YT_ID_EP4}`;
-const YT_THUMB_EP4 = `https://img.youtube.com/vi/${YT_ID_EP4}/hqdefault.jpg`; // 유튜브 기본 썸네일
+const YT_THUMB_EP4 = `https://img.youtube.com/vi/${YT_ID_EP4}/hqdefault.jpg`;
 
-// --- 초기 데이터 ---
+/* -------------------- 초기 데이터 -------------------- */
 const baseVideos = [
   { id: "ep-01", title: "파일 #01 — 촬영 버튼을 안 눌렀을 때", views: "1.2K", age: "5 days ago", thumb: "EP1", tag: "FAIL", desc: "사소한 실패에서 시작된 첫 사건. 카메라는 꺼져 있었고, 라디오는 켜져 있었다." },
   { id: "ep-02", title: "파일 #02 — 골목 끝의 소문", views: "2.4K", age: "10 days ago", thumb: "EP2", tag: "STORY", desc: "도시전설의 입구. 누군가는 봤고, 누군가는 못 봤다." },
   { id: "ep-03", title: "파일 #03 — 편집 타임라인이 사라진 밤", views: "913", age: "2 days ago", thumb: "EP3", tag: "FAIL", desc: "오토세이브가 우리 편이 아니었던 순간들." },
-  // EP04: 유튜브 링크/메타 반영
+  // EP04: YouTube 링크/메타 반영
   { id: "ep-04", title: "p136  무… 무슨", views: null, age: null, thumb: "EP4", tag: "STORY", desc: "낚시냐 진짜냐를 가르는 증거들.", url: YT_URL_EP4, thumbUrl: YT_THUMB_EP4 },
 ];
 
@@ -22,7 +22,7 @@ const playlistsTemplate = (videos) => ({
   reference: [videos[2], videos[0], videos[3]],
 });
 
-// --- 유틸 ---
+/* -------------------- 유틸 -------------------- */
 function formatViews(n){
   if (n == null) return null;
   const num = Number(n);
@@ -46,11 +46,12 @@ function timeAgoFrom(dateStr){
 function metaText(v){
   const views = v?.views ? `${v.views} views` : null;
   const age = v?.age || null;
-  if (!views && !age) return null; // 둘 다 없으면 숨김
+  if (!views && !age) return null;
   return `${views ?? ''}${views && age ? ' · ' : ''}${age ?? ''}`;
 }
 function showMeta(v){ return Boolean(v?.views) || Boolean(v?.age); }
 
+/* 브라우저 안전 API Key 접근 */
 function getYouTubeApiKey(){
   if (typeof window !== 'undefined' && window.YT_API_KEY) return window.YT_API_KEY;
   return null;
@@ -73,7 +74,7 @@ async function fetchYouTubeMeta(id, apiKey){
   }catch(e){ return null; }
 }
 
-// --- UI 컴포넌트 ---
+/* -------------------- UI: Modal -------------------- */
 function Modal({ open, onClose, video }){
   const dialogRef = useRef(null);
   useEffect(()=>{
@@ -115,6 +116,7 @@ function Modal({ open, onClose, video }){
   );
 }
 
+/* -------------------- UI: Cards/Rows -------------------- */
 function VideoCard({ item, onOpen }){
   const handleClick = () => { onOpen(item); }; // 항상 모달 먼저
   return (
@@ -143,6 +145,7 @@ function Row({ title, items, onOpen }){
   );
 }
 
+/* -------------------- 메인 -------------------- */
 export default function App(){
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(null);
@@ -150,6 +153,7 @@ export default function App(){
   const [playlists, setPlaylists] = useState(playlistsTemplate(baseVideos));
   const onOpen = (v) => { setCurrent(v); setOpen(true); };
 
+  // EP04 메타 자동 반영
   useEffect(()=>{
     const apiKey = getYouTubeApiKey();
     (async()=>{
@@ -166,12 +170,6 @@ export default function App(){
     })();
   },[]);
 
-  // 간단 런타임 테스트
-  if (typeof window !== 'undefined'){
-    console.assert(formatViews(1000) === '1K', 'formatViews: 1K');
-    console.assert(metaText({views:null, age:null}) === null, 'metaText null');
-  }
-
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       {/* Header */}
@@ -184,11 +182,8 @@ export default function App(){
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#about" className="hover:underline">About 미브</a>
             <a href="#meme" className="hover:underline">미브 밈 파헤치기</a>
+            <a href="#reference" className="hover:underline">레퍼런스</a>
           </nav>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full border border-neutral-300 text-sm">구독</button>
-            <button className="px-3 py-1.5 rounded-full bg-neutral-900 text-white text-sm">최신 보기</button>
-          </div>
         </div>
       </header>
 
@@ -199,17 +194,32 @@ export default function App(){
             <h1 className="text-4xl md:text-5xl font-black leading-tight">사소한 실패에서 시작하는 미스터리</h1>
             <p className="mt-4 text-neutral-600">B급 유머와 집요한 추적 사이. 미브의 세계로 입장하십시오.</p>
             <div className="mt-6 flex flex-wrap gap-3">
+              {/* 분홍색 버튼은 그대로 About, 나머지 두 개 추가 */}
               <a href="#about" className="px-4 py-2 rounded-xl bg-pink-400 text-neutral-900 font-semibold">About 미브</a>
               <a href="#meme" className="px-4 py-2 rounded-xl border border-neutral-300">밈 파헤치기</a>
+              <a href="#reference" className="px-4 py-2 rounded-xl border border-neutral-300">레퍼런스</a>
             </div>
           </div>
-          <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl grid place-items-center bg-white">
-            <span className="text-neutral-400">채널 트레일러 영상 자리</span>
+
+          {/* ▶︎ 채널 트레일러 자리 → 책 표지 이미지로 교체 */}
+          <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl overflow-hidden bg-white grid place-items-center">
+            {/* /public/hero-book.jpg 로 이미지 파일을 추가하세요 (책표지) */}
+            <img
+              src="/hero-book.jpg"
+              alt="미스터리 브이로그 책 표지"
+              className="w-full h-full object-cover"
+              onError={(e)=>{
+                e.currentTarget.replaceWith(Object.assign(document.createElement('div'),{
+                  className:'text-neutral-400',
+                  innerText:'채널 트레일러 영상 자리 (hero-book.jpg 넣으면 책 표지로 표시됩니다)'
+                }));
+              }}
+            />
           </div>
         </div>
       </section>
 
-      {/* Row 1: About 미브 (비디오 카드 그리드) */}
+      {/* Row 1: About 미브 */}
       <div id="about">
         <Row title="About 미브" items={playlists.about} onOpen={onOpen} />
       </div>
@@ -219,7 +229,7 @@ export default function App(){
         <Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} />
       </div>
 
-      {/* Row 3: 레퍼런스 (하단 섹션 대체) */}
+      {/* Row 3: 레퍼런스 (하단 대체) */}
       <div id="reference">
         <Row title="레퍼런스" items={playlists.reference} onOpen={onOpen} />
       </div>
