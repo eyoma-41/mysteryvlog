@@ -123,7 +123,14 @@ function Grid({ title, items, onOpen }) {
 /* =============== content loader (/public/content.json) =============== */
 const DEFAULT_CONTENT = {
   about: [
-    { id: "about-1", title: "이야기의 시작", excerpt: "요약을 넣어주세요.", image: "", modal: true, desc: "" }
+    { id: "about-1", title: "#1 이야기의 시작", excerpt: "나는 물 속에 있었고 수면으로부터 내려오던 빛이 점차 사라졌다. 몸이 으스스해져서 올려다보니 그곳에서는 덩어리들이 떨어지고 있었다. 그 중 하나가 내 앞으로 하강해갔고, 나는 발가벗은 노인의 시체라는 걸 알게되었다. 피부에 살짝 스쳐간 그 감촉은 차갑다. 차갑다 못해 얼어버릴 것 같은 느낌이었다. 그건 냉동인간이었다.", image: "", modal: true, desc: "" },
+    { id: "a2", title: "#2 운망과 다이빙 엘", excerpt: "", image: "" },
+    { id: "a3", title: "세 명의 주인공", excerpt: "", image: "" },
+    { id: "a4", title: "미스터리-유튜브", excerpt: "", image: "" },
+    { id: "a5", title: "선택하지 않은 선택", excerpt: "", image: "" },
+    { id: "a6", title: "진정성", excerpt: "", image: "" },
+    { id: "a7", title: "번아웃", excerpt: "", image: "" },
+    { id: "a8", title: "양자역학 코펜하겐 해석", excerpt: "", image: "" }
   ],
   meme: [
     { id: "m1", title: "p136 무… 무슨", image: "https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg", url: "https://www.youtube.com/watch?v=MZcAnvE4gQ4", modal: true, meta: "YouTube" }
