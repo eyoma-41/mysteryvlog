@@ -139,17 +139,17 @@ function useContent() {
   useEffect(() => {
     let cancelled = false;
 
+    // 배열 합치기: 사용자가 넣은 항목을 우선하고, 부족한 자리는 기본값으로 채움
     const merge = (arr, def) => {
       if (!Array.isArray(arr)) return def;
-      // 사용자가 넣은 항목 우선, 없는 자리는 기본값으로 채우기
-      const seen = new Set(arr.map(x => x?.id));
-      return arr.concat(def.filter(d => !seen.has(d.id)));
+      const seen = new Set(arr.map((x) => x?.id));
+      return arr.concat(def.filter((d) => !seen.has(d.id)));
     };
 
     (async () => {
       try {
         const res = await fetch("/content.json", { cache: "no-store" });
-        if (!res.ok) return; // 파일 없으면 기본값 유지
+        if (!res.ok) return; // 파일이 없거나 404면 기본값 유지
         const json = await res.json();
         if (cancelled) return;
 
@@ -163,7 +163,9 @@ function useContent() {
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return data;
