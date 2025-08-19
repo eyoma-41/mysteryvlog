@@ -139,19 +139,27 @@ function useContent() {
   useEffect(() => {
     let cancelled = false;
 
+    const merge = (arr, def) => {
+      if (!Array.isArray(arr)) return def;
+      // 사용자가 넣은 항목 우선, 없는 자리는 기본값으로 채우기
+      const seen = new Set(arr.map(x => x?.id));
+      return arr.concat(def.filter(d => !seen.has(d.id)));
+    };
+
     (async () => {
       try {
         const res = await fetch("/content.json", { cache: "no-store" });
-        if (!res.ok) return;
+        if (!res.ok) return; // 파일 없으면 기본값 유지
         const json = await res.json();
         if (cancelled) return;
+
         setData({
-          about: Array.isArray(json.about) ? json.about : DEFAULT_CONTENT.about,
-          meme: Array.isArray(json.meme) ? json.meme : DEFAULT_CONTENT.meme,
-          reference: Array.isArray(json.reference) ? json.reference : DEFAULT_CONTENT.reference,
+          about: merge(json.about, DEFAULT_CONTENT.about),
+          meme: merge(json.meme, DEFAULT_CONTENT.meme),
+          reference: merge(json.reference, DEFAULT_CONTENT.reference),
         });
       } catch {
-        // keep default
+        // JSON 오류 등 → 기본값 유지
       }
     })();
 
@@ -160,6 +168,7 @@ function useContent() {
 
   return data;
 }
+
 
 /* =============== App =============== */
 export default function App() {
