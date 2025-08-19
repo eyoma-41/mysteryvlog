@@ -1,113 +1,105 @@
 // src/App.jsx
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-/* -------------------- 상수/링크 -------------------- */
-const YT_ID_EP4 = "MZcAnvE4gQ4";
-const YT_URL_EP4 = `https://www.youtube.com/watch?v=${YT_ID_EP4}`;
-const YT_THUMB_EP4 = `https://img.youtube.com/vi/${YT_ID_EP4}/hqdefault.jpg`;
+/* =========================================================
+   Generic helpers
+========================================================= */
+const YT_ID_FROM_URL = (url) => {
+  if (!url) return null;
+  const m1 = url.match(/[?&]v=([^&#]+)/);         // watch?v=ID
+  const m2 = url.match(/youtu\.be\/([^?&#/]+)/);  // youtu.be/ID
+  return m1?.[1] || m2?.[1] || null;
+};
 
-/* -------------------- 초기 데이터 -------------------- */
-const baseVideos = [
-  { id: "ep-01", title: "파일 #01 — 촬영 버튼을 안 눌렀을 때", views: "1.2K", age: "5 days ago", thumb: "EP1", tag: "FAIL", desc: "사소한 실패에서 시작된 첫 사건. 카메라는 꺼져 있었고, 라디오는 켜져 있었다." },
-  { id: "ep-02", title: "파일 #02 — 골목 끝의 소문", views: "2.4K", age: "10 days ago", thumb: "EP2", tag: "STORY", desc: "도시전설의 입구. 누군가는 봤고, 누군가는 못 봤다." },
-  { id: "ep-03", title: "파일 #03 — 편집 타임라인이 사라진 밤", views: "913", age: "2 days ago", thumb: "EP3", tag: "FAIL", desc: "오토세이브가 우리 편이 아니었던 순간들." },
-  // EP04: YouTube 링크/메타 반영
-  { id: "ep-04", title: "p136  무… 무슨", views: null, age: null, thumb: "EP4", tag: "STORY", desc: "낚시냐 진짜냐를 가르는 증거들.", url: YT_URL_EP4, thumbUrl: YT_THUMB_EP4 },
-];
-
-const playlistsTemplate = (videos) => ({
-  // 세 섹션 모두 동일한 Row(비디오 카드 그리드) 레이아웃 사용
-  about: [videos[0], videos[2], videos[1], videos[3]],
-  meme: [videos[3], videos[1], videos[0]],
-  reference: [videos[2], videos[0], videos[3]],
-});
-
-/* -------------------- 유틸 -------------------- */
-function formatViews(n){
-  if (n == null) return null;
-  const num = Number(n);
-  if (Number.isNaN(num)) return null;
-  if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
-  if (num >= 1_000) return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
-  return String(num);
-}
-function timeAgoFrom(dateStr){
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return null;
-  const sec = Math.floor((Date.now() - d.getTime())/1000);
-  const m = Math.floor(sec/60), h = Math.floor(m/60), day = Math.floor(h/24), mo = Math.floor(day/30), y = Math.floor(day/365);
-  if (y>0) return `${y} year${y>1?'s':''} ago`;
-  if (mo>0) return `${mo} month${mo>1?'s':''} ago`;
-  if (day>0) return `${day} days ago`;
-  if (h>0) return `${h} hours ago`;
-  if (m>0) return `${m} minutes ago`;
-  return `just now`;
-}
-function metaText(v){
-  const views = v?.views ? `${v.views} views` : null;
-  const age = v?.age || null;
-  if (!views && !age) return null;
-  return `${views ?? ''}${views && age ? ' · ' : ''}${age ?? ''}`;
-}
-function showMeta(v){ return Boolean(v?.views) || Boolean(v?.age); }
-
-/* 브라우저 안전 API Key 접근 */
-function getYouTubeApiKey(){
-  if (typeof window !== 'undefined' && window.YT_API_KEY) return window.YT_API_KEY;
-  return null;
-}
-async function fetchYouTubeMeta(id, apiKey){
-  if (!apiKey) return null;
-  try{
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${apiKey}`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const json = await res.json();
-    const item = json.items?.[0];
-    if (!item) return null;
-    return {
-      views: item.statistics?.viewCount ?? null,
-      publishedAt: item.snippet?.publishedAt ?? null,
-      title: item.snippet?.title ?? null,
-      thumb: item.snippet?.thumbnails?.high?.url ?? null,
-    };
-  }catch(e){ return null; }
-}
-
-/* -------------------- UI: Modal -------------------- */
-function Modal({ open, onClose, video }){
-  const dialogRef = useRef(null);
-  useEffect(()=>{
-    function onKey(e){ if (e.key === 'Escape') onClose(); }
-    if (open) document.addEventListener('keydown', onKey);
-    return ()=> document.removeEventListener('keydown', onKey);
+/* =========================================================
+   Modal (YouTube/video preview)
+========================================================= */
+function Modal({ open, onClose, item }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const onKey = (e) => e.key === "Escape" && onClose();
+    if (open) document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
-  if (!open || !video) return null;
-  const ytMatch = video.url?.match(/[?&]v=([^&#]+)/);
-  const ytId = ytMatch?.[1];
+  if (!open || !item) return null;
+
+  const ytId = YT_ID_FROM_URL(item.url);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button aria-label="Close overlay" className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div ref={dialogRef} role="dialog" aria-modal="true" className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
+      <button
+        aria-label="Close overlay"
+        className="absolute inset-0 bg-black/50"
+        onClick={onClose}
+      />
+      <div
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl"
+      >
         <div className="p-5 border-b border-neutral-200 flex items-center justify-between">
-          <h4 className="font-bold text-lg">{video.title}</h4>
-          <button onClick={onClose} className="px-3 py-1 text-sm rounded-full border border-neutral-300">닫기</button>
+          <h4 className="font-bold text-lg">{item.title}</h4>
+          <button
+            onClick={onClose}
+            className="px-3 py-1 text-sm rounded-full border border-neutral-300"
+          >
+            닫기
+          </button>
         </div>
         <div className="p-5 grid md:grid-cols-2 gap-4">
           <div className="aspect-video rounded-xl border-2 border-dashed border-neutral-300 overflow-hidden bg-black grid place-items-center">
             {ytId ? (
-              <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${ytId}`} title={video.title}
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${ytId}`}
+                title={item.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen />
-            ) : (<span className="text-neutral-400">영상 플레이어 자리</span>)}
+                allowFullScreen
+              />
+            ) : item.image ? (
+              <img
+                src={item.image}
+                alt={item.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span className="text-neutral-400">미리보기</span>
+            )}
           </div>
           <div>
-            {showMeta(video) && <div className="text-sm text-neutral-600">{metaText(video)}</div>}
-            <p className="mt-3 text-neutral-800">{video.desc}</p>
+            {item.meta && (
+              <div className="text-sm text-neutral-600">{item.meta}</div>
+            )}
+            <p className="mt-3 text-neutral-800 whitespace-pre-line">
+              {item.excerpt || item.desc}
+            </p>
             <div className="mt-4 flex flex-wrap gap-2 text-xs items-center">
-              <span className="px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">#{video.tag}</span>
-              {video.url && (<a href={video.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1 rounded-full bg-neutral-900 text-white">유튜브로 보기</a>)}
-              <button className="px-3 py-1 rounded-full border border-neutral-300" onClick={()=> navigator.clipboard?.writeText(window.location.href)}>공유</button>
+              {item.tag && (
+                <span className="px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">
+                  #{item.tag}
+                </span>
+              )}
+              {item.url && (
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1 rounded-full bg-neutral-900 text-white"
+                >
+                  링크 열기
+                </a>
+              )}
+              {item.share !== false && (
+                <button
+                  className="px-3 py-1 rounded-full border border-neutral-300"
+                  onClick={() =>
+                    navigator.clipboard?.writeText(item.url || window.location.href)
+                  }
+                >
+                  공유
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -116,59 +108,168 @@ function Modal({ open, onClose, video }){
   );
 }
 
-/* -------------------- UI: Cards/Rows -------------------- */
-function VideoCard({ item, onOpen }){
-  const handleClick = () => { onOpen(item); }; // 항상 모달 먼저
+/* =========================================================
+   Card & Grid (for About / Meme / Reference)
+========================================================= */
+function Card({ item, onOpen }) {
+  const clickable = Boolean(item.url) || item.modal === true;
+
+  const onClick = () => {
+    // YouTube나 modal:true면 모달 먼저
+    if (item.modal === true || /youtube\.com|youtu\.be/.test(item.url || "")) {
+      onOpen(item);
+      return;
+    }
+    if (item.url) window.open(item.url, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <article className="group cursor-pointer" onClick={handleClick}>
+    <article
+      className={`group ${clickable ? "cursor-pointer" : "cursor-default"}`}
+      onClick={clickable ? onClick : undefined}
+    >
       <div className="aspect-video w-full rounded-xl border-2 border-dashed border-neutral-300 bg-white overflow-hidden grid place-items-center">
-        {item.thumbUrl ? (<img src={item.thumbUrl} alt={`${item.title} 썸네일`} className="w-full h-full object-cover" />)
-                       : (<span className="text-neutral-400">{item.thumb}</span>)}
+        {item.image ? (
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="text-neutral-400">이미지</span>
+        )}
       </div>
       <h4 className="mt-2 font-semibold line-clamp-2">{item.title}</h4>
-      {showMeta(item) && (<p className="text-xs text-neutral-600">{metaText(item)}</p>)}
+      {item.meta && <p className="text-[11px] text-neutral-500">{item.meta}</p>}
+      {item.excerpt && (
+        <p className="text-xs text-neutral-600 line-clamp-2">{item.excerpt}</p>
+      )}
     </article>
   );
 }
 
-function Row({ title, items, onOpen }){
+function Grid({ title, items, onOpen }) {
   return (
     <section className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-end justify-between">
         <h3 className="text-xl md:text-2xl font-extrabold">{title}</h3>
-        <a className="text-sm underline" href="#">더 보기</a>
+        <span className="text-sm text-neutral-400 select-none"> </span>
       </div>
       <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {items.map(v => <VideoCard key={v.id} item={v} onOpen={onOpen} />)}
+        {items.map((it) => (
+          <Card key={it.id} item={it} onOpen={onOpen} />
+        ))}
       </div>
     </section>
   );
 }
 
-/* -------------------- 메인 -------------------- */
-export default function App(){
+/* =========================================================
+   Content loader (from /content.json)
+   {
+     "about":[{id,title,excerpt,image,url,tag,meta,modal}],
+     "meme":[...],
+     "reference":[...]
+   }
+========================================================= */
+function useContent() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetch("/content.json", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((json) => {
+        if (json) setData(json);
+        else {
+          // Fallback: titles only (placeholders)
+          const aboutTitles = [
+            "이야기의 시작",
+            "운망과 다이빙 엘",
+            "세 명의 주인공",
+            "미스터리-유튜브",
+            "선택하지 않은 선택",
+            "진정성",
+            "번아웃",
+            "양자역학 코펜하겐 해석",
+            "인풋",
+            "다차원 고려장",
+            "하트 모양 구름",
+            "Covid-19",
+            "테트라포트늄",
+            "죽음-의미",
+          ];
+          const stub = (t, i) => ({
+            id: `stub-${i}`,
+            title: t,
+            excerpt: "",
+            image: "",
+          });
+          setData({
+            about: aboutTitles.map(stub),
+            meme: [
+              {
+                id: "m1",
+                title: "p136 무… 무슨",
+                image: `https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg`,
+                url: "https://www.youtube.com/watch?v=MZcAnvE4gQ4",
+                meta: "",
+                modal: true,
+              },
+            ],
+            reference: [
+              {
+                id: "r1",
+                title: "프로젝트 소개",
+                image: "",
+                url: "",
+                meta: "",
+              },
+            ],
+          });
+        }
+      })
+      .catch(() =>
+        setData({
+          about: [],
+          meme: [],
+          reference: [],
+        })
+      );
+  }, []);
+
+  return data;
+}
+
+/* =========================================================
+   App
+========================================================= */
+export default function App() {
+  const content = useContent();
+  const [active, setActive] = useState("about"); // about | meme | reference
   const [open, setOpen] = useState(false);
   const [current, setCurrent] = useState(null);
-  const [videos, setVideos] = useState(baseVideos);
-  const [playlists, setPlaylists] = useState(playlistsTemplate(baseVideos));
-  const onOpen = (v) => { setCurrent(v); setOpen(true); };
 
-  // EP04 메타 자동 반영
-  useEffect(()=>{
-    const apiKey = getYouTubeApiKey();
-    (async()=>{
-      const m = await fetchYouTubeMeta(YT_ID_EP4, apiKey);
-      if (!m) return;
-      setVideos(prev => {
-        const next = prev.map(v => v.id === 'ep-04'
-          ? { ...v, title: m.title || v.title, views: formatViews(m.views) || v.views,
-              age: timeAgoFrom(m.publishedAt) || v.age, thumbUrl: m.thumb || v.thumbUrl }
-          : v );
-        setPlaylists(playlistsTemplate(next));
-        return next;
-      });
-    })();
-  },[]);
+  const onOpen = (item) => {
+    setCurrent(item);
+    setOpen(true);
+  };
+
+  // 탭 버튼 스타일
+  const tabBtn =
+    "px-4 py-2 rounded-xl border border-neutral-300 data-[active=true]:bg-pink-400 data-[active=true]:border-pink-400 data-[active=true]:text-neutral-900";
+
+  const heroImg = "/hero-book.jpg"; // public/hero-book.jpg
+
+  const sectionByActive = useMemo(() => {
+    if (!content) return null;
+    if (active === "about")
+      return <Grid title="About 미브" items={content.about} onOpen={onOpen} />;
+    if (active === "meme")
+      return (
+        <Grid title="미브 밈 파헤치기" items={content.meme} onOpen={onOpen} />
+      );
+    return <Grid title="레퍼런스" items={content.reference} onOpen={onOpen} />;
+  }, [active, content]);
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -180,9 +281,18 @@ export default function App(){
             <span className="font-black">『미스터리 브이로그』</span>
           </div>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" className="hover:underline">About 미브</a>
-            <a href="#meme" className="hover:underline">미브 밈 파헤치기</a>
-            <a href="#reference" className="hover:underline">레퍼런스</a>
+            <button className="hover:underline" onClick={() => setActive("about")}>
+              About 미브
+            </button>
+            <button className="hover:underline" onClick={() => setActive("meme")}>
+              미브 밈 파헤치기
+            </button>
+            <button
+              className="hover:underline"
+              onClick={() => setActive("reference")}
+            >
+              레퍼런스
+            </button>
           </nav>
         </div>
       </header>
@@ -191,48 +301,58 @@ export default function App(){
       <section className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black leading-tight">사소한 실패에서 시작하는 미스터리</h1>
-            <p className="mt-4 text-neutral-600">B급 유머와 집요한 추적 사이. 미브의 세계로 입장하십시오.</p>
+            <h1 className="text-4xl md:text-5xl font-black leading-tight">
+              사소한 실패에서 시작하는 미스터리
+            </h1>
+            <p className="mt-4 text-neutral-600">
+              B급 유머와 집요한 추적 사이. 미브의 세계로 입장하십시오.
+            </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              {/* 분홍색 버튼은 그대로 About, 나머지 두 개 추가 */}
-              <a href="#about" className="px-4 py-2 rounded-xl bg-pink-400 text-neutral-900 font-semibold">About 미브</a>
-              <a href="#meme" className="px-4 py-2 rounded-xl border border-neutral-300">밈 파헤치기</a>
-              <a href="#reference" className="px-4 py-2 rounded-xl border border-neutral-300">레퍼런스</a>
+              <button
+                data-active={active === "about"}
+                className={tabBtn}
+                onClick={() => setActive("about")}
+              >
+                About 미브
+              </button>
+              <button
+                data-active={active === "meme"}
+                className={tabBtn}
+                onClick={() => setActive("meme")}
+              >
+                밈 파헤치기
+              </button>
+              <button
+                data-active={active === "reference"}
+                className={tabBtn}
+                onClick={() => setActive("reference")}
+              >
+                레퍼런스
+              </button>
             </div>
           </div>
 
-          {/* ▶︎ 채널 트레일러 자리 → 책 표지 이미지로 교체 */}
           <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl overflow-hidden bg-white grid place-items-center">
-            {/* /src/hero-book.jpg 로 이미지 파일을 추가하세요 (책표지) */}
             <img
-              src="src/hero-book.jpg"
+              src={heroImg}
               alt="미스터리 브이로그 책 표지"
               className="w-full h-full object-cover"
-              onError={(e)=>{
-                e.currentTarget.replaceWith(Object.assign(document.createElement('div'),{
-                  className:'text-neutral-400',
-                  innerText:'채널 트레일러 영상 자리 (hero-book.jpg 넣으면 책 표지로 표시됩니다)'
-                }));
+              onError={(e) => {
+                e.currentTarget.replaceWith(
+                  Object.assign(document.createElement("div"), {
+                    className: "text-neutral-400",
+                    innerText:
+                      "채널 트레일러 영상 자리 (public/hero-book.jpg 업로드하면 표시됩니다)",
+                  })
+                );
               }}
             />
           </div>
         </div>
       </section>
 
-      {/* Row 1: About 미브 */}
-      <div id="about">
-        <Row title="About 미브" items={playlists.about} onOpen={onOpen} />
-      </div>
-
-      {/* Row 2: 미브 밈 파헤치기 */}
-      <div id="meme">
-        <Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} />
-      </div>
-
-      {/* Row 3: 레퍼런스 (하단 대체) */}
-      <div id="reference">
-        <Row title="레퍼런스" items={playlists.reference} onOpen={onOpen} />
-      </div>
+      {/* Category view (only one shown at a time) */}
+      {sectionByActive}
 
       {/* Footer */}
       <footer className="bg-white border-t border-neutral-200">
@@ -242,15 +362,36 @@ export default function App(){
             <span className="font-bold">mysteryvlog.fail</span>
           </div>
           <div className="flex gap-4 text-sm">
-            <a className="underline" href="https://instagram.com/eyoma_mag" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a className="underline" href="https://brunch.co.kr/@hakgome" target="_blank" rel="noopener noreferrer">Brunch</a>
-            <a className="underline opacity-60 cursor-not-allowed" href="#" aria-disabled="true" title="준비 중입니다">Contact</a>
+            <a
+              className="underline"
+              href="https://instagram.com/eyoma_mag"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
+            <a
+              className="underline"
+              href="https://brunch.co.kr/@hakgome"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Brunch
+            </a>
+            <a
+              className="underline opacity-60 cursor-not-allowed"
+              href="#"
+              aria-disabled="true"
+              title="준비 중입니다"
+            >
+              Contact
+            </a>
           </div>
         </div>
       </footer>
 
       {/* Modal */}
-      <Modal open={open} onClose={()=> setOpen(false)} video={current} />
+      <Modal open={open} onClose={() => setOpen(false)} item={current} />
     </div>
   );
 }
