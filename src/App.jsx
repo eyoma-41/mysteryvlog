@@ -166,11 +166,19 @@ function Grid({ title, items, onOpen }) {
 
 /* =========================================================
    Content loader (from /content.json)
-   {
-     "about":[{id,title,excerpt,image,url,tag,meta,modal}],
-     "meme":[...],
-     "reference":[...]
-   }
+{
+  "about": [
+    { "id": "a1", "title": "이야기의 시작", "excerpt": "요약...", "image": "/about/start.jpg" },
+    { "id": "a2", "title": "운망과 다이빙 엘", "excerpt": "요약...", "image": "/about/dive.jpg" }
+  ],
+  "meme": [
+    { "id": "m1", "title": "p136 무… 무슨", "image": "https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg", "url": "https://www.youtube.com/watch?v=MZcAnvE4gQ4", "modal": true, "meta": "YouTube" }
+  ],
+  "reference": [
+    { "id": "r1", "title": "프로젝트 노션", "excerpt": "문서 링크", "image": "/ref/notion.jpg", "url": "https://www.notion.so/..." }
+  ]
+}
+
 ========================================================= */
 function useContent() {
   const [data, setData] = useState(null);
