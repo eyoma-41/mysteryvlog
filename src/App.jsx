@@ -203,8 +203,8 @@ export default function App() {
       <section className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
-            <h1 className="text-4xl md:text-5xl font-black leading-tight">사소한 실패에서 시작하는 미스터리</h1>
-            <p className="mt-4 text-neutral-600">B급 유머와 집요한 추적 사이. 미브의 세계로 입장하십시오.</p>
+            <h1 className="text-4xl md:text-5xl font-black leading-tight">미---브 홈---페이지</h1>
+            <p className="mt-4 text-neutral-600">선택하지 않은 것도 선택인 거 알지?</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button data-active={active === "about"} className={tabBtn} onClick={() => setActive("about")}>About 미브</button>
               <button data-active={active === "meme"} className={tabBtn} onClick={() => setActive("meme")}>밈 파헤치기</button>
