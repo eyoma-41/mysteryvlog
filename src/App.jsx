@@ -235,7 +235,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-pink-400" />
-            <span className="font-bold">mysteryvlog.fail</span>
+            <span className="font-bold">미스터리 브이로그 메타 책</span>
           </div>
           <div className="flex gap-4 text-sm">
             <a className="underline" href="https://instagram.com/eyoma_mag" target="_blank" rel="noopener noreferrer">Instagram</a>
