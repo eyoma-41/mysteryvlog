@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>미스터리 브이로그 — 비하인드</title>
+  <style>
+    :root{--border:#e6e8eb;--brand:#ff0033}
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
+    .wrap{max-width:720px;margin:0 auto;padding:16px 16px 88px}
+    h1{margin:8px 0 12px}
+    .panel{border:1px solid var(--border);border-radius:16px;padding:16px}
+    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px}
+    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
+    .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>비하인드</h1>
+    <div class="panel">
+      촬영 비하인드/작업 노트/스틸 등을 여기에 추가하세요.
+    </div>
+  </div>
+
+  <nav class="tabs" aria-label="하단 메뉴">
+    <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>대시보드</a>
+    <a class="tab" href="meme.html"><svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>밈</a>
+    <a class="tab" href="reference.html"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>레퍼런스</a>
+    <a class="tab active" href="behind.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>비하인드</a>
+    <a class="tab" href="revenue.html"><svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>수익창출</a>
+  </nav>
+</body>
+</html>
