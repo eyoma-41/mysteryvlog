@@ -24,6 +24,8 @@
   background: #ddd center/cover no-repeat;
   box-shadow: 0 1px 2px rgba(0,0,0,.06);
 }
+.page{display:none}
+.page.active{display:block}
 
 
     .ch-meta{display:flex;flex-direction:column;gap:4px}
@@ -82,6 +84,38 @@
     </div>
   </div>
 
+<!-- 👉 밈 페이지 -->
+<section id="page-meme" class="page">
+  <h2 class="sec-title">밈</h2>
+  <div id="meme-list" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 16px 90px">
+    <!-- 카드 예시 -->
+    <a class="panel" href="https://www.youtube.com/watch?v=MZcAnvE4gQ4" target="_blank" style="text-decoration:none;color:inherit">
+      <div style="aspect-ratio:16/9;background:#eee url('https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg') center/cover no-repeat;border-radius:12px"></div>
+      <div style="margin-top:8px;font-weight:700">p136 무… 무슨</div>
+      <div style="color:#6b7280;font-size:12px">YouTube</div>
+    </a>
+  </div>
+</section>
+
+<!-- 👉 레퍼런스 페이지 -->
+<section id="page-ref" class="page">
+  <h2 class="sec-title">레퍼런스</h2>
+  <div class="panel"><p>레퍼런스 자료를 여기에 카드/링크로 쌓아갈게.</p></div>
+</section>
+
+<!-- 👉 비하인드 페이지 -->
+<section id="page-behind" class="page">
+  <h2 class="sec-title">비하인드</h2>
+  <div class="panel"><p>비하인드 스토리/사진/노트 영역.</p></div>
+</section>
+
+<!-- 👉 수익창출 페이지 -->
+<section id="page-revenue" class="page">
+  <h2 class="sec-title">수익창출</h2>
+  <div class="panel"><p>광고 수익/후원/굿즈 등 지표나 링크 넣기.</p></div>
+</section>
+
+  
   <!-- 하단 탭 -->
   <nav class="tabs" aria-label="하단 메뉴">
     <a class="tab active" href="#"><svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>대시보드</a>
@@ -134,6 +168,48 @@
         if (data.subscribers) document.getElementById('subs').textContent = Number(data.subscribers).toLocaleString();
       }catch(_){} // 없어도 조용히 통과
     })();
+    <script>
+  // ---- 탭 네비게이션 (페이지 전환) ----
+  const pages = {
+    dashboard: document.getElementById('page-dashboard') || document.querySelector('.app'), // 대시보드는 기존 영역
+    meme: document.getElementById('page-meme'),
+    ref: document.getElementById('page-ref'),
+    behind: document.getElementById('page-behind'),
+    revenue: document.getElementById('page-revenue'),
+  };
+
+  // 대시보드만 보이게 초기화
+  Object.entries(pages).forEach(([key,el])=>{
+    if(!el) return;
+    el.classList.toggle('active', key==='dashboard');
+    // 대시보드는 .page가 아닐 수 있으니 없는 경우는 패스
+    if(el.classList.contains('page')===false && key!=='dashboard'){
+      el.classList.add('page');
+    }
+  });
+
+  // 탭 클릭 처리
+  document.querySelectorAll('.tabs .tab').forEach(tab=>{
+    tab.addEventListener('click', (e)=>{
+      e.preventDefault();
+      const key = tab.dataset.page;
+      // 탭 active 처리
+      document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // 페이지 토글
+      Object.entries(pages).forEach(([k,el])=>{
+        if(!el) return;
+        const show = (k===key) || (k==='dashboard' && key==='dashboard');
+        el.classList.toggle('active', show);
+      });
+      // 스크롤 상단으로
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+</script>
+
   </script>
+
 </body>
 </html>
