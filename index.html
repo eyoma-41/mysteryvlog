@@ -31,13 +31,13 @@
     .sec-title{font-weight:900;padding:6px 16px 4px;margin:0}
 
     /* 리플레이 카드 */
-    .cards{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+    .cards{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;position:relative;z-index:1;user-select:none}
     .card{
       flex:0 0 auto;scroll-snap-align:start;width:160px;height:110px;border:1px solid var(--border);
       border-radius:16px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:flex-start;justify-content:flex-start;
-      text-align:left;padding:10px 12px;font-weight:300;font-size:12px;line-height:1.28;cursor:pointer;user-select:none
+      text-align:left;padding:10px 12px;font-weight:300;font-size:12px;line-height:1.28;cursor:pointer;user-select:none;position:relative
     }
-    .card:active{transform:scale(.98)}
+    .card:active{transform:scale(.985)}
     .card.is-selected{outline:2px solid var(--brand);outline-offset:0}
 
     /* 본문 패널 (스크롤 가능) */
@@ -200,7 +200,8 @@ W출판사 출간 미팅 및 계약.
 
     const slug = s => s.replace(/\s+/g,'-').replace(/[^\w\u3131-\uD79D-]/g,'').toLowerCase();
 
-    // 카드 렌더 + 개별 클릭
+    // 카드 렌더 + 개별 클릭 (드래그 중 클릭 방지)
+    let dragging = false;
     const buttons = new Map();
     replayData.forEach((item) => {
       const key = slug(item.title);
@@ -210,7 +211,7 @@ W출판사 출간 미팅 및 계약.
       b.textContent = item.title;
       b.dataset.key = key;
       b.setAttribute('aria-label', `${item.title} 보기`);
-      b.addEventListener('click', ()=>openKey(key));
+      b.addEventListener('click', ()=>{ if(!dragging) openKey(key); });
       b.addEventListener('keydown', (e)=>{ if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openKey(key);} });
       listEl.appendChild(b);
       buttons.set(key, { btn:b, data:item });
@@ -226,12 +227,24 @@ W출판사 출간 미팅 및 계약.
       history.replaceState(null,"",`#${key}`);
     }
 
-    // 드래그 스크롤(클릭 간섭 없음)
+    // 드래그 스크롤 (임계값 6px로 드래그/클릭 분리)
     (function dragScroll(c){
-      let down=false, sx=0, ss=0, pid=null;
-      c.addEventListener('pointerdown',e=>{down=true;sx=e.clientX;ss=c.scrollLeft;pid=e.pointerId;c.setPointerCapture(pid);});
-      c.addEventListener('pointermove',e=>{if(!down)return;c.scrollLeft=ss-(e.clientX-sx);});
-      const end=()=>{down=false;if(pid)c.releasePointerCapture(pid);};
+      let down=false, sx=0, ss=0, pid=null, moved=false;
+      c.addEventListener('pointerdown',e=>{
+        if(e.button!==0) return;
+        down=true;moved=false;dragging=false;
+        sx=e.clientX;ss=c.scrollLeft;pid=e.pointerId;c.setPointerCapture(pid);
+      });
+      c.addEventListener('pointermove',e=>{
+        if(!down)return;
+        const dx=e.clientX-sx;
+        if (Math.abs(dx)>6){ moved=true; dragging=true; }
+        c.scrollLeft=ss-dx;
+      });
+      const end=()=>{
+        if(down && moved){ requestAnimationFrame(()=>{ dragging=false; }); }
+        down=false;moved=false;if(pid)c.releasePointerCapture(pid);
+      };
       c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('pointerleave',end);
     })(listEl);
 
