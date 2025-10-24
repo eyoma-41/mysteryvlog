@@ -187,8 +187,12 @@ W출판사 출간 미팅 및 계약.
     { title:"책이 나오고", body:`...` }
   ];
 
-  const listEl  = document.getElementById('replay-cards');
+  const listEl = document.getElementById('replay-cards');
   const panelEl = document.getElementById('panel');
+
+  const slug = s => s.replace(/\s+/g,'-')
+                     .replace(/[^\w\u3131-\uD79D-]/g,'')
+                     .toLowerCase();
 
   // 해시용 슬러그 (한글 OK, ? 같은 특수문자 제거)
   const slug = s => s.replace(/\s+/g,'-')
