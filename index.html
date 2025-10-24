@@ -211,7 +211,6 @@ W출판사 출간 미팅 및 계약.
       b.textContent = item.title;
       b.dataset.key = key;
       b.setAttribute('aria-label', `${item.title} 보기`);
-      b.addEventListener('click', ()=>{ if(!dragging) openKey(key); });
       b.addEventListener('keydown', (e)=>{ if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openKey(key);} });
       listEl.appendChild(b);
       buttons.set(key, { btn:b, data:item });
@@ -247,6 +246,14 @@ W출판사 출간 미팅 및 계약.
       };
       c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('pointerleave',end);
     })(listEl);
+    
+// 카드 클릭은 컨테이너에서 한 번에 처리 (PC에서 pointer capture 충돌 방지)
+listEl.addEventListener('click', (e) => {
+  if (dragging) return;                            // 드래그 직후 클릭 무시
+  const card = e.target.closest('.card');
+  if (!card) return;
+  openKey(card.dataset.key);
+});
 
     // 해시 진입/변경
     function initialOpen(){
