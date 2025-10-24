@@ -52,7 +52,23 @@
       text-align:left;padding:10px 12px;font-weight:300;font-size:12px;line-height:1.28;cursor:pointer;user-select:none;position:relative
     }
     .card:active{transform:scale(.985)}
-    .card.is-selected{outline:2px solid var(--brand);outline-offset:0}
+/* 기존 .cards 를 아래로 교체 */
+.cards{
+  display:flex;gap:12px;overflow-x:auto;
+  /* ⬇️ 위아래 패딩 추가해서 선택 링이 잘리지 않게 */
+  padding:8px 16px 10px;
+  scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  position:relative;z-index:1;user-select:none;-webkit-user-select:none;
+  touch-action: pan-x;
+}
+
+/* 기존 .card.is-selected 를 아래로 교체 */
+.card.is-selected{
+  /* ⬇️ outline 대신 border 색 변경 + 바깥쪽 소프트 링 */
+  border-color: var(--brand);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255,0,51,.25);
+}
 
     /* 본문 패널 (스크롤 가능) */
     .panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:120px;max-height:55vh;overflow:auto;-webkit-overflow-scrolling:touch}
