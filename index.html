@@ -82,6 +82,60 @@ body {
 .leading-normal { line-height: var(--line-height-normal); }
 .leading-loose  { line-height: var(--line-height-loose); }
 
+    /* 기본 글상자 */
+.box{
+  padding:12px 14px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#fff;
+  line-height:1.6;
+  box-shadow: var(--shadow);
+  margin:10px 0;
+}
+
+/* 점선(스크린샷 느낌) */
+.box--dashed{
+  border-style:dashed;
+  border-color:#bfc5cc;       /* 필요하면 var(--border)로 */
+  box-shadow:none;            /* 점선일 땐 그림자 빼도 깔끔 */
+}
+
+/* 왼쪽 컬러 스트라이프(콜아웃 느낌) */
+.box--stripe{
+  border-left:4px solid var(--brand);
+  padding-left:12px;
+}
+
+/* 연한 배경 노트 */
+.box--note{
+  background:var(--card);
+}
+
+/* 강조(경고/정보) 색상들 */
+.box--info   { border-color:#4da3ff; background:#f3f8ff; }
+.box--warn   { border-color:#ffb020; background:#fff8ea; }
+.box--success{ border-color:#3cc47a; background:#f2fbf6; }
+
+/* 상자 안 제목/라벨 */
+.box .label{
+  display:inline-block;
+  font-weight:900;
+  margin-bottom:6px;
+  color:#111;
+}
+
+/* 인용형(따옴표 장식) */
+.box--quote{
+  position:relative;
+  background:#fff;
+}
+.box--quote::before{
+  content:"“";
+  position:absolute; left:10px; top:-6px;
+  font-size:32px; line-height:1; color:#ccd2d9;
+}
+.box--quote p{ margin:0; }
+
     
     /* 리플레이 카드 */
     .cards{
@@ -245,8 +299,10 @@ body {
 <p class="text-md font-light leading-normal">이야기를 쓰는 방법은 저마다 다르겠지만, 나는 임팩트 있는 장면을 먼저 떠올린 뒤 그 장면을 향해 나아가는 방식으로 작업을 한다. 합평 수업에 낼 원고를 쓸 때 내가 꽂혀있던 장면은 ‘언젠간 써야지 마음 먹었던 꿈속의 한 장면’이었다.</p>
 <p class="text-md font-light leading-normal">2021년 3월의 어느 날, 나는 끔찍한 꿈을 하나 꿨다. 스쿠버 장비를 착용한 나는 바다 속을 구경하고 있었다. 그러다 문득 수면 위가 어두워지는 것을 느낀다. 위를 올려다보니 선선히 내려와야 할 햇빛을 가리는 것들이 있었다. 처음엔 무슨 덩어리인가 싶어서 가만히 내 앞으로 지나갈 때까지 지켜보았는데, 자세히 보니 그것은 시체였다. 양팔로 두 무릎을 감싸 안은 기괴한 모습으로 굳은 채 떨어지고 있었다. 당황해 움직이지 못하던 내 팔에 그것이 스치듯 닿았을 때, 소름 돋게 차가운 한기가 전해졌다. 순간 멘붕이 와서 허겁지겁 수면 위로 올라가다가 꿈에서 깬다. 팔에는 닭살이 돋아 있었다. 이게 무슨 꿈이지 생각하며 멍하니 앉아 있다가 나는 기억이 사라질까 휴대폰 메모장에 뜨문뜨문 내가 느낀 감각을 기록했다.</p>    
 <br/>
-<p class="text-md font-light leading-normal"><span class="ul">스킨스쿠버. 물속에서. 떨어지는 시체. </span></p>
-<p class="text-md font-light leading-normal"><span class="ul">냉동인간? 추워. 100구의 시체.</span></p>
+<div class="box" role="note">
+<p class="text-md font-light leading-normal">스킨스쿠버. 물속에서. 떨어지는 시체.</p>
+<p class="text-md font-light leading-normal">냉동인간? 추워. 100구의 시체.</p>
+</div>
 <br/>    
 <p class="text-md font-light leading-normal">악몽의 충격이 커서 그날은 밤새 잠을 이루지 못했다. 그 임팩트가 꽤 컸는지 나는 당시에 창작 동아리의 소모임에서 운영하던 카페 게시판에 ‘차가운 바다의 비밀’이라는 조각글을 올렸고, 그 글을 확장시켜 글을 쓰기로 했다.</p>
 <p class="text-md font-light leading-normal">스쿠버를 하기 위해서는 주인공이 바다로 가야 했고, 바다로 가기 위해선 명분이 필요했다. 어떤 주인공(누가)이 어떤 이유로(왜) 그곳(어디)에 가며, 무슨 행동(어떻게)을 하는지를 하나씩 채워가기 시작했다.</p>
@@ -271,7 +327,8 @@ body {
 <p class="text-md font-light leading-normal">「다크」에서는 같은 인물들이라도 또 다른 지구에서는 완전히 다른 가능성으로 살아갈 수 있다는 점을, 「릭 앤 모티」에서는 한 지구에서 다른 지구로 포탈을 타고 건너갈 수 있다는 터널 개념을, 「슈타인즈 게이트」에서는 주인공의 선택이 다른 사람들의 인생, 더 나아가 지구의 미래에도 영향을 미칠 수 있다는 인과율을 가져와 습작에 더했다. 모두 다 녹여내기엔 역량이 부족했지만, 이야기에 윤곽이 생기기 시작했고, 아래와 같은 로그라인을 작성할 수 있었다.</p>
 
 <br/>
-<p class="text-md font-light leading-normal"><span class="ul">해수면 상승으로 매장할 땅조차 사라진 평행우주 혹은 미래의 지구에서 포털을 통해 다른 시공간으로 시체를 유기한다. 그리고 그 장면을 칼슨 패밀리가 목격한다. </span></p>
+<div class="box" role="note"><p class="text-md font-light leading-normal"><span class="ul">해수면 상승으로 매장할 땅조차 사라진 평행우주 혹은 미래의 지구에서 포털을 통해 다른 시공간으로 시체를 유기한다. 그리고 그 장면을 칼슨 패밀리가 목격한다. </span></p>
+</div>
 <br/>
 <p class="text-md font-light leading-normal">결말을 어떻게 지어야 할지는 감이 잡히지 않았지만 이야기는 조금씩 앞으로 나아가고 있었다.</p>
 
