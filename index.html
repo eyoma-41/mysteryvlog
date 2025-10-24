@@ -27,6 +27,40 @@
 .page{display:none}
 .page.active{display:block}
 
+    /* 리플레이 카드 리스트 */
+.cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 0 16px 8px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  width: 160px;
+  height: 110px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  cursor: pointer;
+  user-select: none;
+}
+.card:active { transform: scale(0.98); }
+.card.is-selected {
+  outline: 2px solid var(--brand);
+  outline-offset: 0;
+}
+
 
     .ch-meta{display:flex;flex-direction:column;gap:4px}
     .title{font-size:22px;font-weight:900}
@@ -70,19 +104,66 @@
       </div>
     </section>
 
-    <!-- 채널 분석 -->
-    <h2 class="sec-title">채널 분석</h2>
-    <div class="hbar" role="tablist" aria-label="채널 분석 메뉴">
-      <button class="pill active" role="tab" aria-selected="true" data-key="views">조회수</button>
-      <button class="pill" role="tab" aria-selected="false" data-key="watch">시청 시간</button>
-      <button class="pill" role="tab" aria-selected="false" data-key="subsbtn">신규 구독</button>
-      <button class="pill" role="tab" aria-selected="false" data-key="top">인기 영상</button>
-      <button class="pill" role="tab" aria-selected="false" data-key="rev">수익 추정</button>
-    </div>
-    <div id="panel" class="panel" role="region" aria-live="polite">
-      <div class="hint">위의 버튼을 눌러 내용을 표시합니다. (초기값 포함)</div>
-    </div>
-  </div>
+<h2 class="sec-title">미스터리 브이로그: 리플레이</h2>
+
+<div class="cards" id="replay-cards" aria-label="리플레이 목록">
+  <!-- JS가 아래 7개를 자동으로 채워 넣습니다 -->
+</div>
+
+<div id="panel" class="panel" role="region" aria-live="polite">
+  <div class="hint">네모 박스를 눌러 내용을 표시합니다. (나중에 글 넣는 영역)</div>
+</div>
+<script>
+  // ------- 리플레이 카드 데이터 -------
+  const replayItems = [
+    "타임라인",
+    "왜 쓰는가?",
+    "무엇을 쓰지",
+    "어떻게 바꾸지",
+    "계약을 하려고",
+    "작업하는 마음",
+    "책이 나오고"
+  ];
+
+  const panelEl = document.getElementById('panel');
+  const listEl  = document.getElementById('replay-cards');
+
+  // 카드 생성
+  replayItems.forEach((title, idx) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'card';
+    b.textContent = title;
+    b.setAttribute('aria-label', title + ' 보기');
+    b.addEventListener('click', () => {
+      // 선택 표시
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
+      b.classList.add('is-selected');
+      // 패널에 내용 표시(임시 텍스트, 나중에 진짜 글 넣으면 됨)
+      panelEl.innerHTML = `<h3 style="margin:0 0 8px">${title}</h3>
+        <p style="margin:0;color:var(--muted)">이 영역에 “${title}”의 내용을 적어주세요.</p>`;
+    });
+    listEl.appendChild(b);
+  });
+
+  // 마우스 드래그 스크롤(모바일은 터치로 기본 지원)
+  (function enableDragScroll(container){
+    let isDown = false, startX = 0, startScroll = 0;
+    container.addEventListener('pointerdown', e => {
+      isDown = true; startX = e.clientX; startScroll = container.scrollLeft;
+      container.setPointerCapture(e.pointerId);
+      container.style.cursor = 'grabbing';
+    });
+    container.addEventListener('pointermove', e => {
+      if (!isDown) return;
+      container.scrollLeft = startScroll - (e.clientX - startX);
+    });
+    ['pointerup','pointercancel','pointerleave'].forEach(ev =>
+      container.addEventListener(ev, () => { isDown = false; container.style.cursor='auto'; })
+    );
+  })(listEl);
+</script>
+
 
 <!-- 👉 밈 페이지 -->
 <section id="page-meme" class="page">
