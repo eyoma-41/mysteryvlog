@@ -271,91 +271,98 @@ W출판사 출간 미팅 및 계약.
       { title:"책이 나오고", body:`여기에 '책이 나오고' 내용` }
     ];
 
-    const listEl  = document.getElementById('replay-cards');
-    const panelEl = document.getElementById('panel');
+     const listEl  = document.getElementById('replay-cards');
+  const panelEl = document.getElementById('panel');
 
-    const slug = s => s.replace(/\s+/g,'-').replace(/[^\w\u3131-\uD79D-]/g,'').toLowerCase();
+  const slug = s => s.replace(/\s+/g,'-').replace(/[^\w\u3131-\uD79D-]/g,'').toLowerCase();
 
-    // 카드 렌더
-    const buttons = new Map();
-    replayData.forEach((item) => {
-      const key = slug(item.title);
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'card';
-      b.textContent = item.title;
-      b.dataset.key = key;
-      b.setAttribute('aria-label', `${item.title} 보기`);
-      listEl.appendChild(b);
-      buttons.set(key, { btn:b, data:item });
-    });
+  // 카드 렌더
+  const buttons = new Map();
+  replayData.forEach((item) => {
+    const key = slug(item.title);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'card';
+    b.textContent = item.title;
+    b.dataset.key = key;
+    b.setAttribute('aria-label', `${item.title} 보기`);
+    listEl.appendChild(b);
+    buttons.set(key, { btn:b, data:item });
+  });
 
-    // --- 드래그 스크롤(PC/모바일) + 클릭 분리 ---
-    (function dragScroll(el){
-      let isDown=false, startX=0, scrollLeft=0, moved=false;
+  // ---- 드래그/클릭 완전 분리 (PC/모바일 공통) ----
+  let draggingNow = false;
+  let downX = 0;
+  let startScrollLeft = 0;
+  const DRAG_THRESHOLD = 6;
 
-      // 데스크톱
-      el.addEventListener('mousedown',(e)=>{
-        if(e.button!==0) return;
-        isDown=true; moved=false;
-        startX = e.pageX; scrollLeft = el.scrollLeft;
-      });
-      el.addEventListener('mousemove',(e)=>{
-        if(!isDown) return;
-        const dx = e.pageX - startX;
-        if(Math.abs(dx)>5) moved=true;
-        el.scrollLeft = scrollLeft - dx;
-      });
-      ['mouseleave','mouseup'].forEach(t=>el.addEventListener(t,()=>{isDown=false;}));
-      el.addEventListener('click',(e)=>{
-        if(moved){ e.preventDefault(); e.stopPropagation(); return; }
-        const card = e.target.closest('.card'); if(!card) return;
-        openKey(card.dataset.key);
-      }, true);
+  // 포인터 기반 하나로 처리 (마우스/터치/펜 공통)
+  listEl.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return; // 좌클릭만
+    draggingNow = false;
+    downX = e.clientX;
+    startScrollLeft = listEl.scrollLeft;
+    listEl.setPointerCapture(e.pointerId);
+  });
 
-      // 터치(모바일) — 기본 pan-x에 맡기고, 탭만 처리
-      el.addEventListener('touchstart',()=>{ moved=false; }, {passive:true});
-      el.addEventListener('touchmove',()=>{ moved=true; }, {passive:true});
-      el.addEventListener('touchend',(e)=>{
-        if(moved) return;
-        const card = e.target.closest('.card'); if(!card) return;
-        openKey(card.dataset.key);
-      });
-    })(listEl);
+  listEl.addEventListener('pointermove', (e) => {
+    if (!listEl.hasPointerCapture?.(e.pointerId)) return;
+    const dx = e.clientX - downX;
+    if (Math.abs(dx) > DRAG_THRESHOLD) draggingNow = true;
+    listEl.scrollLeft = startScrollLeft - dx;
+  });
 
-    // 카드 열기
-    function openKey(key, scrollCard=true){
-      const entry = buttons.get(key); if(!entry) return;
+  listEl.addEventListener('pointerup', (e) => {
+    try { listEl.releasePointerCapture(e.pointerId); } catch(_){}
+  });
 
-      document.querySelectorAll('.card').forEach(c=>c.classList.remove('is-selected'));
-      entry.btn.classList.add('is-selected');
+  // 각 카드의 "클릭"은 드래그가 아니었을 때만 열기
+  listEl.addEventListener('click', (e) => {
+    if (draggingNow) { draggingNow = false; return; }
+    const card = e.target.closest('.card');
+    if (!card) return;
+    openKey(card.dataset.key);
+  });
 
-      panelEl.innerHTML =
-        `<h3>${entry.data.title}</h3>` +
-        entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
+  // 카드 열기 (패널에 제목은 넣지 않음)
+  function openKey(key, scrollCard = true) {
+    const entry = buttons.get(key); if (!entry) return;
 
-      panelEl.scrollTo({top:0,behavior:'auto'});
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
+    entry.btn.classList.add('is-selected');
 
-      // 카드 빨간 테두리가 헤더에 가리지 않도록 화면도 살짝 올려줌
-      const titleTop = document.getElementById('replay-title').getBoundingClientRect().top;
-      if (titleTop < 72) {
-        window.scrollBy({ top: titleTop - 80, behavior: 'smooth' });
-      }
+    // 본문 렌더: HTML 포함이면 그대로, 아니면 줄바꿈 단위로 <p> 처리
+    const hasHTML = /<\/?[a-z][\s\S]*>/i.test(entry.data.body);
+    panelEl.innerHTML = hasHTML
+      ? entry.data.body
+      : entry.data.body.split('\n').map(t => `<p>${t.trim()}</p>`).join('');
 
-      if (scrollCard) {
-        entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
-      }
-      history.replaceState(null,"",`#${key}`);
+    panelEl.scrollTo({ top: 0, behavior: 'auto' });
+
+    // 선택 카드가 상·하단에 잘리지 않도록, 리스트와 화면을 보정
+    entry.btn.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+
+    // 헤더 고정 높이만큼 여유를 줘서 빨간 테두리가 위에서 안 잘리게
+    const titleEl = document.getElementById('replay-title');
+    if (titleEl) {
+      const top = titleEl.getBoundingClientRect().top;
+      if (top < 80) window.scrollBy({ top: top - 96, behavior: 'smooth' });
     }
 
-    // 해시 진입/변경
-    function initialOpen(){
-      const key=(location.hash||'').replace(/^#/,'');
-      if (key && buttons.has(key)) openKey(key,false);
-      else { const firstKey=buttons.keys().next().value; if(firstKey) openKey(firstKey,false); }
+    history.replaceState(null, "", `#${key}`);
+  }
+
+  // 해시 진입/변경
+  function initialOpen(){
+    const key = (location.hash || '').replace(/^#/, '');
+    if (key && buttons.has(key)) openKey(key, false);
+    else {
+      const firstKey = buttons.keys().next().value;
+      if (firstKey) openKey(firstKey, false);
     }
-    window.addEventListener('hashchange',initialOpen);
-    initialOpen();
-  </script>
+  }
+  window.addEventListener('hashchange', initialOpen);
+  initialOpen();
+</script>
 </body>
 </html>
