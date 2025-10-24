@@ -1,257 +1,167 @@
-import { useState, useRef, useEffect } from "react";
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>미스터리 브이로그 — 대시보드</title>
+  <style>
+    :root{--bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;--card:#f7f7f8;--shadow:0 1px 2px rgba(0,0,0,.06);--r:18px}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text);background:var(--bg)}
+    .app{max-width:720px;margin:0 auto;padding-bottom:88px}
+    .top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;padding:12px 16px}
+    .mark{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+    .logo{width:26px;height:18px;border-radius:6px;background:var(--brand);position:relative}
+    .logo:after{content:"";position:absolute;left:9px;top:3px;border-left:8px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent}
+    .hero{padding:0 16px 12px}
+    .banner{width:100%;aspect-ratio:16/9;border-radius:14px;background:#e9eaee center/cover no-repeat;border:1px solid var(--border)}
+    .ch{display:flex;gap:14px;align-items:center;margin-top:-28px;padding:0 10px}
+    .avatar{width:68px;height:68px;border-radius:999px;border:3px solid #fff;background:#ddd center/cover no-repeat;box-shadow:var(--shadow)}
+    .ch-meta{display:flex;flex-direction:column;gap:4px}
+    .title{font-size:22px;font-weight:900}
+    .subs{color:var(--muted);font-size:14px}
+    .sec-title{font-weight:900;padding:8px 16px 6px}
+    .hbar{display:flex;gap:10px;overflow-x:auto;padding:0 16px 8px;scroll-snap-type:x mandatory}
+    .pill{flex:0 0 auto;scroll-snap-align:start;padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:700;font-size:14px;cursor:pointer;user-select:none}
+    .pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+    .panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:90px}
+    .panel .hint{color:var(--muted);font-size:14px}
+    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px}
+    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
+    .tab svg{width:22px;height:22px}
+    .tab.active{color:var(--brand);font-weight:800}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div class="mark"><span class="logo"></span><span>Studio</span></div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button title="새로 만들기" aria-label="새로 만들기" class="pill" style="padding:6px 10px">+</button>
+      </div>
+    </header>
 
-// --- 상수/링크 ---
-const YT_ID_EP4 = "MZcAnvE4gQ4"; // 사용자가 준 링크의 YouTube ID
-const YT_URL_EP4 = `https://www.youtube.com/watch?v=${YT_ID_EP4}`;
-const YT_THUMB_EP4 = `https://img.youtube.com/vi/${YT_ID_EP4}/hqdefault.jpg`; // 유튜브 기본 썸네일
-
-// --- 초기 데이터 ---
-const baseVideos = [
-  { id: "ep-01", title: "파일 #01 — 촬영 버튼을 안 눌렀을 때", views: "1.2K", age: "5 days ago", thumb: "EP1", tag: "FAIL", desc: "사소한 실패에서 시작된 첫 사건. 카메라는 꺼져 있었고, 라디오는 켜져 있었다." },
-  { id: "ep-02", title: "파일 #02 — 골목 끝의 소문", views: "2.4K", age: "10 days ago", thumb: "EP2", tag: "STORY", desc: "도시전설의 입구. 누군가는 봤고, 누군가는 못 봤다." },
-  { id: "ep-03", title: "파일 #03 — 편집 타임라인이 사라진 밤", views: "913", age: "2 days ago", thumb: "EP3", tag: "FAIL", desc: "오토세이브가 우리 편이 아니었던 순간들." },
-  // EP04: 유튜브 링크/메타 반영
-  { id: "ep-04", title: "p136  무… 무슨", views: null, age: null, thumb: "EP4", tag: "STORY", desc: "낚시냐 진짜냐를 가르는 증거들.", url: YT_URL_EP4, thumbUrl: YT_THUMB_EP4 },
-];
-
-const playlistsTemplate = (videos) => ({
-  about: [videos[0], videos[2], videos[1]],
-  meme: [videos[3], videos[1], videos[0]],
-});
-
-// --- 유틸 ---
-function formatViews(n){
-  if (n == null) return null;
-  const num = Number(n);
-  if (Number.isNaN(num)) return null;
-  if (num >= 1_000_000) return (num/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M';
-  if (num >= 1_000) return (num/1_000).toFixed(1).replace(/\.0$/,'') + 'K';
-  return String(num);
-}
-function timeAgoFrom(dateStr){
-  const d = new Date(dateStr);
-  if (isNaN(d.getTime())) return null;
-  const sec = Math.floor((Date.now() - d.getTime())/1000);
-  const m = Math.floor(sec/60), h = Math.floor(m/60), day = Math.floor(h/24), mo = Math.floor(day/30), y = Math.floor(day/365);
-  if (y>0) return `${y} year${y>1?'s':''} ago`;
-  if (mo>0) return `${mo} month${mo>1?'s':''} ago`;
-  if (day>0) return `${day} days ago`;
-  if (h>0) return `${h} hours ago`;
-  if (m>0) return `${m} minutes ago`;
-  return `just now`;
-}
-function metaText(v){
-  const views = v?.views ? `${v.views} views` : null;
-  const age = v?.age || null;
-  if (!views && !age) return null; // 둘 다 없으면 숨김
-  return `${views ?? ''}${views && age ? ' · ' : ''}${age ?? ''}`;
-}
-function showMeta(v){ return Boolean(v?.views) || Boolean(v?.age); }
-
-function getYouTubeApiKey(){
-  if (typeof window !== 'undefined' && window.YT_API_KEY) return window.YT_API_KEY;
-  return null;
-}
-async function fetchYouTubeMeta(id, apiKey){
-  if (!apiKey) return null;
-  try{
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${apiKey}`;
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const json = await res.json();
-    const item = json.items?.[0];
-    if (!item) return null;
-    return {
-      views: item.statistics?.viewCount ?? null,
-      publishedAt: item.snippet?.publishedAt ?? null,
-      title: item.snippet?.title ?? null,
-      thumb: item.snippet?.thumbnails?.high?.url ?? null,
-    };
-  }catch(e){ return null; }
-}
-
-// --- UI 컴포넌트 ---
-function Modal({ open, onClose, video }){
-  const dialogRef = useRef(null);
-  useEffect(()=>{
-    function onKey(e){ if (e.key === 'Escape') onClose(); }
-    if (open) document.addEventListener('keydown', onKey);
-    return ()=> document.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-  if (!open || !video) return null;
-  const ytMatch = video.url?.match(/[?&]v=([^&#]+)/);
-  const ytId = ytMatch?.[1];
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <button aria-label="Close overlay" className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div ref={dialogRef} role="dialog" aria-modal="true" className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl">
-        <div className="p-5 border-b border-neutral-200 flex items-center justify-between">
-          <h4 className="font-bold text-lg">{video.title}</h4>
-          <button onClick={onClose} className="px-3 py-1 text-sm rounded-full border border-neutral-300">닫기</button>
+    <!-- 배너 + 프로필 + 타이틀 -->
+    <section class="hero" aria-label="채널 헤더">
+      <div id="banner" class="banner"></div>
+      <div class="ch">
+        <div id="avatar" class="avatar" aria-label="프로필 이미지"></div>
+        <div class="ch-meta">
+          <div class="title" id="title">미스터리 브이로그</div>
+          <div class="subs">구독자 <strong id="subs">320,158</strong></div>
         </div>
-        <div className="p-5 grid md:grid-cols-2 gap-4">
-          <div className="aspect-video rounded-xl border-2 border-dashed border-neutral-300 overflow-hidden bg-black grid place-items-center">
-            {ytId ? (
-              <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${ytId}`} title={video.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen />
-            ) : (<span className="text-neutral-400">영상 플레이어 자리</span>)}
-          </div>
-          <div>
-            {showMeta(video) && <div className="text-sm text-neutral-600">{metaText(video)}</div>}
-            <p className="mt-3 text-neutral-800">{video.desc}</p>
-            <div className="mt-4 flex flex-wrap gap-2 text-xs items-center">
-              <span className="px-2 py-1 rounded-full bg-neutral-100 border border-neutral-200">#{video.tag}</span>
-              {video.url && (<a href={video.url} target="_blank" rel="noopener noreferrer" className="px-3 py-1 rounded-full bg-neutral-900 text-white">유튜브로 보기</a>)}
-              <button className="px-3 py-1 rounded-full border border-neutral-300" onClick={()=> navigator.clipboard?.writeText(window.location.href)}>공유</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function VideoCard({ item, onOpen }){
-  const handleClick = () => { onOpen(item); }; // 항상 모달 먼저
-  return (
-    <article className="group cursor-pointer" onClick={handleClick}>
-      <div className="aspect-video w-full rounded-xl border-2 border-dashed border-neutral-300 bg-white overflow-hidden grid place-items-center">
-        {item.thumbUrl ? (<img src={item.thumbUrl} alt={`${item.title} 썸네일`} className="w-full h-full object-cover" />)
-                       : (<span className="text-neutral-400">{item.thumb}</span>)}
-      </div>
-      <h4 className="mt-2 font-semibold line-clamp-2">{item.title}</h4>
-      {showMeta(item) && (<p className="text-xs text-neutral-600">{metaText(item)}</p>)}
-    </article>
-  );
-}
-
-function Row({ title, items, onOpen }){
-  return (
-    <section className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex items-end justify-between">
-        <h3 className="text-xl md:text-2xl font-extrabold">{title}</h3>
-        <a className="text-sm underline" href="#">더 보기</a>
-      </div>
-      <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {items.map(v => <VideoCard key={v.id} item={v} onOpen={onOpen} />)}
       </div>
     </section>
-  );
-}
 
-export default function App(){
-  const [open, setOpen] = useState(false);
-  const [current, setCurrent] = useState(null);
-  const [videos, setVideos] = useState(baseVideos);
-  const [playlists, setPlaylists] = useState(playlistsTemplate(baseVideos));
-  const onOpen = (v) => { setCurrent(v); setOpen(true); };
-
-  useEffect(()=>{
-    const apiKey = getYouTubeApiKey();
-    (async()=>{
-      const m = await fetchYouTubeMeta(YT_ID_EP4, apiKey);
-      if (!m) return;
-      setVideos(prev => {
-        const next = prev.map(v => v.id === 'ep-04'
-          ? { ...v, title: m.title || v.title, views: formatViews(m.views) || v.views,
-              age: timeAgoFrom(m.publishedAt) || v.age, thumbUrl: m.thumb || v.thumbUrl }
-          : v );
-        setPlaylists(playlistsTemplate(next));
-        return next;
-      });
-    })();
-  },[]);
-
-  return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      {/* Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-pink-400" />
-            <span className="font-black">『미스터리 브이로그』</span>
-          </div>
-          <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#about" className="hover:underline">About 미브</a>
-            <a href="#meme" className="hover:underline">미브 밈 파헤치기</a>
-          </nav>
-        </div>
-      </header>
-
-      {/* Hero */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-black leading-tight">사소한 실패에서 시작하는 미스터리</h1>
-            <p className="mt-4 text-neutral-600">B급 유머와 집요한 추적 사이. 미브의 세계로 입장하십시오.</p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <a href="#about" className="px-4 py-2 rounded-xl bg-pink-400 text-neutral-900 font-semibold">About 미브</a>
-              <a href="#meme" className="px-4 py-2 rounded-xl border border-neutral-300">밈 파헤치기</a>
-            </div>
-          </div>
-          <div className="aspect-video w-full border-2 border-dashed border-neutral-300 rounded-2xl grid place-items-center bg-white">
-            <span className="text-neutral-400">채널 트레일러 영상 자리</span>
-          </div>
-        </div>
-      </section>
-
-      {/* About 미브 (영상 그리드 → 이미지+텍스트 블록) */}
-      <div id="about" className="max-w-7xl mx-auto px-4 py-10">
-        <h3 className="text-xl md:text-2xl font-extrabold mb-6">About 미브</h3>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="aspect-square rounded-2xl border-2 border-dashed border-neutral-300 overflow-hidden bg-white grid place-items-center">
-            {/* /public 폴더에 about-miv.jpg 추가해 주세요 */}
-            <img src="/about-miv.jpg" alt="About 미브" className="w-full h-full object-cover" onError={(e)=>{e.currentTarget.replaceWith(Object.assign(document.createElement('div'),{className:'text-neutral-400',innerText:'이미지 자리 (about-miv.jpg)'}));}} />
-          </div>
-          <div>
-            <h4 className="text-2xl font-bold mb-3">사소한 실패에서 시작하는 미스터리</h4>
-            <p className="text-neutral-600 leading-relaxed">
-              키치한 톤과 진지한 집요함으로, 실패를 단서 삼아 세계를 의심합니다.
-              <br /><br />
-              미스터리 브이로그는 일상의 웃픈 실패와 도시전설을 뒤섞어
-              새로운 시선으로 이야기를 풀어냅니다.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 미브 밈 파헤치기 (비디오 그리드 유지) */}
-      <div id="meme">
-        <Row title="미브 밈 파헤치기" items={playlists.meme} onOpen={onOpen} />
-      </div>
-
-      {/* 소개 */}
-      <section className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-3 gap-6 items-start">
-          <div className="h-32 rounded-2xl border-2 border-dashed border-neutral-300 bg-white grid place-items-center">
-            <span className="text-neutral-400">프로필</span>
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-xl md:text-2xl font-extrabold">MysteryVlog.fail</h3>
-            <p className="mt-2 text-neutral-600">키치한 톤과 진지한 집요함으로, 실패를 단서 삼아 세계를 의심합니다.</p>
-            <div className="mt-3 text-sm text-neutral-600">구독자 123K · 영상 56개 · 2021-01 개설</div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-pink-400" />
-            <span className="font-bold">mysteryvlog.fail</span>
-          </div>
-          <div className="flex gap-4 text-sm">
-            <a className="underline" href="https://instagram.com/eyoma_mag" target="_blank" rel="noopener noreferrer">Instagram</a>
-            <a className="underline" href="https://brunch.co.kr/@hakgome" target="_blank" rel="noopener noreferrer">Brunch</a>
-            <a className="underline opacity-60 cursor-not-allowed" href="#" aria-disabled="true" title="준비 중입니다">Contact</a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Modal */}
-      <Modal open={open} onClose={()=> setOpen(false)} video={current} />
+    <!-- 채널 분석 -->
+    <h2 class="sec-title">채널 분석</h2>
+    <div class="hbar" role="tablist" aria-label="채널 분석 메뉴">
+      <button class="pill active" role="tab" aria-selected="true" data-key="views">조회수</button>
+      <button class="pill" role="tab" aria-selected="false" data-key="watch">시청 시간</button>
+      <button class="pill" role="tab" aria-selected="false" data-key="subs">신규 구독</button>
+      <button class="pill" role="tab" aria-selected="false" data-key="top">인기 영상</button>
+      <button class="pill" role="tab" aria-selected="false" data-key="rev">수익 추정</button>
     </div>
-  );
-}
+    <div id="panel" class="panel" role="region" aria-live="polite">
+      <div class="hint">위의 버튼을 눌러 내용을 표시합니다. (나중에 글 채워 넣을 영역)</div>
+    </div>
+  </div>
+
+  <!-- 하단 탭 -->
+  <nav class="tabs" aria-label="하단 메뉴">
+    <a class="tab active" href="#" data-page="dashboard">
+      <svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>
+      대시보드
+    </a>
+    <a class="tab" href="#" data-page="meme">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      밈
+    </a>
+    <a class="tab" href="#" data-page="ref">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      레퍼런스
+    </a>
+    <a class="tab" href="#" data-page="behind">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      비하인드
+    </a>
+    <a class="tab" href="#" data-page="revenue">
+      <svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      수익창출
+    </a>
+  </nav>
+
+  <!-- 1) 인라인 JSON(네가 준 예시 그대로) -->
+  <script type="application/json" id="content">
+  {
+    "about": [
+      {
+        "id": "about-1",
+        "title": "이야기의 시작",
+        "excerpt": "꿈을 꾸었다. 나는 물 속에 있었고 수면으로부터 내려오던 빛이 점차 사라졌다.",
+        "desc": "꿈을 꾸었다. 나는 물 속에 있었고 수면으로부터 내려오던 빛이 점차 사라졌다. 몸이 으스스해져서 올려다보니 그곳에서는 덩어리들이 떨어지고 있었다. 그 중 하나가 내 앞으로 하강해갔고, 나는 발가벗은 노인의 시체라는 걸 알게되었다. 피부에 살짝 스쳐간 그 감촉은 차갑다. 차갑다 못해 얼어버릴 것 같은 느낌이었다. 그건 냉동인간이었다.",
+        "image": "/about/start.jpg",
+        "modal": true
+      }
+    ],
+    "meme": [{"id":"m1","title":"p136 무… 무슨","image":"https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg","url":"https://www.youtube.com/watch?v=MZcAnvE4gQ4","modal":true,"meta":"YouTube"}],
+    "reference": [{"id":"r1","title":"프로젝트 소개","excerpt":"","image":""}]
+  }
+  </script>
+
+  <script>
+    // 유틸: 루트 슬래시(/) 경로를 로컬용으로 보정
+    const fixPath = (p)=> !p ? "" : (p.startsWith("/") ? ("."+p) : p);
+
+    // 분석 탭 동작
+    const panel = document.getElementById('panel');
+    const pills = document.querySelectorAll('.hbar .pill');
+    const contentByKey = {
+      views:"조회수 패널 — 나중에 실제 지표/설명 텍스트.",
+      watch:"시청 시간 패널 — 설명/차트/문단 등.",
+      subs:"신규 구독 패널 — 샘플 텍스트.",
+      top:"인기 영상 패널 — 썸네일/리스트 가능.",
+      rev:"수익 추정 패널 — KPI/표시 영역."
+    };
+    pills.forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        pills.forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
+        btn.classList.add('active');btn.setAttribute('aria-selected','true');
+        panel.innerHTML = "<p>"+(contentByKey[btn.dataset.key]||"내용 준비 중")+"</p>";
+      });
+    });
+
+    // 1) 인라인 JSON 로딩
+    function loadFromInline(){
+      try{
+        const raw = document.getElementById('content').textContent.trim();
+        const data = JSON.parse(raw);
+        applyData(data);
+      }catch(e){ console.warn('inline json parse fail', e); }
+    }
+
+    // 2) 외부 파일로 전환하고 싶으면 이 함수로 교체
+    async function loadFromFetch(){
+      const r = await fetch('content.json');
+      const data = await r.json();
+      applyData(data);
+    }
+
+    function applyData(data){
+      // 배너 = about[0].image, 프로필 동일 사용(원하면 profileImage 키 추가)
+      const bannerUrl = fixPath(data?.about?.[0]?.image || "");
+      if(bannerUrl) document.getElementById('banner').style.backgroundImage = `url('${bannerUrl}')`;
+      const profileUrl = bannerUrl;
+      if(profileUrl) document.getElementById('avatar').style.backgroundImage = `url('${profileUrl}')`;
+      // 타이틀/구독자 고정값 요구사항
+      document.getElementById('title').textContent = '미스터리 브이로그';
+      document.getElementById('subs').textContent = '320,158';
+    }
+
+    // 기본은 인라인 로딩(파일환경에서도 100% 동작)
+    loadFromInline();
+    // 외부 JSON로 바꿀 땐 위 줄을 주석처리하고 loadFromFetch() 호출하면 됨.
+    // loadFromFetch();
+  </script>
+</body>
+</html>
