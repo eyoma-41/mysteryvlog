@@ -190,6 +190,81 @@ W출판사 출간 미팅 및 계약.
   const listEl  = document.getElementById('replay-cards');
   const panelEl = document.getElementById('panel');
 
+  // 해시용 슬러그 (한글 OK, ? 같은 특수문자 제거)
+  const slug = s => s.replace(/\s+/g,'-')
+                     .replace(/[^\w\u3131-\uD79D-]/g,'')
+                     .toLowerCase();
+
+  // 카드 렌더 + 개별 클릭 리스너 (드래그와 분리)
+  const buttons = new Map();
+  replayData.forEach((item) => {
+    const key = slug(item.title);
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'card';
+    b.textContent = item.title;
+    b.dataset.key = key;
+    b.setAttribute('aria-label', `${item.title} 보기`);
+    b.addEventListener('click', (e) => {
+      openKey(key);        // 👈 개별 카드 클릭으로 직접 오픈
+    });
+    b.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openKey(key); }
+    });
+    listEl.appendChild(b);
+    buttons.set(key, { btn: b, data: item });
+  });
+
+  // 선택/표시
+  function openKey(key, scrollCard=true) {
+    const entry = buttons.get(key);
+    if (!entry) return;
+
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
+    entry.btn.classList.add('is-selected');
+
+    panelEl.innerHTML = `<h3>${entry.data.title}</h3>` +
+      entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
+    panelEl.scrollTo({ top: 0, behavior: 'auto' });
+
+    if (scrollCard) entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
+    history.replaceState(null, "", `#${key}`);
+  }
+
+  // 드래그 스크롤은 스크롤만! (클릭 판정에 간섭 X)
+  (function enableDragScroll(container){
+    let isDown=false, startX=0, startScroll=0, pid=null;
+    container.addEventListener('pointerdown', e=>{
+      isDown=true; startX=e.clientX; startScroll=container.scrollLeft;
+      pid=e.pointerId; container.setPointerCapture(pid);
+    });
+    container.addEventListener('pointermove', e=>{
+      if(!isDown) return;
+      container.scrollLeft = startScroll - (e.clientX - startX);
+    });
+    const end = ()=>{ isDown=false; if(pid) container.releasePointerCapture(pid); };
+    container.addEventListener('pointerup', end);
+    container.addEventListener('pointercancel', end);
+    container.addEventListener('pointerleave', end);
+  })(listEl);
+
+  // 해시 진입/변경 지원
+  function initialOpen() {
+    const key = (location.hash || '').replace(/^#/, '');
+    if (key && buttons.has(key)) openKey(key, false);
+    else {
+      const firstKey = buttons.keys().next().value;
+      if (firstKey) openKey(firstKey, false);
+    }
+  }
+  window.addEventListener('hashchange', initialOpen);
+  initialOpen();
+</script>
+
+
+  const listEl  = document.getElementById('replay-cards');
+  const panelEl = document.getElementById('panel');
+
   // 슬러그 유틸 (해시용)
   const slug = s => s.replace(/\s+/g,'-')
                      .replace(/[^\w\u3131-\uD79D-]/g,'') // 한글/영문/숫자/밑줄만
