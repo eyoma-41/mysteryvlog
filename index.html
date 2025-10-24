@@ -14,7 +14,8 @@
     .logo:after{content:"";position:absolute;left:9px;top:3px;border-left:8px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent}
 
     /* 프로필 행만 남김 */
-    .hero{padding:12px 16px}
+.hero{padding:8px 16px 4px;}               /* 기존 12px → 8/4로 타이트하게 */
+    .sec-title{padding:6px 16px 4px;}          /* 제목도 살짝 타이트 *
     .ch{display:flex;gap:14px;align-items:center}
 .avatar {
   width: 80px;              /* 필요하면 크기 조정 */
@@ -27,39 +28,22 @@
 .page{display:none}
 .page.active{display:block}
 
-    /* 리플레이 카드 리스트 */
-.cards {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding: 0 16px 8px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+/* 리플레이 카드 리스트(그대로) */
+.cards{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+
+/* 카드: 얇은 폰트 + 작은 글자 + 좌상단 정렬 */
+.card{
+  flex:0 0 auto; scroll-snap-align:start;
+  width:160px; height:110px;
+  border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:var(--shadow);
+  display:flex; align-items:flex-start; justify-content:flex-start;   /* 좌상단 정렬 */
+  text-align:left; padding:10px 12px;
+  font-weight:300;                 /* 라이트 */
+  font-size:12px; line-height:1.28;/* 작게 */
+  cursor:pointer; user-select:none;
 }
-.card {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  width: 160px;
-  height: 110px;
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 12px;
-  font-weight: 800;
-  font-size: 15px;
-  cursor: pointer;
-  user-select: none;
-}
-.card:active { transform: scale(0.98); }
-.card.is-selected {
-  outline: 2px solid var(--brand);
-  outline-offset: 0;
-}
+.card:active{transform:scale(.98)}
+.card.is-selected{outline:2px solid var(--brand);outline-offset:0}
 
 
     .ch-meta{display:flex;flex-direction:column;gap:4px}
@@ -70,9 +54,11 @@
     .hbar{display:flex;gap:10px;overflow-x:auto;padding:0 16px 8px;scroll-snap-type:x mandatory}
     .pill{flex:0 0 auto;scroll-snap-align:start;padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:700;font-size:14px;cursor:pointer;user-select:none}
     .pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-    .panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:90px}
-    .panel .hint{color:var(--muted);font-size:14px}
-
+/* 패널은 길게 스크롤 되도록 */
+.panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:90px;
+  max-height:55vh; overflow:auto; -webkit-overflow-scrolling:touch}
+.panel h3{margin:0 0 10px 0}
+.panel p{margin:0 0 12px 0}
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px}
     .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
     .tab svg{width:22px;height:22px}
@@ -105,62 +91,88 @@
     </section>
 
 <h2 class="sec-title">미스터리 브이로그: 리플레이</h2>
-
-<div class="cards" id="replay-cards" aria-label="리플레이 목록">
-  <!-- JS가 아래 7개를 자동으로 채워 넣습니다 -->
-</div>
-
+<div class="cards" id="replay-cards" aria-label="리플레이 목록"></div>
 <div id="panel" class="panel" role="region" aria-live="polite">
   <div class="hint">네모 박스를 눌러 내용을 표시합니다. (나중에 글 넣는 영역)</div>
 </div>
+
 <script>
-  // ------- 리플레이 카드 데이터 -------
-  const replayItems = [
-    "타임라인",
-    "왜 쓰는가?",
-    "무엇을 쓰지",
-    "어떻게 바꾸지",
-    "계약을 하려고",
-    "작업하는 마음",
-    "책이 나오고"
+  // ------- 리플레이 카드 데이터 & 본문(긴 텍스트) -------
+  const replayData = [
+    { title:"타임라인", body:`긴 텍스트 예시입니다. 시작—아래 내용은 스크롤로 이어집니다.
+프로젝트의 주요 시점들을 나열하고, 각 시점의 결정과 수정사항을 기록합니다.
+1) 프리프로덕션: 아이디어 수집, 포맷 정의, 테스트 촬영
+2) 파일럿: 업로드 주기, 컷 편집 규칙, 썸네일 룩앤필
+3) 본편: 시즌/에피소드 체계, 데이터 기반 개선
+4) 회고: 실패/성공 포인트, 다음 스텝 … (계속)`},
+
+    { title:"왜 쓰는가?", body:`기획의 목적을 분명히 적어 유지보수 시 기준점으로 씁니다.
+- 기록을 통한 정체성 강화
+- 반복되는 질문에 대한 표준 답변 확보
+- 협업자 온보딩용 핵심 문서화
+- 관객과의 약속(업로드 리듬, 톤앤매너) …`},
+
+    { title:"무엇을 쓰지", body:`콘텐츠 재료와 금지 리스트를 함께 정의합니다.
+• 사용하는 재료: 브이로그, 비하인드, 인터뷰, 메모 보이스오버
+• 금지: 개인 신상 민감정보, 스포일러, 확인되지 않은 루머 …`},
+
+    { title:"어떻게 바꾸지", body:`변경 프로세스(제안→검토→실험→결정)를 명문화합니다.
+- 실험 기간: 2주
+- 측정 기준: CTR, 평균시청시간, 재방문율
+- 롤백 기준: 지표 하락 10% 이상, 시청자 피드백 부정적 …`},
+
+    { title:"계약을 하려고", body:`파트너/스폰서/플랫폼 계약 전 체크리스트.
+1) 권리: 2차 저작물, 클립 사용 범위
+2) 기간: 독점/비독점, 지역 제한
+3) 리스크: 광고 표기, 리뷰 공정성, 해지 조항 …`},
+
+    { title:"작업하는 마음", body:`번아웃을 피하기 위한 운영 규칙.
+- 제작/휴식 리듬: 3:1
+- ‘완벽’보다 ‘일관성’ 우선
+- 주간 목표: 1) 초안 2) 러프컷 3) 공개 …`},
+
+    { title:"책이 나오고", body:`출간 연계 활동 플랜.
+- 연재와 책의 경계: 스포일러 가이드
+- 이벤트: 북토크, 사인회, 밈 공모
+- ROI: 트래픽→구매 전환 경로 설계 …`}
   ];
 
   const panelEl = document.getElementById('panel');
   const listEl  = document.getElementById('replay-cards');
 
-  // 카드 생성
-  replayItems.forEach((title, idx) => {
+  // 카드 렌더
+  replayData.forEach((item, idx) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'card';
-    b.textContent = title;
-    b.setAttribute('aria-label', title + ' 보기');
+    b.textContent = item.title;
+    b.setAttribute('aria-label', item.title + ' 보기');
     b.addEventListener('click', () => {
-      // 선택 표시
       document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
       b.classList.add('is-selected');
-      // 패널에 내용 표시(임시 텍스트, 나중에 진짜 글 넣으면 됨)
-      panelEl.innerHTML = `<h3 style="margin:0 0 8px">${title}</h3>
-        <p style="margin:0;color:var(--muted)">이 영역에 “${title}”의 내용을 적어주세요.</p>`;
+      // 긴 텍스트 출력 (스크롤 가능)
+      panelEl.innerHTML = `<h3>${item.title}</h3>` +
+        item.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
+      // 패널 맨 위로
+      panelEl.scrollTo({ top: 0, behavior: 'auto' });
     });
     listEl.appendChild(b);
   });
 
-  // 마우스 드래그 스크롤(모바일은 터치로 기본 지원)
+  // 첫 카드 자동 선택(원하면 유지/삭제)
+  if (listEl.firstElementChild) listEl.firstElementChild.click();
+
+  // 드래그 스크롤(데스크탑용) — 모바일은 기본 터치 스크롤
   (function enableDragScroll(container){
-    let isDown = false, startX = 0, startScroll = 0;
+    let isDown = false, startX = 0, startScroll = 0, pid = null;
     container.addEventListener('pointerdown', e => {
       isDown = true; startX = e.clientX; startScroll = container.scrollLeft;
-      container.setPointerCapture(e.pointerId);
-      container.style.cursor = 'grabbing';
+      pid = e.pointerId; container.setPointerCapture(pid); container.style.cursor='grabbing';
     });
-    container.addEventListener('pointermove', e => {
-      if (!isDown) return;
-      container.scrollLeft = startScroll - (e.clientX - startX);
-    });
-    ['pointerup','pointercancel','pointerleave'].forEach(ev =>
-      container.addEventListener(ev, () => { isDown = false; container.style.cursor='auto'; })
-    );
+    container.addEventListener('pointermove', e => { if (isDown) container.scrollLeft = startScroll - (e.clientX - startX); });
+    ['pointerup','pointercancel','pointerleave'].forEach(ev => container.addEventListener(ev, () => {
+      isDown = false; if(pid) container.releasePointerCapture(pid); container.style.cursor='auto';
+    }));
   })(listEl);
 </script>
 
