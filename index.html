@@ -5,60 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>미스터리 브이로그 — 대시보드</title>
   <style>
-    :root{--bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;--card:#f7f7f8;--shadow:0 1px 2px rgba(0,0,0,.06);--r:18px}
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text);background:var(--bg)}
+    :root{
+      --bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;
+      --card:#f7f7f8;--shadow:0 1px 2px rgba(0,0,0,.06);--r:18px
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text);background:var(--bg)}
     .app{max-width:720px;margin:0 auto;padding-bottom:88px}
+
+    /* 헤더 */
     .top{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;padding:12px 16px}
     .mark{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
     .logo{width:26px;height:18px;border-radius:6px;background:var(--brand);position:relative}
     .logo:after{content:"";position:absolute;left:9px;top:3px;border-left:8px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent}
 
-    /* 프로필 행만 남김 */
-.hero{padding:8px 16px 4px;}               /* 기존 12px → 8/4로 타이트하게 */
-    .sec-title{padding:6px 16px 4px;}          /* 제목도 살짝 타이트 *
+    /* 프로필 */
+    .hero{padding:8px 16px 4px}
     .ch{display:flex;gap:14px;align-items:center}
-.avatar {
-  width: 80px;              /* 필요하면 크기 조정 */
-  height: 80px;
-  border-radius: 50%;
-  border: 3px solid #fff;
-  background: #ddd center/cover no-repeat;
-  box-shadow: 0 1px 2px rgba(0,0,0,.06);
-}
-.page{display:none}
-.page.active{display:block}
-
-/* 리플레이 카드 리스트(그대로) */
-.cards{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
-
-/* 카드: 얇은 폰트 + 작은 글자 + 좌상단 정렬 */
-.card{
-  flex:0 0 auto; scroll-snap-align:start;
-  width:160px; height:110px;
-  border:1px solid var(--border); border-radius:16px; background:#fff; box-shadow:var(--shadow);
-  display:flex; align-items:flex-start; justify-content:flex-start;   /* 좌상단 정렬 */
-  text-align:left; padding:10px 12px;
-  font-weight:300;                 /* 라이트 */
-  font-size:12px; line-height:1.28;/* 작게 */
-  cursor:pointer; user-select:none;
-}
-.card:active{transform:scale(.98)}
-.card.is-selected{outline:2px solid var(--brand);outline-offset:0}
-
-
+    .avatar{width:80px;height:80px;border-radius:50%;border:3px solid #fff;background:#ddd center/cover no-repeat;box-shadow:var(--shadow)}
     .ch-meta{display:flex;flex-direction:column;gap:4px}
     .title{font-size:22px;font-weight:900}
     .subs{color:var(--muted);font-size:14px}
 
-    .sec-title{font-weight:900;padding:8px 16px 6px}
-    .hbar{display:flex;gap:10px;overflow-x:auto;padding:0 16px 8px;scroll-snap-type:x mandatory}
-    .pill{flex:0 0 auto;scroll-snap-align:start;padding:10px 14px;border:1px solid var(--border);border-radius:999px;background:#fff;font-weight:700;font-size:14px;cursor:pointer;user-select:none}
-    .pill.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-/* 패널은 길게 스크롤 되도록 */
-.panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:90px;
-  max-height:55vh; overflow:auto; -webkit-overflow-scrolling:touch}
-.panel h3{margin:0 0 10px 0}
-.panel p{margin:0 0 12px 0}
+    /* 섹션 타이틀 */
+    .sec-title{font-weight:900;padding:6px 16px 4px;margin:0}
+
+    /* 리플레이 카드 */
+    .cards{display:flex;gap:12px;overflow-x:auto;padding:0 16px 6px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+    .card{
+      flex:0 0 auto;scroll-snap-align:start;width:160px;height:110px;border:1px solid var(--border);
+      border-radius:16px;background:#fff;box-shadow:var(--shadow);display:flex;align-items:flex-start;justify-content:flex-start;
+      text-align:left;padding:10px 12px;font-weight:300;font-size:12px;line-height:1.28;cursor:pointer;user-select:none
+    }
+    .card:active{transform:scale(.98)}
+    .card.is-selected{outline:2px solid var(--brand);outline-offset:0}
+
+    /* 본문 패널 (스크롤 가능) */
+    .panel{margin:8px 16px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:120px;max-height:55vh;overflow:auto;-webkit-overflow-scrolling:touch}
+    .panel h3{margin:0 0 10px}
+    .panel p{margin:0 0 12px}
+
+    /* 하단 탭바 */
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px}
     .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
     .tab svg{width:22px;height:22px}
@@ -67,22 +54,17 @@
 </head>
 <body>
   <div class="app">
-    <header class="top">
+    <header class="top" role="banner">
       <div class="mark"><span class="logo"></span><span>Studio</span></div>
       <div style="margin-left:auto;display:flex;gap:8px">
-        <button title="새로 만들기" aria-label="새로 만들기" class="pill" style="padding:6px 10px">+</button>
+        <button title="새로 만들기" aria-label="새로 만들기" style="padding:6px 10px;border:1px solid var(--border);background:#fff;border-radius:999px;cursor:pointer">+</button>
       </div>
     </header>
 
-    <!-- 프로필만 표시 -->
+    <!-- 프로필 -->
     <section class="hero" aria-label="채널 헤더">
-<div
-  id="avatar"
-  class="avatar"
-  style="background-image:url('/hero-book.jpg')">
-</div>
-
-
+      <div class="ch">
+        <div id="avatar" class="avatar" style="background-image:url('/hero-book.jpg')"></div>
         <div class="ch-meta">
           <div class="title" id="title">미스터리 브이로그</div>
           <div class="subs">구독자 <strong id="subs">320,158</strong></div>
@@ -90,396 +72,98 @@
       </div>
     </section>
 
-<h2 class="sec-title">미스터리 브이로그: 리플레이</h2>
-<div class="cards" id="replay-cards" aria-label="리플레이 목록"></div>
-<div id="panel" class="panel" role="region" aria-live="polite">
-  <div class="hint">네모 박스를 눌러 내용을 표시합니다. (나중에 글 넣는 영역)</div>
-</div>
-
-<script>
-  // 데이터
-  const replayData = [
-    { title:"타임라인", body:`2021. 03.
-스쿠버다이빙 중에 수면에서 냉동 인간들이 내려오는 악몽을 꿈.
-2021. 04. 18 ~ 25
-꿈 꾼 내용을 소설 창작 소모임 카페에 조각글 ‘차가운 바다의 비밀’로 기록함.
-2022. 03. 17~05. 12
-번아웃 극복해보려 한겨레교육 김성중 작가의 상상력 발전소 2호기 합평 수업 수강
-2022. 03. 31
-작중 타임캡슐 소재의 씨앗이 되는 조각글 ‘컬을 찾아서’ 메모장에 기록.
-2022. 04. 14
-칼슨 패밀리가 미스터리 스팟을 찾는 「다이빙 엘」단편 초고 완성, 합평 받음.
-2022. 05. 26~07. 14
-한겨레교육 이야기를 여행하는 히치하이커를 위한 안내서 vol. 2 [심화반] 합평 수업 수강
-2022. 06. 
-회사 퇴사.
-2022. 07. 11
-「다이빙 엘」을 개작한 중편 「가디언즈 프로젝트」 미완성 초고 합평 받음. 
-2022. 07. 29
-강릉 여행, 운망 해변 방풍림의 배경이 되는 경포대 방풍림 답사.
-2023. 01.
-공모전 도전 결심. 청소년 장편 소설 공모전 도전
-2023. 01. 30~02. 02
-묵호 글쓰기 캠프. 
-2023. 02. 26
-원고 『가디언즈 프로젝트』로 투고.
-2023. 05. 11
-공모전 낙선 후 『가디언즈 프로젝트』 밀리로드 무료 연재 시작.
-2023. 05. 30
-A사 출간 미팅, 계약 논의 중 B사 출간 미팅 제안.
-2023. 06. 27
-B사 출간 미팅, 원고 검토를 위한 샘플 원고 요청하여 작업 시작
-2023. 08. 21
-샘플 원고 『실패하지 않는 방송부』약 400매 작성 후 폐기, 계약 결렬.
-2023. 09. 07
-A사 재미팅, 계약 불가 및 투고 시 검토로 스탠스 바꿈.
-2023. 10~12
-수정, 공모전 응모를 전전하다가 투고로 가닥 잡음.
-2024. 01. 10
-A사에 개작한 원고 『하이드 온 월드』 투고.
-2024. 02. 28
-A사 원고 최종 반려.
-2024. 03~07
-출판사 원고 투고 계속.
-2024. 07. 01
-W출판사 『하이드 온 월드』 투고.
-2024. 09. 10
-W출판사 출간 미팅 및 계약.
-2025. 04. 30
-『미스터리 브이로그』 출간.
-` },
-    { title:"왜 쓰는가?", body:`올해는 신춘문예 내야지: 조각글 쓰기
-2021
-문학에 뜻을 품어본 사람이라면 가을만 되면 어쩐지 두려워지는 느낌을 받을 것이다. ‘올해는 신춘문예 내야지.’라는 지키지 못할 약속을 하며 백지를 마주하는 시간. 마감을 한두 달 앞두고 시작하는 원고의 결과가 잘 나올 리 없는데도, 혹시 이번엔 행운이 따르지 않을까 하는 삿된 희망으로 글을 붙잡는다. 그러나 문장은 마음만 조급할 뿐 나오지 않고, 스스로의 재능을 책망하며 끝내 완성하지 못한 나 자신을 책망하는 것으로 가을의 루틴(?)은 마무리되고 만다. 
-2015년, 처음 작가의 꿈을 품은 이래 나는 ‘이번엔 써야지.’ 하는 다짐만 반복하며 변변한 완성작 하나 없이 시간을 흘려 보냈다. 그 당시의 나는 ‘완성만 하면 대박’일 아이디어가 있었기에 기회만 온다면 스타가 될 수 있다는 근거 없는 자신감에 차있던 것 같다. 하지만 그 시간이 1년, 2년을 지나 5년, 6년째 되자 스스로에 대한 의심이 찾아왔다. ‘내가 정말 재능이 있나?’ 20대에 데뷔하지 못한다면 펜을 꺾겠다던 호기로운 습작생은, 점차 글에 대한 기대도 의지도 많이 희미해진 속세에 찌든 회사원이 되어갔다. 
-그래도 소위 자신이 젊은 시절 ‘문학 청년’이었다고 소개하는 사람들의 후진 레파토리처럼 ‘내가 소설을 썼어야 했는데…’ 하는 미련을 나도 놓치는 못했는데, 회사를 다니면서도 몇몇 친구들과 습작을 합평하거나 메모장에 아이디어를 기록하는 조각글 쓰기는 놓지는 않았다. 다만, 그 어떤 원고의 씨앗도 완성까지 키워내지 못했지만 말이다.
-조각글 쓰기는 ‘작가’라는 꿈을 간당간당하게 유지시키는 호흡기였다. 일상에서 우선 순위가 밀리고 무관심해지더라도, 숨은 붙이고 있는, 그러면서도 ‘나는 아직 꿈을 지키고 있어.’라는 명분을 만들어주는 작은 변명이었다.
-회사의 직급이 오르고, 맡은 일이 늘어나면서 글쓰기에 쓰는 시간은 더욱 줄어들었다. 뜨문뜨문 나가던 합평 모임도 사라졌고, 메모장엔 내 글 대신 다른 사람들이 만든 이야기에 대한 메모가 쌓여갔다. 여전히 마음속으론 ‘난 작가가 꿈이야.’라고 말하고 있지만 정작 행동으로 이어지지 못하던 시간이 계속되었다.
-
-갑자기 찾아온 우울증 + 한겨레교육 합평 수업
-2022.03
-그러던 어느 날, 예고도 없이 번아웃이 찾아왔다. 일은 진도가 나가지 않았고, 책을 읽거나 영화를 보며 쉬는 것도 버거워졌다. 좋아하던 것들도 더 이상 내게 행복감을 주지 않았고 내가 할 수 있는 건 잠으로, 또 잠으로 도피하는 것뿐이었다. 이대로는 안 되겠다 싶어서 발버둥을 쳤다. 회사에선 느려진 일 처리 속도를 메우려 한 시간씩 더 남아 일을 했고, 퇴근 후엔 억지로라도 책을 잡아 읽었다. 하지만 그럼에도 일은 펑크 났고, 책도 끝내 읽지 못했다. 그런 사소한 일조차 해내지 못하는 자신을 책망하는 악순환은 내 가슴을 더욱 옥죄었다. 스스로가 너무나 혐오스러웠고, 자아비판은 자아부정으로 번져 ‘나는 왜 살지?’라는 극단적인 생각에까지 이르렀다. 나중에서야 알았지만 그 시절의 나는 이미 우울증을 앓고 있었다.
-진단을 받기 전에는 어떻게든 떨어진 에너지를 끌어올리려 별의별 시도를 했는데, 그 중 하나가 ‘소설 쓰기’였다. 한때는 인생을 걸고 싶었던, 내 존재를 온 세상에 알리고 싶었던 그 취미를 다시 붙잡는다면 예전의 나로 돌아올 수 있지 않을까 하는 막연한 기대였다. 혼자서는 힘들 것 같아, 한겨레 교육을 찾았고, 마침 내가 좋아하던 K선생님의 수업이 바로 개강을 앞두고 있어 주저 없이 신청했다.
-첫 수업 날, 나는 선생님과 문우분들께 이렇게 자기소개를 했다.
-“예전엔 쓰고 싶은 것들이 참 많았는데, 안 쓴 지 벌써 몇 년이 흘렀습니다. 그렇게 스스로 버린 시간을 메우고 싶어 이곳에 귀인을 찾으러 왔습니다.”
-내 소개를 들은 선생님은 이렇게 말씀하셨다.
-“버린 시간은 아니라고 생각해요. 그 시간들도 소설을 쓰기 위해 필요한, 채우는 시간이었을 거예요.”
-그 말에 눈물이 날 것 같았다. 달이 차오르듯 내게도 채워지는 시간이 필요했던 거구나. 그저 한 마디를 들었을 뿐인데, 조각글만 쓰면서 ‘써야지, 써야지.’ 자책하던 그 몇 년이 채움의 시간으로 바뀌는 순간이었다. 
-그날 수업 말미에 선생님은 이런 말씀도 하셨다.
-“등단을 하거나 책을 내야만 작가가 되는 게 아니에요. 여기 있는 분들처럼 지금 내 글을 쓰는 사람이 작가예요.”
-그날부터 나는 퇴근하면 무인 카페로 향해 노트북을 펼쳤다. 처음 며칠은 아무것도 쓸 수 없었다. 문득 예전에 소설가로 데뷔한 대학 선배가 해준 말이 떠올랐다.
-“글쓰기는 자전거 타기와 같은 거야. 매일 써야지 감이 유지 되지. 그렇다고 쓰지 않는다고 해서 방법을 잃어버리진 않아.” 
-사흘째 되는 날, 비로소 예전부터 꼭 쓰고 싶었던 이야기를 완성시켜야겠다고 다짐했다. 그렇게 대학 시절 썼던 원고의 한글 파일을 열었다.
-
-낡아버린 아이디어와 프리퀄
-2022.03~05
-2015~2016년, 대학 창작 동아리에 몸담고 있을 때 나는 장편 소설을 쓰고 있었다. 제목은 이름하여 『유언 주식회사』. 정체 모를 원인으로 자연 재해와 연쇄 테러가 이어지고, 언제 죽을지 모르는 상황 속에서 사람들이 과거에 집착하며 살아가는 디스토피아 이야기였다. 소설이 무엇인지도 모른 채 불굴의 허슬로 A4 용지 60페이지를 채웠지만 그 이상은 나아가지 못한 채, ‘언젠가 잘 쓰게 되는 날’을 기약하며 습작 폴더에 묻어두었었다.
-몇 년 만에 꺼내 읽은 그 글에는 호기롭던 20대 시절의 내가 고스란히 담겨 있었다. 나는 ‘매스터피스’를 쓰겠다고 공언하던 기세가 두려움 없는 문장들이 드러나있었다. 그러다 나도 모르게 불쑥 말 한 마디가 툭 튀어나왔다.
-“와. 미친.”
-‘미친, 이렇게 잘 쓰던 시절이 있었다니?’라는 감탄이었을까? 아니었다. ‘미친, 이렇게 쪽팔린 걸 자랑스레 내보였다니.’라는 탄식이었다. 메마른 줄 알았던 감정 조절 장치가 재작동 하더니 부끄러움이 한없이 솟구쳤다. 다섯 쪽쯤 읽다가 더는 볼 수 없어 파일을 껐다. ‘아무튼 재해가 옴. 지구가 망가짐. 걍 망함.’ 이 정도의 개연성으로 어떻게 60쪽을 이어갔는지 지금도 미스터리다. 그래도 패기는 있던 시절, 마냥 글 쓰는 게 좋았던 시절 나의 글에는 확신이 있었다. 나는 그 시간의 나를 복원하고 싶었기에 이 소설을 고쳐야겠다고 생각했다. 작은 것부터 하나씩 정비하기 시작했다.
-시대착오적인 표현이나 낡은 묘사를 덜어내고, 설명이 부족한 부분은 디테일을 보강했다. 하지만 모순된 설정의 틈을 메우다 보니 이럴 바엔 새로 쓰는 게 낫겠다는 생각이 들었다. 
-어디서부터 새로 써야 할까 고민한 끝에 일단 ‘왜 지구가 그렇게 망하게 되었는지’부터 스스로에게 설명하는 설정문을 새로 썼고, 거기에 셀프 피드백을 덧붙이다 보니 이야기는 어느새 다른 차원의 우주로 가버렸고 처음 계획과는 완전히 동떨어진 이야기가 되어갔다.  이게 『미스터리 브이로그』의 출발이 되었다. 
-` },
-    { title:"무엇을 쓰지", body:`...` },
-    { title:"어떻게 바꾸지", body:`...` },
-    { title:"계약을 하려고", body:`...` },
-    { title:"작업하는 마음", body:`...` },
-    { title:"책이 나오고", body:`...` }
-  ];
-
-  const listEl = document.getElementById('replay-cards');
-  const panelEl = document.getElementById('panel');
-
-  const slug = s => s.replace(/\s+/g,'-')
-                     .replace(/[^\w\u3131-\uD79D-]/g,'')
-                     .toLowerCase();
-
-  // 해시용 슬러그 (한글 OK, ? 같은 특수문자 제거)
-  const slug = s => s.replace(/\s+/g,'-')
-                     .replace(/[^\w\u3131-\uD79D-]/g,'')
-                     .toLowerCase();
-
-  // 카드 렌더 + 개별 클릭 리스너 (드래그와 분리)
-  const buttons = new Map();
-  replayData.forEach((item) => {
-    const key = slug(item.title);
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'card';
-    b.textContent = item.title;
-    b.dataset.key = key;
-    b.setAttribute('aria-label', `${item.title} 보기`);
-    b.addEventListener('click', (e) => {
-      openKey(key);        // 👈 개별 카드 클릭으로 직접 오픈
-    });
-    b.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openKey(key); }
-    });
-    listEl.appendChild(b);
-    buttons.set(key, { btn: b, data: item });
-  });
-
-  // 선택/표시
-  function openKey(key, scrollCard=true) {
-    const entry = buttons.get(key);
-    if (!entry) return;
-
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
-    entry.btn.classList.add('is-selected');
-
-    panelEl.innerHTML = `<h3>${entry.data.title}</h3>` +
-      entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
-    panelEl.scrollTo({ top: 0, behavior: 'auto' });
-
-    if (scrollCard) entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
-    history.replaceState(null, "", `#${key}`);
-  }
-
-  // 드래그 스크롤은 스크롤만! (클릭 판정에 간섭 X)
-  (function enableDragScroll(container){
-    let isDown=false, startX=0, startScroll=0, pid=null;
-    container.addEventListener('pointerdown', e=>{
-      isDown=true; startX=e.clientX; startScroll=container.scrollLeft;
-      pid=e.pointerId; container.setPointerCapture(pid);
-    });
-    container.addEventListener('pointermove', e=>{
-      if(!isDown) return;
-      container.scrollLeft = startScroll - (e.clientX - startX);
-    });
-    const end = ()=>{ isDown=false; if(pid) container.releasePointerCapture(pid); };
-    container.addEventListener('pointerup', end);
-    container.addEventListener('pointercancel', end);
-    container.addEventListener('pointerleave', end);
-  })(listEl);
-
-  // 해시 진입/변경 지원
-  function initialOpen() {
-    const key = (location.hash || '').replace(/^#/, '');
-    if (key && buttons.has(key)) openKey(key, false);
-    else {
-      const firstKey = buttons.keys().next().value;
-      if (firstKey) openKey(firstKey, false);
-    }
-  }
-  window.addEventListener('hashchange', initialOpen);
-  initialOpen();
-</script>
-
-
-  const listEl  = document.getElementById('replay-cards');
-  const panelEl = document.getElementById('panel');
-
-  // 슬러그 유틸 (해시용)
-  const slug = s => s.replace(/\s+/g,'-')
-                     .replace(/[^\w\u3131-\uD79D-]/g,'') // 한글/영문/숫자/밑줄만
-                     .toLowerCase();
-
-  // 렌더 + 맵
-  const buttons = new Map();
-  replayData.forEach((item) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'card';
-    b.textContent = item.title;
-    b.dataset.key = slug(item.title);
-    b.setAttribute('aria-label', `${item.title} 보기`);
-    listEl.appendChild(b);
-    buttons.set(b.dataset.key, { btn: b, data: item });
-  });
-
-  // 선택 함수
-  function openKey(key, scrollCard=true) {
-    const entry = buttons.get(key);
-    if (!entry) return;
-
-    // 카드 active
-    document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
-    entry.btn.classList.add('is-selected');
-
-    // 내용 교체 (긴 텍스트)
-    const html = [
-      `<h3>${entry.data.title}</h3>`,
-      ...entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`)
-    ].join('');
-    panelEl.innerHTML = html;
-    panelEl.scrollTo({ top: 0, behavior: 'auto' });
-
-    // 카드 보이도록 스크롤
-    if (scrollCard) entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
-
-    // 해시 갱신
-    history.replaceState(null, "", `#${key}`);
-  }
-
-  // 드래그 스크롤 + 탭 구분 (클릭 충돌 방지)
-  (function enableDragScroll(container){
-    let isDown=false, startX=0, startScroll=0, moved=false, pid=null;
-    container.addEventListener('pointerdown', e=>{
-      isDown=true; moved=false; startX=e.clientX; startScroll=container.scrollLeft;
-      pid=e.pointerId; container.setPointerCapture(pid);
-    });
-    container.addEventListener('pointermove', e=>{
-      if(!isDown) return;
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) > 4) moved=true;
-      container.scrollLeft = startScroll - dx;
-    });
-    const end = e=>{ isDown=false; if(pid) container.releasePointerCapture(pid); };
-    container.addEventListener('pointerup', end);
-    container.addEventListener('pointercancel', end);
-    container.addEventListener('pointerleave', end);
-
-    // 카드에 탭 핸들러: 드래그가 아니었을 때만 열기
-    container.addEventListener('click', e=>{
-      const card = e.target.closest('.card');
-      if(!card) return;
-      if(moved) return;                // 드래그로 판정되면 무시
-      openKey(card.dataset.key);
-    });
-  })(listEl);
-
-  // 해시 진입 지원 (#무엇을-쓰지 등)
-  function initialOpen() {
-    const key = (location.hash || '').replace(/^#/, '');
-    if (key && buttons.has(key)) {
-      openKey(key, false);
-    } else {
-      // 첫 항목 기본 오픈
-      const firstKey = buttons.keys().next().value;
-      if (firstKey) openKey(firstKey, false);
-    }
-  }
-  window.addEventListener('hashchange', initialOpen);
-  initialOpen();
-</script>
-
-
-<!-- 👉 밈 페이지 -->
-<section id="page-meme" class="page">
-  <h2 class="sec-title">밈</h2>
-  <div id="meme-list" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 16px 90px">
-    <!-- 카드 예시 -->
-    <a class="panel" href="https://www.youtube.com/watch?v=MZcAnvE4gQ4" target="_blank" style="text-decoration:none;color:inherit">
-      <div style="aspect-ratio:16/9;background:#eee url('https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg') center/cover no-repeat;border-radius:12px"></div>
-      <div style="margin-top:8px;font-weight:700">p136 무… 무슨</div>
-      <div style="color:#6b7280;font-size:12px">YouTube</div>
-    </a>
+    <!-- 리플레이 -->
+    <h2 class="sec-title">미스터리 브이로그: 리플레이</h2>
+    <div class="cards" id="replay-cards" aria-label="리플레이 목록"></div>
+    <div id="panel" class="panel" role="region" aria-live="polite">
+      <div class="hint">네모 박스를 눌러 내용을 표시합니다.</div>
+    </div>
   </div>
-</section>
 
-<!-- 👉 레퍼런스 페이지 -->
-<section id="page-ref" class="page">
-  <h2 class="sec-title">레퍼런스</h2>
-  <div class="panel"><p>레퍼런스 자료를 여기에 카드/링크로 쌓아갈게.</p></div>
-</section>
-
-<!-- 👉 비하인드 페이지 -->
-<section id="page-behind" class="page">
-  <h2 class="sec-title">비하인드</h2>
-  <div class="panel"><p>비하인드 스토리/사진/노트 영역.</p></div>
-</section>
-
-<!-- 👉 수익창출 페이지 -->
-<section id="page-revenue" class="page">
-  <h2 class="sec-title">수익창출</h2>
-  <div class="panel"><p>광고 수익/후원/굿즈 등 지표나 링크 넣기.</p></div>
-</section>
-
-  
-  <!-- 하단 탭 -->
+  <!-- 하단 탭: 각기 다른 페이지로 이동 -->
   <nav class="tabs" aria-label="하단 메뉴">
-    <a class="tab active" href="#"><svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>대시보드</a>
-    <a class="tab" href="#"><svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>밈</a>
-    <a class="tab" href="#"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>레퍼런스</a>
-    <a class="tab" href="#"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>비하인드</a>
-    <a class="tab" href="#"><svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>수익창출</a>
+    <a class="tab active" href="index.html" data-page="dashboard" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>
+      대시보드
+    </a>
+    <a class="tab" href="meme.html" data-page="meme">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      밈
+    </a>
+    <a class="tab" href="reference.html" data-page="ref">
+      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      레퍼런스
+    </a>
+    <a class="tab" href="behind.html" data-page="behind">
+      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      비하인드
+    </a>
+    <a class="tab" href="revenue.html" data-page="revenue">
+      <svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      수익창출
+    </a>
   </nav>
 
   <script>
-    // --- 기본 표시(콘텐츠가 없어도 보이게) ---
-    document.getElementById('title').textContent = '미스터리 브이로그';
-    document.getElementById('subs').textContent = '320,158';
-    // 프로필 이미지: Vite/정적 배포 모두 커버 (public/ 또는 루트)
-    const candidates = ['/hero-book.jpg', './hero-book.jpg'];
-    (async () => {
-      for (const url of candidates) {
-        try { const r = await fetch(url, { method:'HEAD' }); if (r.ok) { document.getElementById('avatar').style.backgroundImage = `url('${url}')`; break; } } catch(e){}
-      }
-    })();
+    // ---------- 리플레이 데이터 ----------
+    const replayData = [
+      { title:"타임라인", body:`여기에 긴 텍스트…(이미 넣은 타임라인 텍스트)` },
+      { title:"왜 쓰는가?", body:`여기에 '왜 쓰는가?' 내용` },
+      { title:"무엇을 쓰지", body:`여기에 '무엇을 쓰지' 내용` },
+      { title:"어떻게 바꾸지", body:`여기에 '어떻게 바꾸지' 내용` },
+      { title:"계약을 하려고", body:`여기에 '계약을 하려고' 내용` },
+      { title:"작업하는 마음", body:`여기에 '작업하는 마음' 내용` },
+      { title:"책이 나오고", body:`여기에 '책이 나오고' 내용` }
+    ];
 
-    // 분석 버튼 클릭 시 내용
-    const panel = document.getElementById('panel');
-    const pills = document.querySelectorAll('.hbar .pill');
-    const contentByKey = {
-      views:"지난 28일 기준 조회수: 0 (샘플 텍스트)",
-      watch:"시청 시간: 0.0시간 (샘플 텍스트)",
-      subsbtn:"신규 구독자: 0명 (샘플 텍스트)",
-      top:"인기 영상 영역 — 추후 카드/리스트 추가",
-      rev:"수익 추정 영역 — 추후 지표 추가"
-    };
-    function setPanel(key){ panel.innerHTML = "<p>"+(contentByKey[key]||"내용 준비 중")+"</p>"; }
-    setPanel('views'); // 초기 내용
+    const listEl  = document.getElementById('replay-cards');
+    const panelEl = document.getElementById('panel');
 
-    pills.forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        pills.forEach(b=>{b.classList.remove('active');b.setAttribute('aria-selected','false');});
-        btn.classList.add('active');btn.setAttribute('aria-selected','true');
-        setPanel(btn.dataset.key);
-      });
+    const slug = s => s.replace(/\s+/g,'-').replace(/[^\w\u3131-\uD79D-]/g,'').toLowerCase();
+
+    // 카드 렌더 + 개별 클릭
+    const buttons = new Map();
+    replayData.forEach((item) => {
+      const key = slug(item.title);
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'card';
+      b.textContent = item.title;
+      b.dataset.key = key;
+      b.setAttribute('aria-label', `${item.title} 보기`);
+      b.addEventListener('click', ()=>openKey(key));
+      b.addEventListener('keydown', (e)=>{ if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openKey(key);} });
+      listEl.appendChild(b);
+      buttons.set(key, { btn:b, data:item });
     });
 
-    // (선택사항) content.json이 있으면 제목/숫자 덮어쓰기
-    (async () => {
-      try{
-        const r = await fetch('/content.json', { cache:'no-store' });
-        if (!r.ok) return;
-        const data = await r.json();
-        if (data.channelName) document.getElementById('title').textContent = data.channelName;
-        if (data.subscribers) document.getElementById('subs').textContent = Number(data.subscribers).toLocaleString();
-      }catch(_){} // 없어도 조용히 통과
-    })();
-    <script>
-  // ---- 탭 네비게이션 (페이지 전환) ----
-  const pages = {
-    dashboard: document.getElementById('page-dashboard') || document.querySelector('.app'), // 대시보드는 기존 영역
-    meme: document.getElementById('page-meme'),
-    ref: document.getElementById('page-ref'),
-    behind: document.getElementById('page-behind'),
-    revenue: document.getElementById('page-revenue'),
-  };
-
-  // 대시보드만 보이게 초기화
-  Object.entries(pages).forEach(([key,el])=>{
-    if(!el) return;
-    el.classList.toggle('active', key==='dashboard');
-    // 대시보드는 .page가 아닐 수 있으니 없는 경우는 패스
-    if(el.classList.contains('page')===false && key!=='dashboard'){
-      el.classList.add('page');
+    function openKey(key, scrollCard=true){
+      const entry = buttons.get(key); if(!entry) return;
+      document.querySelectorAll('.card').forEach(c=>c.classList.remove('is-selected'));
+      entry.btn.classList.add('is-selected');
+      panelEl.innerHTML = `<h3>${entry.data.title}</h3>` + entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
+      panelEl.scrollTo({top:0,behavior:'auto'});
+      if (scrollCard) entry.btn.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
+      history.replaceState(null,"",`#${key}`);
     }
-  });
 
-  // 탭 클릭 처리
-  document.querySelectorAll('.tabs .tab').forEach(tab=>{
-    tab.addEventListener('click', (e)=>{
-      e.preventDefault();
-      const key = tab.dataset.page;
-      // 탭 active 처리
-      document.querySelectorAll('.tabs .tab').forEach(t=>t.classList.remove('active'));
-      tab.classList.add('active');
+    // 드래그 스크롤(클릭 간섭 없음)
+    (function dragScroll(c){
+      let down=false, sx=0, ss=0, pid=null;
+      c.addEventListener('pointerdown',e=>{down=true;sx=e.clientX;ss=c.scrollLeft;pid=e.pointerId;c.setPointerCapture(pid);});
+      c.addEventListener('pointermove',e=>{if(!down)return;c.scrollLeft=ss-(e.clientX-sx);});
+      const end=()=>{down=false;if(pid)c.releasePointerCapture(pid);};
+      c.addEventListener('pointerup',end);c.addEventListener('pointercancel',end);c.addEventListener('pointerleave',end);
+    })(listEl);
 
-      // 페이지 토글
-      Object.entries(pages).forEach(([k,el])=>{
-        if(!el) return;
-        const show = (k===key) || (k==='dashboard' && key==='dashboard');
-        el.classList.toggle('active', show);
-      });
-      // 스크롤 상단으로
-      window.scrollTo({top:0, behavior:'smooth'});
-    });
-  });
-</script>
-
+    // 해시 진입/변경
+    function initialOpen(){
+      const key=(location.hash||'').replace(/^#/,'');
+      if (key && buttons.has(key)) openKey(key,false);
+      else { const firstKey=buttons.keys().next().value; if(firstKey) openKey(firstKey,false); }
+    }
+    window.addEventListener('hashchange',initialOpen);
+    initialOpen();
   </script>
-
 </body>
 </html>
