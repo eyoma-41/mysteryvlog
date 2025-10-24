@@ -97,83 +97,102 @@
 </div>
 
 <script>
-  // ------- 리플레이 카드 데이터 & 본문(긴 텍스트) -------
+  // 데이터
   const replayData = [
-    { title:"타임라인", body:`긴 텍스트 예시입니다. 시작—아래 내용은 스크롤로 이어집니다.
-프로젝트의 주요 시점들을 나열하고, 각 시점의 결정과 수정사항을 기록합니다.
-1) 프리프로덕션: 아이디어 수집, 포맷 정의, 테스트 촬영
-2) 파일럿: 업로드 주기, 컷 편집 규칙, 썸네일 룩앤필
-3) 본편: 시즌/에피소드 체계, 데이터 기반 개선
-4) 회고: 실패/성공 포인트, 다음 스텝 … (계속)`},
-
-    { title:"왜 쓰는가?", body:`기획의 목적을 분명히 적어 유지보수 시 기준점으로 씁니다.
-- 기록을 통한 정체성 강화
-- 반복되는 질문에 대한 표준 답변 확보
-- 협업자 온보딩용 핵심 문서화
-- 관객과의 약속(업로드 리듬, 톤앤매너) …`},
-
-    { title:"무엇을 쓰지", body:`콘텐츠 재료와 금지 리스트를 함께 정의합니다.
-• 사용하는 재료: 브이로그, 비하인드, 인터뷰, 메모 보이스오버
-• 금지: 개인 신상 민감정보, 스포일러, 확인되지 않은 루머 …`},
-
-    { title:"어떻게 바꾸지", body:`변경 프로세스(제안→검토→실험→결정)를 명문화합니다.
-- 실험 기간: 2주
-- 측정 기준: CTR, 평균시청시간, 재방문율
-- 롤백 기준: 지표 하락 10% 이상, 시청자 피드백 부정적 …`},
-
-    { title:"계약을 하려고", body:`파트너/스폰서/플랫폼 계약 전 체크리스트.
-1) 권리: 2차 저작물, 클립 사용 범위
-2) 기간: 독점/비독점, 지역 제한
-3) 리스크: 광고 표기, 리뷰 공정성, 해지 조항 …`},
-
-    { title:"작업하는 마음", body:`번아웃을 피하기 위한 운영 규칙.
-- 제작/휴식 리듬: 3:1
-- ‘완벽’보다 ‘일관성’ 우선
-- 주간 목표: 1) 초안 2) 러프컷 3) 공개 …`},
-
-    { title:"책이 나오고", body:`출간 연계 활동 플랜.
-- 연재와 책의 경계: 스포일러 가이드
-- 이벤트: 북토크, 사인회, 밈 공모
-- ROI: 트래픽→구매 전환 경로 설계 …`}
+    { title:"타임라인", body:`...` },
+    { title:"왜 쓰는가?", body:`...` },
+    { title:"무엇을 쓰지", body:`...` },
+    { title:"어떻게 바꾸지", body:`...` },
+    { title:"계약을 하려고", body:`...` },
+    { title:"작업하는 마음", body:`...` },
+    { title:"책이 나오고", body:`...` }
   ];
 
-  const panelEl = document.getElementById('panel');
   const listEl  = document.getElementById('replay-cards');
+  const panelEl = document.getElementById('panel');
 
-  // 카드 렌더
-  replayData.forEach((item, idx) => {
+  // 슬러그 유틸 (해시용)
+  const slug = s => s.replace(/\s+/g,'-')
+                     .replace(/[^\w\u3131-\uD79D-]/g,'') // 한글/영문/숫자/밑줄만
+                     .toLowerCase();
+
+  // 렌더 + 맵
+  const buttons = new Map();
+  replayData.forEach((item) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'card';
     b.textContent = item.title;
-    b.setAttribute('aria-label', item.title + ' 보기');
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
-      b.classList.add('is-selected');
-      // 긴 텍스트 출력 (스크롤 가능)
-      panelEl.innerHTML = `<h3>${item.title}</h3>` +
-        item.body.split('\n').map(t=>`<p>${t.trim()}</p>`).join('');
-      // 패널 맨 위로
-      panelEl.scrollTo({ top: 0, behavior: 'auto' });
-    });
+    b.dataset.key = slug(item.title);
+    b.setAttribute('aria-label', `${item.title} 보기`);
     listEl.appendChild(b);
+    buttons.set(b.dataset.key, { btn: b, data: item });
   });
 
-  // 첫 카드 자동 선택(원하면 유지/삭제)
-  if (listEl.firstElementChild) listEl.firstElementChild.click();
+  // 선택 함수
+  function openKey(key, scrollCard=true) {
+    const entry = buttons.get(key);
+    if (!entry) return;
 
-  // 드래그 스크롤(데스크탑용) — 모바일은 기본 터치 스크롤
+    // 카드 active
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
+    entry.btn.classList.add('is-selected');
+
+    // 내용 교체 (긴 텍스트)
+    const html = [
+      `<h3>${entry.data.title}</h3>`,
+      ...entry.data.body.split('\n').map(t=>`<p>${t.trim()}</p>`)
+    ].join('');
+    panelEl.innerHTML = html;
+    panelEl.scrollTo({ top: 0, behavior: 'auto' });
+
+    // 카드 보이도록 스크롤
+    if (scrollCard) entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
+
+    // 해시 갱신
+    history.replaceState(null, "", `#${key}`);
+  }
+
+  // 드래그 스크롤 + 탭 구분 (클릭 충돌 방지)
   (function enableDragScroll(container){
-    let isDown = false, startX = 0, startScroll = 0, pid = null;
-    container.addEventListener('pointerdown', e => {
-      isDown = true; startX = e.clientX; startScroll = container.scrollLeft;
-      pid = e.pointerId; container.setPointerCapture(pid); container.style.cursor='grabbing';
+    let isDown=false, startX=0, startScroll=0, moved=false, pid=null;
+    container.addEventListener('pointerdown', e=>{
+      isDown=true; moved=false; startX=e.clientX; startScroll=container.scrollLeft;
+      pid=e.pointerId; container.setPointerCapture(pid);
     });
-    container.addEventListener('pointermove', e => { if (isDown) container.scrollLeft = startScroll - (e.clientX - startX); });
-    ['pointerup','pointercancel','pointerleave'].forEach(ev => container.addEventListener(ev, () => {
-      isDown = false; if(pid) container.releasePointerCapture(pid); container.style.cursor='auto';
-    }));
+    container.addEventListener('pointermove', e=>{
+      if(!isDown) return;
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 4) moved=true;
+      container.scrollLeft = startScroll - dx;
+    });
+    const end = e=>{ isDown=false; if(pid) container.releasePointerCapture(pid); };
+    container.addEventListener('pointerup', end);
+    container.addEventListener('pointercancel', end);
+    container.addEventListener('pointerleave', end);
+
+    // 카드에 탭 핸들러: 드래그가 아니었을 때만 열기
+    container.addEventListener('click', e=>{
+      const card = e.target.closest('.card');
+      if(!card) return;
+      if(moved) return;                // 드래그로 판정되면 무시
+      openKey(card.dataset.key);
+    });
   })(listEl);
+
+  // 해시 진입 지원 (#무엇을-쓰지 등)
+  function initialOpen() {
+    const key = (location.hash || '').replace(/^#/, '');
+    if (key && buttons.has(key)) {
+      openKey(key, false);
+    } else {
+      // 첫 항목 기본 오픈
+      const firstKey = buttons.keys().next().value;
+      if (firstKey) openKey(firstKey, false);
+    }
+  }
+  window.addEventListener('hashchange', initialOpen);
+  initialOpen();
 </script>
 
 
