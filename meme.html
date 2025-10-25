@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 밈</title>
-      <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
   <style>
     :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318}
     *{box-sizing:border-box}
@@ -16,27 +15,8 @@
     @media (min-width:720px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
     @media (min-width:1100px){ .grid{grid-template-columns:repeat(7,minmax(0,1fr));} }
 
-.modal-desc{               /* 기존 그대로 두되 줄바꿈은 HTML 태그로 처리 */
-  padding:14px;
-  border-top:1px solid var(--border);
-  font-size:14px;
-  line-height:1.6;
-  white-space:normal;      /* ← 기존 pre-wrap 를 normal로 변경 (br 태그 사용) */
-}
-.modal-desc b,
-.modal-desc strong{        /* 굵게 */
-  font-weight:800;
-}
-.modal-desc .thin{         /* 얇은 글씨 */
-  font-weight:300;
-  color:#6b7280;
-}
-
-    
-    .card{
-      border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff;
-      text-decoration:none;color:var(--text);display:block
-    }
+    .card{border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff;
+      text-decoration:none;color:var(--text);display:block}
     .thumb{aspect-ratio:16/9;background:#eee center/cover no-repeat;border-radius:10px}
     .card-title{margin-top:8px;font-weight:700;line-height:1.3}
     .card-meta{color:#6b7280;font-size:12px}
@@ -49,39 +29,36 @@
     .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
 
     /* Modal */
-    .backdrop{
-      position:fixed;inset:0;background:rgba(17,19,24,.55);
-      display:none;align-items:center;justify-content:center;padding:16px;z-index:50
-    }
+    .backdrop{position:fixed;inset:0;background:rgba(17,19,24,.55);display:none;
+      align-items:center;justify-content:center;padding:16px;z-index:50}
     .backdrop.show{display:flex}
-    .modal{
-      width:min(960px,100%);background:#fff;border-radius:16px;border:1px solid var(--border);
-      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;cursor:pointer
-    }
+    .modal{width:min(960px,100%);background:#fff;border-radius:16px;border:1px solid var(--border);
+      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;cursor:pointer}
     .modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
     .modal-title{font-weight:800}
     .modal-body{padding:0}
-    .preview{
-      width:100%;aspect-ratio:16/9;background:#000;display:block;object-fit:cover;border:0
-    }
-    .modal-desc{
-      padding:14px;border-top:1px solid var(--border);
-      font-size:14px;line-height:1.6;white-space:pre-wrap
-    }
+    .preview{width:100%;aspect-ratio:16/9;background:#000;display:block;object-fit:cover;border:0}
+
+    /* 모달 설명: 굵게/얇게 + 줄바꿈은 HTML 태그로 */
+    .modal-desc{padding:14px;border-top:1px solid var(--border);font-size:14px;line-height:1.6;white-space:normal}
+    .modal-desc b,.modal-desc strong{font-weight:800}
+    .modal-desc .thin{font-weight:300;color:#6b7280}
+
     .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>밈</h1>
-
+    <!-- 시각적 위치는 그대로(제목 바로 아래) -->
+    <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
 
     <div class="grid" id="memeGrid">
-      <!-- 이미지 카드 (jsDelivr 경로로 통일) -->
+      <!-- 이미지 카드 (jsDelivr 경로) -->
       <a class="card"
          href="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
          data-title="p.9 감다뒤"
-         data-text="‘<strong>예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다.</strong> <br/> <span class="thin">‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다.</span>"
+         data-text='<strong>예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다.</strong><br><span class="thin">‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다.</span>'
          data-source="Image"
          data-img="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
          target="_blank" rel="noopener">
@@ -152,7 +129,7 @@
   </div>
 
   <script>
-    // 유튜브 URL → embed URL (자동재생 제거)
+    // 유튜브 URL → embed URL (자동재생 X)
     function toYouTubeEmbed(url){
       try{
         const u=new URL(url);
@@ -183,8 +160,7 @@
 
     function openModal({title, href, text, img}){
       modalTitle.textContent = title || '';
-modalDesc.innerHTML = text || '';
-
+      modalDesc.innerHTML = text || '';  // HTML 허용(볼드/얇게/줄바꿈)
       modalPreviewContainer.innerHTML = '';
       currentIframe = null;
 
