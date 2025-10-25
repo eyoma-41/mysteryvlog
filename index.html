@@ -215,12 +215,41 @@ const replayData = [
 
   const drag = { down:false,startX:0,startLeft:0,moved:false };
   const TH=6;
-  listEl.addEventListener('mousedown',e=>{if(e.button!==0)return;drag.down=true;drag.moved=false;drag.startX=e.pageX;drag.startLeft=listEl.scrollLeft;});
-  window.addEventListener('mousemove',e=>{if(!drag.down)return;const dx=e.pageX-drag.startX;if(Math.abs(dx)>TH)drag.moved=true;listEl.scrollLeft=drag.startLeft-dx;});
-  window.addEventListener('mouseup',()=>{drag.down=false;setTimeout(()=>drag.moved=false,40);});
-  listEl.addEventListener('touchstart',e=>{const t=e.touches[0];drag.down=true;drag.moved=false;drag.startX=t.clientX;drag.startLeft=listEl.scrollLeft;},{passive:true});
-  listEl.addEventListener('touchmove',e=>{if(!drag.down)return;const t=e.touches[0];const dx=t.clientX-drag.startX;if(Math.abs(dx)>TH)drag.moved=true;listEl.scrollLeft=drag.startLeft-dx;},{passive:true});
-  listEl.addEventListener('touchend',()=>{drag.down=false;setTimeout(()=>drag.moved=false,40);});
+  listEl.addEventListener('mousedown',e=>{
+    if(e.button!==0)return;
+    drag.down=true;
+    drag.moved=false;
+    drag.startX=e.pageX;
+    drag.startLeft=listEl.scrollLeft;
+  });
+  window.addEventListener('mousemove',e=>{
+    if(!drag.down)return;
+    const dx=e.pageX-drag.startX;
+    if(Math.abs(dx)>TH)drag.moved=true;
+    listEl.scrollLeft=drag.startLeft-dx;
+  });
+  window.addEventListener('mouseup',()=>{
+    drag.down=false;
+    setTimeout(()=>drag.moved=false,40);
+  });
+  listEl.addEventListener('touchstart',e=>{
+    const t=e.touches[0];
+    drag.down=true;
+    drag.moved=false;
+    drag.startX=t.clientX;
+    drag.startLeft=listEl.scrollLeft;
+  },{passive:true});
+  listEl.addEventListener('touchmove',e=>{
+    if(!drag.down)return;
+    const t=e.touches[0];
+    const dx=t.clientX-drag.startX;
+    if(Math.abs(dx)>TH)drag.moved=true;
+    listEl.scrollLeft=drag.startLeft-dx;
+  },{passive:true});
+  listEl.addEventListener('touchend',()=>{
+    drag.down=false;
+    setTimeout(()=>drag.moved=false,40);
+  });
 
   function openKey(key){
     const entry=buttons.get(key);if(!entry)return;
