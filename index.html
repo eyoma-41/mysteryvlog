@@ -38,6 +38,8 @@
 
     .sec-title{font-weight:900;padding:0 16px;margin:24px 0 6px}
 
+/* 기본 글상자 */ .box{ padding:12px 12px; border:1px solid var(--border); border-radius:10px; background:#fff; line-height:1.6; box-shadow: var(--shadow); margin:10px 0; } /* 점선(스크린샷 느낌) */ .box--dashed{ border-style:dashed; border-color:#bfc5cc; /* 필요하면 var(--border)로 */ box-shadow:none; /* 점선일 땐 그림자 빼도 깔끔 */ } /* 왼쪽 컬러 스트라이프(콜아웃 느낌) */ .box--stripe{ border-left:4px solid var(--brand); padding-left:12px; } /* 연한 배경 노트 */ .box--note{ background:var(--card); } /* 강조(경고/정보) 색상들 */ .box--info { border-color:#4da3ff; background:#f3f8ff; } .box--warn { border-color:#ffb020; background:#fff8ea; } .box--success{ border-color:#3cc47a; background:#f2fbf6; } /* 상자 안 제목/라벨 */ .box .label{ display:inline-block; font-weight:900; margin-bottom:6px; color:#111; } /* 인용형(따옴표 장식) */ .box--quote{ position:relative; background:#fff; } .box--quote::before{ content:"“"; position:absolute; left:10px; top:-6px; font-size:32px; line-height:1; color:#ccd2d9; } .box--quote p{ margin:0; }
+    
     /* Font utils */
     .text-sm{font-size:var(--font-size-sm)}
     .text-md{font-size:var(--font-size-md)}
