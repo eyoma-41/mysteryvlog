@@ -137,14 +137,15 @@
     function toYouTubeEmbed(url){
       try{
         const u=new URL(url);
-        if(u.hostname.includes('youtube.com')){
-          const v=u.searchParams.get('v');
-          if(v) return `https://www.youtube.com/embed/${v}?autoplay=1&rel=0`;
-        }
-        if(u.hostname.includes('youtu.be')){
-          const id=u.pathname.slice(1);
-          if(id) return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
-        }
+       if(u.hostname.includes('youtube.com')){
+  const v=u.searchParams.get('v');
+  if(v) return `https://www.youtube.com/embed/${v}`;
+}
+if(u.hostname.includes('youtu.be')){
+  const id=u.pathname.slice(1);
+  if(id) return `https://www.youtube.com/embed/${id}`;
+}
+
       }catch(e){}
       return null;
     }
