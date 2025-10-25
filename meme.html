@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 밈</title>
+      <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
   <style>
     :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318}
     *{box-sizing:border-box}
@@ -10,25 +11,20 @@
     .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 88px}
     h1{margin:8px 0 12px}
 
-    /* grid: 반응형 */
+    /* grid: 2열 → 4열 → 7열 */
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:10px}
     @media (min-width:720px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
     @media (min-width:1100px){ .grid{grid-template-columns:repeat(7,minmax(0,1fr));} }
 
     .card{
-      border:1px solid var(--border);border-radius:14px;padding:10px;
-      text-decoration:none;color:var(--text);background:#fff;display:block
+      border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff;
+      text-decoration:none;color:var(--text);display:block
     }
     .thumb{aspect-ratio:16/9;background:#eee center/cover no-repeat;border-radius:10px}
     .card-title{margin-top:8px;font-weight:700;line-height:1.3}
     .card-meta{color:#6b7280;font-size:12px}
 
-    .caption{
-      font-size:12px;
-      color:#6b7280;
-      text-align:center;
-      margin-top:6px;
-    }
+    .caption{font-size:12px;color:#6b7280;text-align:center;margin-top:6px}
 
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);
       display:grid;grid-template-columns:repeat(5,1fr);height:72px}
@@ -37,54 +33,68 @@
 
     /* Modal */
     .backdrop{
-      position:fixed;inset:0;background:rgba(17,19,24,.5);
+      position:fixed;inset:0;background:rgba(17,19,24,.55);
       display:none;align-items:center;justify-content:center;padding:16px;z-index:50
     }
     .backdrop.show{display:flex}
     .modal{
       width:min(960px,100%);background:#fff;border-radius:16px;border:1px solid var(--border);
-      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden
+      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;cursor:pointer  /* 클릭 시 닫힘 */
     }
     .modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
     .modal-title{font-weight:800}
     .modal-body{padding:0}
-    .modal-body iframe,.modal-body .preview{
-      width:100%;aspect-ratio:16/9;border:0;display:block;background:#000
+    .preview{
+      width:100%;aspect-ratio:16/9;background:#000;display:block;object-fit:cover
     }
-    .modal-footer{display:flex;gap:8px;justify-content:flex-end;padding:12px 14px;border-top:1px solid var(--border)}
-    .btn{appearance:none;border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
-    .btn.primary{border-color:var(--brand);color:#fff;background:var(--brand)}
+    .modal-desc{
+      padding:14px;
+      border-top:1px solid var(--border);
+      font-size:14px;line-height:1.6;white-space:pre-wrap
+    }
     .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>밈</h1>
+
     <div class="grid" id="memeGrid">
-      <!-- 카드 예시 1 -->
-      <a class="card" href="https://www.youtube.com/watch?v=MZcAnvE4gQ4" target="_blank" rel="noopener"
-         data-title="p136 무… 무슨" data-source="YouTube">
+      <!-- 7×3로 21개 정도 채워 쓰면 깔끔 -->
+      <a class="card"
+         href="https://www.youtube.com/watch?v=MZcAnvE4gQ4"
+         data-title="p136 무… 무슨"
+         data-text="p136에서 인물의 당황을 살린 밈. 상황 맥락 메모 등을 적어두면 좋음."
+         data-source="YouTube" target="_blank" rel="noopener">
         <div class="thumb" style="background-image:url('https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg')"></div>
         <div class="card-title">p136 무… 무슨</div>
         <div class="card-meta">YouTube</div>
       </a>
-      <!-- 카드 예시 2 -->
-      <a class="card" href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener"
-         data-title="밈 샘플 02" data-source="YouTube">
+
+      <a class="card"
+         href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+         data-title="밈 샘플 02"
+         data-text="두 번째 샘플 설명."
+         data-source="YouTube" target="_blank" rel="noopener">
         <div class="thumb" style="background-image:url('https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg')"></div>
         <div class="card-title">밈 샘플 02</div>
         <div class="card-meta">YouTube</div>
       </a>
-      <!-- 카드 예시 3 -->
-      <a class="card" href="https://example.com" target="_blank" rel="noopener"
-         data-title="외부 링크 예시" data-source="Web">
+
+      <a class="card"
+         href="https://picsum.photos/seed/meme1/1280/720"
+         data-title="이미지 밈 샘플"
+         data-text="이미지 기반 밈의 설명입니다. 장면, 페이지, 의도 등을 적어두세요."
+         data-source="Image" target="_blank" rel="noopener">
         <div class="thumb" style="background-image:url('https://picsum.photos/seed/meme1/640/360')"></div>
-        <div class="card-title">외부 링크 예시</div>
-        <div class="card-meta">Web</div>
+        <div class="card-title">이미지 밈 샘플</div>
+        <div class="card-meta">Image</div>
       </a>
-      <!-- 필요 수만큼 카드 복제해서 총 21개(7×3) 배치 -->
+
+      <!-- ↑ 이 블록 복제해서 총 21개로 채워도 OK -->
     </div>
-    <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
+
+
   </div>
 
   <!-- 하단 탭 -->
@@ -113,20 +123,20 @@
 
   <!-- Modal -->
   <div class="backdrop" id="backdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
         <div class="modal-title" id="modalTitle">제목</div>
-        <button class="btn" id="closeBtn" aria-label="닫기">닫기</button>
+        <!-- 우상단 X 버튼 없이, 모달 자체 클릭으로 닫히게 -->
       </div>
-      <div class="modal-body" id="modalBody"></div>
-      <div class="modal-footer">
-        <a class="btn" id="openNewTab" target="_blank" rel="noopener">새 탭에서 열기</a>
-        <button class="btn primary" id="playPause">재생</button>
+      <div class="modal-body">
+        <div id="modalPreviewContainer"></div>
+        <div id="modalDesc" class="modal-desc"></div>
       </div>
     </div>
   </div>
 
   <script>
+    // 유튜브 URL → embed URL
     function toYouTubeEmbed(url){
       try{
         const u=new URL(url);
@@ -135,4 +145,54 @@
           if(v) return `https://www.youtube.com/embed/${v}?autoplay=1&rel=0`;
         }
         if(u.hostname.includes('youtu.be')){
-          con
+          const id=u.pathname.slice(1);
+          if(id) return `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+        }
+      }catch(e){}
+      return null;
+    }
+
+    // 이미지 링크 판별
+    function isImageUrl(url){
+      return /\.(png|jpe?g|webp|gif|bmp|avif)(\?.*)?$/i.test(url||'');
+    }
+
+    const grid=document.getElementById('memeGrid');
+    const backdrop=document.getElementById('backdrop');
+    const modal=document.getElementById('modal');
+    const modalTitle=document.getElementById('modalTitle');
+    const modalPreviewContainer=document.getElementById('modalPreviewContainer');
+    const modalDesc=document.getElementById('modalDesc');
+    let currentIframe=null;
+
+    function openModal({title, href, text, img}){
+      modalTitle.textContent = title || '';
+      modalDesc.textContent = text || '';
+      modalPreviewContainer.innerHTML = '';
+      currentIframe = null;
+
+      const yt = toYouTubeEmbed(href||'');
+      const imageUrl = img || (isImageUrl(href) ? href : null);
+
+      if(yt){
+        const iframe=document.createElement('iframe');
+        iframe.className='preview';
+        iframe.src=yt;
+        iframe.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        iframe.referrerPolicy="strict-origin-when-cross-origin";
+        iframe.allowFullscreen=true;
+        modalPreviewContainer.appendChild(iframe);
+        currentIframe=iframe;
+      }else if(imageUrl){
+        const image=document.createElement('img');
+        image.className='preview';
+        image.src=imageUrl;
+        image.alt=title||'이미지 미리보기';
+        image.loading='lazy';
+        modalPreviewContainer.appendChild(image);
+      }else{
+        const empty=document.createElement('div');
+        empty.className='preview';
+        empty.style.display='grid';
+        empty.style.placeItems='center';
+        em
