@@ -39,6 +39,29 @@
     /* 섹션 타이틀 (구독자 아래 간격 2행 정도) */
     .sec-title{font-weight:900;padding:0 16px;margin:24px 0 6px} /* ← margin-top 24px */
 
+/* 패널 기본적으로 닫힌 상태 */
+.panel {
+  margin: 8px 16px 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0 16px; /* 닫힐 때 패딩 0으로 */
+  min-height: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease;
+}
+
+/* 열릴 때 스타일 */
+.panel.open {
+  padding: 16px;
+  max-height: 55vh;
+  min-height: 120px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+    
 :root {
   /* 기본 폰트 사이즈 & 굵기 설정 */
   --font-size-base: 14px;
@@ -437,6 +460,7 @@ body {
       : entry.data.body.split('\n').map(t => `<p>${t.trim()}</p>`).join('');
 
     panelEl.scrollTo({ top: 0, behavior: 'auto' });
+    panelEl.classList.add('open');
 
     if (scrollCard) {
       entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
@@ -453,13 +477,14 @@ body {
   }
 
   // 해시 진입/변경
-  function initialOpen(){
-    const key = (location.hash || '').replace(/^#/, '');
-    if (key && buttons.has(key)) openKey(key, false);
-    else {
-      const firstKey = buttons.keys().next().value;
-      if (firstKey) openKey(firstKey, false);
-    }
+function initialOpen() {
+  const key = (location.hash || '').replace(/^#/, '');
+  if (key && buttons.has(key)) {
+    openKey(key, false);
+  } 
+  // else 블록 제거 (자동 오픈 안 함)
+}
+
   }
   window.addEventListener('hashchange', initialOpen);
   initialOpen();
