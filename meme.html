@@ -16,6 +16,23 @@
     @media (min-width:720px){ .grid{grid-template-columns:repeat(4,minmax(0,1fr));} }
     @media (min-width:1100px){ .grid{grid-template-columns:repeat(7,minmax(0,1fr));} }
 
+.modal-desc{               /* 기존 그대로 두되 줄바꿈은 HTML 태그로 처리 */
+  padding:14px;
+  border-top:1px solid var(--border);
+  font-size:14px;
+  line-height:1.6;
+  white-space:normal;      /* ← 기존 pre-wrap 를 normal로 변경 (br 태그 사용) */
+}
+.modal-desc b,
+.modal-desc strong{        /* 굵게 */
+  font-weight:800;
+}
+.modal-desc .thin{         /* 얇은 글씨 */
+  font-weight:300;
+  color:#6b7280;
+}
+
+    
     .card{
       border:1px solid var(--border);border-radius:14px;padding:10px;background:#fff;
       text-decoration:none;color:var(--text);display:block
@@ -64,7 +81,7 @@
       <a class="card"
          href="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
          data-title="p.9 감다뒤"
-         data-text="‘예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다. <br/> ‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다."
+         data-text="‘<strong>예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다.</strong> <br/> <span class="thin">‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다.</span>"
          data-source="Image"
          data-img="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
          target="_blank" rel="noopener">
@@ -166,7 +183,8 @@
 
     function openModal({title, href, text, img}){
       modalTitle.textContent = title || '';
-      modalDesc.textContent = text || '';
+modalDesc.innerHTML = text || '';
+
       modalPreviewContainer.innerHTML = '';
       currentIframe = null;
 
