@@ -45,7 +45,7 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 0 16px; /* 닫힐 때 패딩 0으로 */
+  padding: 0 16px;
   min-height: 0;
   max-height: 0;
   overflow: hidden;
@@ -60,6 +60,7 @@
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
+
 
     
 :root {
@@ -460,7 +461,7 @@ body {
       : entry.data.body.split('\n').map(t => `<p>${t.trim()}</p>`).join('');
 
     panelEl.scrollTo({ top: 0, behavior: 'auto' });
-    panelEl.classList.add('open');
+
 
     if (scrollCard) {
       entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
@@ -477,12 +478,44 @@ body {
   }
 
   // 해시 진입/변경
+// 초기 진입 시 자동 오픈 제거
 function initialOpen() {
   const key = (location.hash || '').replace(/^#/, '');
   if (key && buttons.has(key)) {
     openKey(key, false);
-  } 
-  // else 블록 제거 (자동 오픈 안 함)
+  }
+}
+
+// 카드 클릭 시 열림
+function openKey(key, scrollCard = true) {
+  const entry = buttons.get(key); if (!entry) return;
+
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('is-selected'));
+  entry.btn.classList.add('is-selected');
+
+  // HTML or plain text 구분
+  const hasHTML = /<\/?[a-z][\s\S]*>/i.test(entry.data.body);
+  panelEl.innerHTML = hasHTML
+    ? entry.data.body
+    : entry.data.body.split('\n').map(t => `<p>${t.trim()}</p>`).join('');
+
+  panelEl.classList.add('open');
+  panelEl.scrollTo({ top: 0, behavior: 'auto' });
+
+  if (scrollCard) {
+    entry.btn.scrollIntoView({ inline:'center', block:'nearest', behavior:'smooth' });
+  }
+
+  // 테두리 잘림 보정
+  const titleEl = document.getElementById('replay-title');
+  if (titleEl) {
+    const top = titleEl.getBoundingClientRect().top;
+    if (top < 84) window.scrollBy({ top: top - 96, behavior: 'smooth' });
+  }
+
+  history.replaceState(null, "", `#${key}`);
+}
+
 }
 
   }
