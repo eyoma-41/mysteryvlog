@@ -105,12 +105,10 @@
   </div>
 
 <script>
-  // === 이 부분에서 본문 데이터를 나중에 채워넣을 거야 ===
   const replayData = [
-const replayData = [
-  { 
-    title: "타임라인",
-    body: `
+    { 
+      title: "타임라인",
+      body: `
 <p class="text-md font-black leading-tight">2021. 03. | <span class="text-md font-light leading-normal">스쿠버다이빙 중에 수면에서 냉동 인간들이 내려오는 악몽을 꿈.</span></p>
 <p class="text-md font-black leading-tight">2021. 04. 18 ~ 25 | <span class="text-md font-light leading-normal">꿈 꾼 내용을 소설 창작 소모임 카페에 조각글 ‘차가운 바다의 비밀’로 기록함.</span></p>
 <p class="text-md font-black leading-tight">2022. 03. 17 ~ 05. 12 | <span class="text-md font-light leading-normal">번아웃 극복해보려 한겨레교육 K선생님의 합평 수업 수강.</span></p>
@@ -135,12 +133,12 @@ const replayData = [
 <p class="text-md font-black leading-tight">2024. 07. 01 | <span class="text-md font-light leading-normal">W출판사 『하이드 온 월드』 투고.</span></p>
 <p class="text-md font-black leading-tight">2024. 09. 10 | <span class="text-md font-light leading-normal">W출판사 출간 미팅 및 계약.</span></p>
 <p class="text-md font-black leading-tight">2025. 04. 30 | <span class="text-md font-light leading-normal">『미스터리 브이로그』 출간.</span></p>
-    `
-  },
+      `
+    },
 
-  {
-    title: "왜 쓰는가?",
-    body: `
+    {
+      title: "왜 쓰는가?",
+      body: `
 <p class="text-lg font-black leading-tight">올해는 신춘문예 내야지: 조각글 쓰기</p>
 <p class="text-md font-black leading-tight">2021</p>
 <p class="text-md font-light leading-normal">문학에 뜻을 품어본 사람이라면 가을만 되면 어쩐지 두려워지는 느낌을 받을 것이다. ...</p>
@@ -155,12 +153,12 @@ const replayData = [
 <p class="text-md font-black leading-tight">2022.03~05</p>
 <p class="text-md font-light leading-normal">2015~2016년, 대학 창작 동아리에 몸담고 있을 때 나는 장편소설을 쓰고 있었다...</p>
 <p class="text-md font-light leading-normal">그래도 패기는 있던 시절, 마냥 글 쓰는 게 좋았던 시절...</p>
-    `
-  },
+      `
+    },
 
-  {
-    title: "무엇을 쓰지",
-    body: `
+    {
+      title: "무엇을 쓰지",
+      body: `
 <p class="text-lg font-black leading-tight">꿈에서 마주한 100여구의 냉동인간들</p>
 <p class="text-md font-black leading-tight">2021.03 / 2021.04.18 ~ 25</p>
 <p class="text-md font-light leading-normal">이야기를 쓰는 방법은 저마다 다르겠지만, 나는 임팩트 있는 장면을 먼저 떠올린 뒤...</p>
@@ -180,12 +178,13 @@ const replayData = [
   <p class="text-md font-light leading-normal">해수면 상승으로 매장할 땅조차 사라진 평행우주 혹은 미래의 지구에서...</p>
 </div>
 <p class="text-md font-light leading-normal">결말을 어떻게 지어야 할지는 감이 잡히지 않았지만 이야기는 조금씩 앞으로 나아가고 있었다.</p>
-    `
-  }
+      `
+    },
+
     { title: "어떻게 바꾸지", body: `<p>여기에 '어떻게 바꾸지' 내용</p>` },
     { title: "계약을 하려고", body: `<p>여기에 '계약을 하려고' 내용</p>` },
     { title: "작업하는 마음", body: `<p>여기에 '작업하는 마음' 내용</p>` },
-    { title: "책이 나오고", body: `<p>여기에 '책이 나오고' 내용</p>` },
+    { title: "책이 나오고", body: `<p>여기에 '책이 나오고' 내용</p>` }
   ];
 
   const listEl = document.getElementById('replay-cards');
