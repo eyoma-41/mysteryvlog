@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 밈</title>
-      <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
   <style>
     :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318}
     *{box-sizing:border-box}
@@ -45,11 +44,10 @@
     .modal-title{font-weight:800}
     .modal-body{padding:0}
     .preview{
-      width:100%;aspect-ratio:16/9;background:#000;display:block;object-fit:cover
+      width:100%;aspect-ratio:16/9;background:#000;display:block;object-fit:cover;border:0
     }
     .modal-desc{
-      padding:14px;
-      border-top:1px solid var(--border);
+      padding:14px;border-top:1px solid var(--border);
       font-size:14px;line-height:1.6;white-space:pre-wrap
     }
     .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
@@ -58,13 +56,13 @@
 <body>
   <div class="wrap">
     <h1>밈</h1>
-
+    <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
     <div class="grid" id="memeGrid">
-      <!-- 7×3로 21개 정도 채워 쓰면 깔끔 -->
+      <!-- 카드들 -->
       <a class="card"
          href="https://www.youtube.com/watch?v=MZcAnvE4gQ4"
          data-title="p136 무… 무슨"
-         data-text="p136에서 인물의 당황을 살린 밈. 상황 맥락 메모 등을 적어두면 좋음."
+         data-text="p136에서 인물의 당황을 살린 밈. 상황 메모 등을 적어두면 좋음."
          data-source="YouTube" target="_blank" rel="noopener">
         <div class="thumb" style="background-image:url('https://img.youtube.com/vi/MZcAnvE4gQ4/hqdefault.jpg')"></div>
         <div class="card-title">p136 무… 무슨</div>
@@ -91,7 +89,7 @@
         <div class="card-meta">Image</div>
       </a>
 
-      <!-- ↑ 이 블록 복제해서 총 21개로 채워도 OK -->
+      <!-- 필요만큼 복제해서 21개(7×3) 채워 -->
     </div>
 
 
@@ -126,7 +124,6 @@
     <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <div class="modal-header">
         <div class="modal-title" id="modalTitle">제목</div>
-        <!-- 우상단 X 버튼 없이, 모달 자체 클릭으로 닫히게 -->
       </div>
       <div class="modal-body">
         <div id="modalPreviewContainer"></div>
@@ -195,4 +192,41 @@
         empty.className='preview';
         empty.style.display='grid';
         empty.style.placeItems='center';
-        em
+        empty.style.color='#fff';
+        empty.textContent='미리보기 없음';
+        modalPreviewContainer.appendChild(empty);
+      }
+
+      backdrop.classList.add('show');
+      backdrop.setAttribute('aria-hidden','false');
+      document.addEventListener('keydown',onKeydown);
+    }
+
+    function closeModal(){
+      backdrop.classList.remove('show');
+      backdrop.setAttribute('aria-hidden','true');
+      if(currentIframe){ currentIframe.src='about:blank'; currentIframe=null; }
+      document.removeEventListener('keydown',onKeydown);
+    }
+
+    function onKeydown(e){ if(e.key==='Escape') closeModal(); }
+
+    // 카드 클릭 → 모달 먼저 (새 탭 이동 막기)
+    grid.addEventListener('click', (e)=>{
+      const a=e.target.closest('a.card');
+      if(!a) return;
+      e.preventDefault();
+      openModal({
+        title: a.dataset.title || a.querySelector('.card-title')?.textContent || '',
+        href: a.getAttribute('href') || '',
+        text: a.dataset.text || '',
+        img: a.dataset.img || ''
+      });
+    });
+
+    // 아무 곳이나 한 번 더 클릭 → 닫기
+    backdrop.addEventListener('click', closeModal);
+    modal.addEventListener('click', closeModal);
+  </script>
+</body>
+</html>
