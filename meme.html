@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 밈</title>
+      <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
   <style>
     :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318}
     *{box-sizing:border-box}
@@ -38,7 +39,7 @@
     .backdrop.show{display:flex}
     .modal{
       width:min(960px,100%);background:#fff;border-radius:16px;border:1px solid var(--border);
-      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;cursor:pointer  /* 클릭 시 닫힘 */
+      box-shadow:0 10px 30px rgba(0,0,0,.2);overflow:hidden;cursor:pointer
     }
     .modal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
     .modal-title{font-weight:800}
@@ -56,25 +57,23 @@
 <body>
   <div class="wrap">
     <h1>밈</h1>
-    <div class="caption">페이지 표기는 《미스터리 브이로그》 초판 1쇄를 기준입니다.</div>
+
+
     <div class="grid" id="memeGrid">
-      <!-- 카드들 -->
-<a class="card"
-   href="https://github.com/eyoma-41/mysteryvlog/img/meme01.png"
-   data-title="<p class="text-md font-black leading-tight">p.9 감다뒤</p>"
-   data-text="<p class="text-md font-black leading-tight">‘예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로, 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다.</p>
-<p class="text-md font-light leading-normal">‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다.</p>
-  "
-   data-source="Image"
-   data-img="https://github.com/eyoma-41/mysteryvlog/img/meme01.png"
-   target="_blank" rel="noopener">
+      <!-- 이미지 카드 (jsDelivr 경로로 통일) -->
+      <a class="card"
+         href="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
+         data-title="p.9 감다뒤"
+         data-text="‘예술가병 걸린 기획자가, 재미도 감동도 없으며, 감 다 떨어진 연출로 스스로의 낮은 수준을 증명한, 개망한 콘텐츠’였다. <br/> ‘감이 다 뒤졌다’는 인터넷 방송 은어로 ‘감다뒤’로 줄여 쓴다. 청소년 소설이라는 장르와 청소년 독자들을 고려하여 ‘감 다 떨어진’으로 수정되었다."
+         data-source="Image"
+         data-img="https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png"
+         target="_blank" rel="noopener">
+        <div class="thumb" style="background-image:url('https://cdn.jsdelivr.net/gh/eyoma-41/mysteryvlog@main/img/meme01.png')"></div>
+        <div class="card-title">p.9 감다뒤</div>
+        <div class="card-meta">Image</div>
+      </a>
 
-  <div class="thumb" style="background-image:url('https://eyoma.github.io/mystery-vlog/img/meme01.png')"></div>
-  <div class="card-title">이미지 밈 예시</div>
-  <div class="card-meta">Image</div>
-</a>
-
-
+      <!-- 유튜브 카드 -->
       <a class="card"
          href="https://www.youtube.com/watch?v=MZcAnvE4gQ4"
          data-title="p136 무… 무슨"
@@ -85,6 +84,7 @@
         <div class="card-meta">YouTube</div>
       </a>
 
+      <!-- 샘플 이미지 카드 -->
       <a class="card"
          href="https://picsum.photos/seed/meme1/1280/720"
          data-title="이미지 밈 샘플"
@@ -94,11 +94,7 @@
         <div class="card-title">이미지 밈 샘플</div>
         <div class="card-meta">Image</div>
       </a>
-
-      <!-- 필요만큼 복제해서 21개(7×3) 채워 -->
     </div>
-
-
   </div>
 
   <!-- 하단 탭 -->
@@ -139,19 +135,18 @@
   </div>
 
   <script>
-    // 유튜브 URL → embed URL
+    // 유튜브 URL → embed URL (자동재생 제거)
     function toYouTubeEmbed(url){
       try{
         const u=new URL(url);
-       if(u.hostname.includes('youtube.com')){
-  const v=u.searchParams.get('v');
-  if(v) return `https://www.youtube.com/embed/${v}`;
-}
-if(u.hostname.includes('youtu.be')){
-  const id=u.pathname.slice(1);
-  if(id) return `https://www.youtube.com/embed/${id}`;
-}
-
+        if(u.hostname.includes('youtube.com')){
+          const v=u.searchParams.get('v');
+          if(v) return `https://www.youtube.com/embed/${v}`;
+        }
+        if(u.hostname.includes('youtu.be')){
+          const id=u.pathname.slice(1);
+          if(id) return `https://www.youtube.com/embed/${id}`;
+        }
       }catch(e){}
       return null;
     }
@@ -218,7 +213,7 @@ if(u.hostname.includes('youtu.be')){
 
     function onKeydown(e){ if(e.key==='Escape') closeModal(); }
 
-    // 카드 클릭 → 모달 먼저 (새 탭 이동 막기)
+    // 카드 클릭 → 모달 먼저
     grid.addEventListener('click', (e)=>{
       const a=e.target.closest('a.card');
       if(!a) return;
