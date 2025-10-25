@@ -9,6 +9,30 @@
     body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text)}
     .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 88px}
     h1{margin:8px 0 12px}
+/* 공통 */
+.preview{
+  display:block;
+  width:100%;
+  background:#000;
+  border:0;
+}
+
+/* 유튜브 등 영상용 */
+.video-preview{
+  aspect-ratio:16/9;
+  height:auto;
+  object-fit:cover;
+}
+
+/* 이미지용: 잘리지 않게 contain + 세로 최대높이 제한 */
+.img-preview{
+  width:auto;                /* 이미지가 가로 100%를 초과하면 max-width로 제한 */
+  max-width:100%;
+  height:auto;
+  max-height:calc(100vh - 220px); /* 상단 타이틀/하단 텍스트 여백 고려 */
+  margin:0 auto;             /* 가운데 정렬 */
+  object-fit:contain;        /* 비율 유지하며 전체 표시 */
+}
 
     /* grid: 2열 → 4열 → 7열 */
     .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:10px}
@@ -164,41 +188,31 @@
       const yt = toYouTubeEmbed(href||'');
       const imageUrl = img || (isImageUrl(href) ? href : null);
 
-      if(yt){
-        const iframe=document.createElement('iframe');
-        iframe.className='preview';
-        iframe.src=yt;
-        iframe.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-        iframe.referrerPolicy="strict-origin-when-cross-origin";
-        iframe.allowFullscreen=true;
-        modalPreviewContainer.appendChild(iframe);
-        currentIframe=iframe;
-      }else if(imageUrl){
-        const image=document.createElement('img');
-        image.className='preview';
-        image.src=imageUrl;
-        image.alt=title||'이미지 미리보기';
-        image.loading='lazy';
-        image.onerror = () => {
-          // raw.githubusercontent 주소로도 실패하면 간단한 메시지 표시
-          const empty=document.createElement('div');
-          empty.className='preview';
-          empty.style.display='grid';
-          empty.style.placeItems='center';
-          empty.style.color='#fff';
-          empty.textContent='이미지를 불러오지 못했습니다.';
-          image.replaceWith(empty);
-        };
-        modalPreviewContainer.appendChild(image);
-      }else{
-        const empty=document.createElement('div');
-        empty.className='preview';
-        empty.style.display='grid';
-        empty.style.placeItems='center';
-        empty.style.color='#fff';
-        empty.textContent='미리보기 없음';
-        modalPreviewContainer.appendChild(empty);
-      }
+if (yt) {
+  const iframe = document.createElement('iframe');
+  iframe.className = 'preview video-preview';   // 영상일 때 전용 클래스
+  iframe.src = yt;
+  iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+  iframe.referrerPolicy = "strict-origin-when-cross-origin";
+  iframe.allowFullscreen = true;
+  modalPreviewContainer.appendChild(iframe);
+  currentIframe = iframe;
+} else if (imageUrl) {
+  const image = document.createElement('img');
+  image.className = 'preview img-preview';     // 이미지일 때 전용 클래스
+  image.src = imageUrl;
+  image.alt = title || '이미지 미리보기';
+  image.loading = 'lazy';
+  modalPreviewContainer.appendChild(image);
+} else {
+  const empty = document.createElement('div');
+  empty.className = 'preview img-preview';
+  empty.style.display = 'grid';
+  empty.style.placeItems = 'center';
+  empty.style.color = '#fff';
+  empty.textContent = '미리보기 없음';
+  modalPreviewContainer.appendChild(empty);
+}
 
       backdrop.classList.add('show');
       backdrop.setAttribute('aria-hidden','false');
