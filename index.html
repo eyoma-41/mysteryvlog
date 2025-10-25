@@ -57,6 +57,12 @@
       display:flex;gap:12px;overflow-x:auto;padding:8px 16px 10px;
       scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
       position:relative;z-index:1;user-select:none;touch-action: pan-x;
+        -ms-overflow-style: none;     /* IE/Edge */
+  scrollbar-width: none;        /* Firefox */
+      
+.cards::-webkit-scrollbar{
+  display: none;                /* Chrome/Safari */
+}
     }
     .card{
       flex:0 0 auto;scroll-snap-align:start;width:160px;height:110px;
