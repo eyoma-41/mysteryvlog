@@ -4,101 +4,120 @@
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 비하인드</title>
   <style>
-    :root{
-      --bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;
-      --shadow:0 1px 2px rgba(0,0,0,.08);--r:16px;
-    }
+    :root{--bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;--shadow:0 1px 2px rgba(0,0,0,.08)}
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
     .wrap{max-width:920px;margin:0 auto;padding:16px 16px 88px}
     h1{margin:8px 0 12px;font-size:22px}
     .sub{margin:0 0 16px;color:var(--muted);font-size:14px}
 
-    /* 테트리스 스타일 리스트 */
-    .stack{position:relative;display:flex;flex-direction:column;gap:14px}
+    /* 테트리스 리스트 */
+    .stack{display:flex;flex-direction:column;gap:14px}
     .brick{
-      --c:#f5f5f5; /* js에서 덮어씀 */
-      background:var(--c);
-      border:1px solid rgba(0,0,0,.06);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-      padding:14px 16px;
-      display:grid;grid-template-columns:92px 1fr auto;align-items:center;gap:10px;
-      width:clamp(520px, 78vw, 840px); /* 기본 폭 */
-      min-height:52px;
-      transition:transform .15s ease, box-shadow .15s ease;
+      --c:#f5f5f5;background:var(--c);border:1px solid rgba(0,0,0,.06);border-radius:18px;
+      box-shadow:var(--shadow);padding:14px 16px;display:grid;grid-template-columns:92px 1fr auto;gap:10px;
+      width:clamp(520px,78vw,840px);min-height:52px;cursor:pointer
     }
-    /* 모양(라운드) 다양화 */
-    .shape-a{border-radius:24px 8px 18px 18px}
-    .shape-b{border-radius:10px 24px 18px 10px}
-    .shape-c{border-radius:18px 18px 10px 24px}
-    .shape-d{border-radius:8px 18px 24px 10px}
-
-    /* 위치·폭 랜덤 클래스(테트리스 느낌으로 좌/중/우 오프셋) */
-    .pos-left{margin-left:0}
-    .pos-center{margin-left:clamp(8px, 6vw, 80px)}
-    .pos-right{margin-left:clamp(16px, 12vw, 140px)}
-    .w-s{width:clamp(480px, 68vw, 760px)}
-    .w-m{width:clamp(520px, 78vw, 840px)}
-    .w-l{width:clamp(560px, 86vw, 900px)}
-
-    .brick:hover{box-shadow:0 4px 18px rgba(0,0,0,.12) inset}
+    .shape-a{border-radius:24px 8px 18px 18px}.shape-b{border-radius:10px 24px 18px 10px}
+    .shape-c{border-radius:18px 18px 10px 24px}.shape-d{border-radius:8px 18px 24px 10px}
+    .pos-left{margin-left:0}.pos-center{margin-left:clamp(8px,6vw,80px)}.pos-right{margin-left:clamp(16px,12vw,140px)}
+    .w-s{width:clamp(480px,68vw,760px)}.w-m{width:clamp(520px,78vw,840px)}.w-l{width:clamp(560px,86vw,900px)}
     .page{font-variant-numeric:tabular-nums;font-weight:700;color:#111318}
     .page small{display:block;color:#374151;font-weight:600;font-size:11px;opacity:.75}
     .title{font-size:15px;line-height:1.35}
     .chev{width:18px;height:18px;color:#111318;opacity:.4}
+    @media (max-width:640px){.brick{width:100%;margin-left:0!important;border-radius:18px!important}}
 
-    /* 모바일(<=640px)는 일반 리스트 느낌으로 풀폭) */
-    @media (max-width:640px){
-      .brick{width:100%;margin-left:0!important;border-radius:18px!important}
-      .pos-left,.pos-center,.pos-right{margin-left:0}
-    }
+    /* 모달 */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;visibility:hidden;transition:.18s;z-index:50}
+    .overlay.show{opacity:1;visibility:visible}
+    .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);opacity:0;visibility:hidden;
+      width:min(780px,94vw);max-height:84vh;overflow:auto;background:#fff;border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);padding:18px;transition:.18s;z-index:51}
+    .modal.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+    .modal-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .modal-code{font-size:12px;color:var(--muted)}
+    .modal-title{font-size:18px;font-weight:700}
+    .close{margin-left:auto;border:1px solid var(--border);background:#fff;border-radius:12px;padding:6px 10px;cursor:pointer;font-size:13px}
+    .meta{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin:6px 0 12px}
+    .badge{font-size:11px;color:#fff;background:#111318;border-radius:999px;padding:4px 8px}
+    .modal-body{font-size:14px;line-height:1.65;color:#333}
+    /* 미디어 블록 */
+    .media{border:1px solid var(--border);border-radius:14px;overflow:hidden;margin:8px 0 12px}
+    .media img{display:block;width:100%;height:auto}
+    .media .video16x9{position:relative;width:100%;padding-top:56.25%}
+    .media .video16x9 > *{position:absolute;inset:0;width:100%;height:100%}
+    .caption{font-size:12px;color:var(--muted);margin-top:6px}
 
     /* 하단 탭 */
-    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);
-      display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
-    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
-      font-size:12px;color:#333;text-decoration:none}
+    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
+    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
     .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>비하인드</h1>
-    <p class="sub">촬영 비하인드 · 작업 노트 · 스틸을 “테트리스 블록”처럼 색·오프셋·폭을 랜덤으로 쌓아 보여줘. 왼쪽은 <b>p. ###</b> 페이지, 오른쪽은 제목.</p>
+    <p class="sub">왼쪽은 <b>p. ###</b>, 오른쪽은 제목. 항목을 누르면 팝업이 열리고, 같은 항목을 다시 누르면 닫혀.</p>
 
     <div class="stack" id="stack">
-      <!-- data-page, data-title만 채워주면 됨 -->
+      <!-- type: text / image / video -->
       <button class="brick"
-        data-page="125" data-title="밀리의 서재 문학강좌촬영 — 천명관(고래) 텍스트">
+        data-page="125" data-title="밀리의 서재 문학강좌촬영 — 천명관(고래) 텍스트"
+        data-type="text"
+        data-text="촬영일: 2025-09-21
+장소: 합정 스튜디오 B
+메모: 클랩 싱크 오류 02:11~02:14 구간 보정 필요.">
         <div class="page"><small>p.</small>125</div>
         <div class="title">밀리의 서재 문학강좌촬영 — 천명관(고래) 텍스트</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
       <button class="brick"
-        data-page="118" data-title="엠디랩프레스 행사 사이트">
+        data-page="118" data-title="엠디랩프레스 행사 사이트"
+        data-type="image"
+        data-img="https://picsum.photos/1200/675?random=1"
+        data-text="히어로 시안 v3. 폰트 로딩 최적화 TODO.">
         <div class="page"><small>p.</small>118</div>
         <div class="title">엠디랩프레스 행사 사이트</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
       <button class="brick"
-        data-page="96" data-title="2025 디자인캠프 in 영등포">
+        data-page="096" data-title="2025 디자인캠프 in 영등포"
+        data-type="video"
+        data-video="https://www.youtube.com/embed/dQw4w9WgXcQ"
+        data-text="패널 Q&A 하이라이트 12:33 타임코드.">
         <div class="page"><small>p.</small>096</div>
         <div class="title">2025 디자인캠프 in 영등포</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
       <button class="brick"
-        data-page="84" data-title="Riso + Foil The Palette Index">
+        data-page="084" data-title="Riso + Foil The Palette Index"
+        data-type="image"
+        data-img="https://picsum.photos/1200/675?random=2"
+        data-text="테스트 인쇄: Blue+Fluo Pink. 포일면 지문 주의.">
         <div class="page"><small>p.</small>084</div>
         <div class="title">Riso + Foil The Palette Index</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
     </div>
   </div>
+
+  <!-- 팝업 -->
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+    <div class="modal-header">
+      <div>
+        <div class="modal-code" id="modal-code">p. 000</div>
+        <div class="modal-title" id="modal-title">제목</div>
+      </div>
+      <button class="close" id="closeBtn" aria-label="팝업 닫기">닫기</button>
+    </div>
+    <div class="meta" id="modal-tags"></div>
+    <div class="modal-body" id="modal-desc"></div>
+  </section>
 
   <!-- 하단 탭 -->
   <nav class="tabs" aria-label="하단 메뉴">
@@ -110,62 +129,123 @@
   </nav>
 
   <script>
-  // 테트리스 느낌: 색상 + 폭 + 오프셋 + 모양을 행마다 랜덤 할당
+  // ===== 테트리스 랜덤 스타일 =====
   (function(){
     const $ = (s, p=document)=>p.querySelector(s);
     const $$ = (s, p=document)=>Array.from(p.querySelectorAll(s));
     const bricks = $$(".brick");
-
-    // 파스텔 기반 팔레트(시각 피로 낮음). 필요하면 추가해 사용.
-    const palette = [
-      "#FFE8E8", "#FFF0D6", "#FFF6B9", "#E8FBD1", "#DFF8FF",
-      "#EAE8FF", "#FDEBFF", "#E9F1FF", "#EFFFF5", "#FFEFE3"
-    ];
+    const palette = ["#FFE8E8","#FFF0D6","#FFF6B9","#E8FBD1","#DFF8FF","#EAE8FF","#FDEBFF","#E9F1FF","#EFFFF5","#FFEFE3"];
     const shapes = ["shape-a","shape-b","shape-c","shape-d"];
     const pos = ["pos-left","pos-center","pos-right"];
     const widths = ["w-s","w-m","w-l"];
+    let lastColor=-1;
 
-    let lastColor = -1;
-    bricks.forEach((b, i)=>{
-      // 1) 색상(인접 색 중복 회피)
-      let idx; do { idx = Math.floor(Math.random()*palette.length); } while(idx===lastColor);
-      lastColor = idx;
-      b.style.setProperty("--c", palette[idx]);
-
-      // 2) 오프셋/폭/모양
+    bricks.forEach(b=>{
+      let idx; do{idx=Math.floor(Math.random()*palette.length)}while(idx===lastColor);
+      lastColor=idx; b.style.setProperty("--c",palette[idx]);
       b.classList.add(pos[Math.floor(Math.random()*pos.length)]);
       b.classList.add(widths[Math.floor(Math.random()*widths.length)]);
       b.classList.add(shapes[Math.floor(Math.random()*shapes.length)]);
-
-      // 3) 페이지 표기 포맷팅(001 패딩)
       const p = (b.dataset.page||"").toString().padStart(3,"0");
       b.querySelector(".page").innerHTML = `<small>p.</small>${p}`;
-      // 4) 제목 싱크(혹시 비워왔을 때 대비)
-      if(!b.querySelector(".title").textContent.trim() && b.dataset.title){
-        b.querySelector(".title").textContent = b.dataset.title;
-      }
+      if(!b.querySelector(".title").textContent.trim() && b.dataset.title){ b.querySelector(".title").textContent=b.dataset.title; }
+    });
+  })();
 
-      // 5) 클릭 잠금(팝업은 다음 단계에서 연결)
-      b.addEventListener("click", (e)=>{
+  // ===== 모달 동작(토글, ESC, 바깥 클릭, 포커스 복귀) + 3타입 렌더 =====
+  (function(){
+    const $ = (s, p=document)=>p.querySelector(s);
+    const $$ = (s, p=document)=>Array.from(p.querySelectorAll(s));
+    const overlay = $("#overlay"), modal=$("#modal"), mCode=$("#modal-code"), mTitle=$("#modal-title"), mDesc=$("#modal-desc"), closeBtn=$("#closeBtn");
+    let lastFocused=null, openedBy=null;
+
+    function renderContent(btn){
+      const type = (btn.dataset.type||"text").toLowerCase();
+      const page = (btn.dataset.page||"").toString().padStart(3,"0");
+      const title = btn.dataset.title||"";
+      const text = (btn.dataset.text||"").trim();
+      const img = btn.dataset.img||"";
+      const video = btn.dataset.video||"";
+      mCode.textContent = `p. ${page}`;
+      mTitle.textContent = title;
+
+      // 비움
+      mDesc.innerHTML = "";
+
+      // 1) 텍스트만
+      if(type==="text"){
+        const p = document.createElement("p");
+        p.textContent = text || "내용이 없습니다.";
+        mDesc.appendChild(p);
+      }
+      // 2) 이미지 + 텍스트
+      else if(type==="image"){
+        if(img){
+          const block = document.createElement("div"); block.className="media";
+          const el = document.createElement("img"); el.src = img; el.alt = title||"image";
+          block.appendChild(el); mDesc.appendChild(block);
+        }
+        if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
+      }
+      // 3) 동영상 + 텍스트 (YouTube/MP4 모두 지원)
+      else if(type==="video"){
+        if(video){
+          const block = document.createElement("div"); block.className="media";
+          const wrap = document.createElement("div"); wrap.className="video16x9";
+          let node;
+          if(/(youtube\.com|youtu\.be)/i.test(video)){
+            node = document.createElement("iframe");
+            node.src = video.includes("embed")? video : `https://www.youtube.com/embed/${video}`;
+            node.title = title||"video"; node.frameBorder="0"; node.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"; node.allowFullscreen = true;
+          }else{
+            node = document.createElement("video");
+            node.src = video; node.controls = true; node.playsInline = true; node.preload="metadata";
+          }
+          wrap.appendChild(node); block.appendChild(wrap); mDesc.appendChild(block);
+        }
+        if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
+      }
+    }
+
+    function openModal(btn){
+      lastFocused = document.activeElement; openedBy = btn;
+      renderContent(btn);
+      document.body.style.overflow="hidden";
+      overlay.classList.add("show"); modal.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+      closeBtn.focus();
+    }
+    function closeModal(){
+      overlay.classList.remove("show"); modal.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+      if(lastFocused) lastFocused.focus();
+      openedBy = null;
+    }
+
+    // 클릭: 같은 버튼이면 토글 닫기, 아니면 내용 갱신 후 열기
+    $$(".brick").forEach(btn=>{
+      btn.addEventListener("click", (e)=>{
         e.preventDefault();
-        // 여기에 openModal(...) 연결 예정
+        if(openedBy === btn && modal.classList.contains("show")){ closeModal(); return; }
+        if(modal.classList.contains("show")){ renderContent(btn); openedBy = btn; return; }
+        openModal(btn);
       });
     });
 
-    // 리스트를 늘리고 싶으면 아래와 같이 JS로도 추가 가능
-    // addBrick({page: '072', title: '세번째 스틸 컷 편집 메모'});
-    function addBrick({page,title}){
-      const btn = document.createElement("button");
-      btn.className="brick";
-      btn.dataset.page = page.replace(/[^\d]/g,"");
-      btn.dataset.title = title;
-      btn.innerHTML = `
-        <div class="page"><small>p.</small>${String(page).padStart(3,'0')}</div>
-        <div class="title">${title}</div>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-      `;
-      $("#stack").appendChild(btn);
-    }
+    closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", closeModal);
+    window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
+
+    // 간단 포커스 트랩
+    window.addEventListener("keydown",(e)=>{
+      if(e.key!=="Tab" || !modal.classList.contains("show")) return;
+      const focusables = $("#modal").querySelectorAll("button, a, [tabindex]:not([tabindex='-1'])");
+      if(!focusables.length) return;
+      const first = focusables[0], last = focusables[focusables.length-1];
+      if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+      else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+    });
   })();
   </script>
 </body>
