@@ -55,11 +55,13 @@
 
     .cards{
       display:flex;gap:12px;overflow-x:auto;padding:8px 16px 10px;
-      scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+      scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;
       position:relative;z-index:1;user-select:none;touch-action: pan-x;
         -ms-overflow-style: none;     /* IE/Edge */
   scrollbar-width: none;        /* Firefox */
+    cursor: grab;   
       
+.cards:active{ cursor: grabbing; }   
 .cards::-webkit-scrollbar{
   display: none;                /* Chrome/Safari */
 }
@@ -536,43 +538,67 @@
     buttons.set(key,{btn:b,data:item});
   });
 
-  const drag = { down:false,startX:0,startLeft:0,moved:false };
-  const TH=6;
-  listEl.addEventListener('mousedown',e=>{
-    if(e.button!==0)return;
-    drag.down=true;
-    drag.moved=false;
-    drag.startX=e.pageX;
-    drag.startLeft=listEl.scrollLeft;
-  });
-  window.addEventListener('mousemove',e=>{
-    if(!drag.down)return;
-    const dx=e.pageX-drag.startX;
-    if(Math.abs(dx)>TH)drag.moved=true;
-    listEl.scrollLeft=drag.startLeft-dx;
-  });
-  window.addEventListener('mouseup',()=>{
-    drag.down=false;
-    setTimeout(()=>drag.moved=false,40);
-  });
-  listEl.addEventListener('touchstart',e=>{
-    const t=e.touches[0];
-    drag.down=true;
-    drag.moved=false;
-    drag.startX=t.clientX;
-    drag.startLeft=listEl.scrollLeft;
-  },{passive:true});
-  listEl.addEventListener('touchmove',e=>{
-    if(!drag.down)return;
-    const t=e.touches[0];
-    const dx=t.clientX-drag.startX;
-    if(Math.abs(dx)>TH)drag.moved=true;
-    listEl.scrollLeft=drag.startLeft-dx;
-  },{passive:true});
-  listEl.addEventListener('touchend',()=>{
-    drag.down=false;
-    setTimeout(()=>drag.moved=false,40);
-  });
+// ===== 부드러운 가로 드래그 + 관성 스크롤 =====
+const drag = {
+  down:false, startX:0, startLeft:0, moved:false,
+  vx:0, lastX:0, lastT:0, raf:0
+};
+const TH = 6;           // 클릭과 드래그 구분 임계값(px)
+const FRICTION = 0.95;  // 관성 마찰(0.9~0.97 사이 취향대로)
+const MIN_V = 0.25;     // 관성 정지 임계 속도(px/frame)
+
+// 클릭 억제: 드래그한 프레임에 클릭이 전파되지 않도록
+listEl.addEventListener('click', (e)=>{
+  if (drag.moved) { e.preventDefault(); e.stopPropagation(); }
+}, true);
+
+// Pointer Events로 통합(마우스+터치)
+function onPointerDown(e){
+  if(e.pointerType==='mouse' && e.button!==0) return;
+  drag.down = true;
+  drag.moved = false;
+  drag.startX = e.clientX;
+  drag.startLeft = listEl.scrollLeft;
+  drag.lastX = e.clientX;
+  drag.lastT = performance.now();
+  drag.vx = 0;
+  listEl.setPointerCapture?.(e.pointerId);
+  cancelAnimationFrame(drag.raf);
+}
+function onPointerMove(e){
+  if(!drag.down) return;
+  const now = performance.now();
+  const dx = e.clientX - drag.startX;
+  if (Math.abs(dx) > TH) drag.moved = true;
+  listEl.scrollLeft = drag.startLeft - dx;
+
+  // 속도 추정(px/ms)
+  const dt = Math.max(1, now - drag.lastT);
+  drag.vx = (e.clientX - drag.lastX) / dt;
+  drag.lastX = e.clientX;
+  drag.lastT = now;
+}
+function onPointerUp(e){
+  if(!drag.down) return;
+  drag.down = false;
+  listEl.releasePointerCapture?.(e.pointerId);
+
+  // px/ms -> px/frame(약 16.67ms 기준)
+  let v = drag.vx * 16.67;
+
+  function step(){
+    if (Math.abs(v) < MIN_V) return;
+    listEl.scrollLeft -= v;
+    v *= FRICTION;
+    drag.raf = requestAnimationFrame(step);
+  }
+  if (Math.abs(v) > 0.5) step();
+}
+
+// 이벤트 바인딩
+listEl.addEventListener('pointerdown', onPointerDown, {passive:true});
+window.addEventListener('pointermove', onPointerMove, {passive:true});
+window.addEventListener('pointerup', onPointerUp, {passive:true});
 
   function openKey(key){
     const entry=buttons.get(key);if(!entry)return;
