@@ -1,324 +1,77 @@
-<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>미스터리 브이로그 — 레퍼런스</title>
-  <style>
-    :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318;--muted:#6b7280;--bg:#fff;--shadow:0 10px 30px rgba(0,0,0,.18)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text);background:var(--bg)}
+<!-- 중략: head/meta 동일 -->
+<style>
+  :root{--border:#e6e8eb;--brand:#ff0033;--text:#111318;--muted:#6b7280;--bg:#fff;--shadow:0 10px 30px rgba(0,0,0,.18)}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif;color:var(--text);background:var(--bg)}
 
-    .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 96px}
-    h1{margin:8px 0 12px}
-    .caption{font-size:13px;color:var(--muted);margin-bottom:12px}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 96px}
+  h1{margin:8px 0 12px}
+  .caption{font-size:13px;color:var(--muted);margin-bottom:12px}
 
-    /* 카드: 2열(모바일 1열) */
-    .grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:24px}
-    @media (min-width:680px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  .grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:24px}
+  @media (min-width:680px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 
-    .card{display:block;border:1px solid var(--border);border-radius:20px;background:#fff;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s;cursor:pointer}
-    .card:hover{transform:translateY(-4px)}
-    .thumb{aspect-ratio:16/9;background:#f3f4f6 center/cover no-repeat}
-    .card-body{padding:16px}
-    .card-title{font-weight:800;font-size:18px;line-height:1.4}
-    .card-meta{margin-top:6px;font-size:13px;color:var(--muted)}
+  .card{display:block;border:1px solid var(--border);border-radius:20px;background:#fff;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s;cursor:pointer}
+  .card:hover{transform:translateY(-4px)}
+  .thumb{aspect-ratio:16/9;background:#f3f4f6 center/cover no-repeat}
+  .card-body{padding:16px}
+  .card-title{font-weight:800;font-size:18px;line-height:1.4}
+  .card-meta{margin-top:6px;font-size:13px;color:var(--muted)}
 
-    /* 팝업 */
-    .backdrop{position:fixed;inset:0;background:rgba(17,19,24,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
-    .backdrop.show{display:flex}
-    .modal{width:min(1200px,100%);max-height:calc(100vh - 120px);background:#000;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-rows:auto 1fr auto}
-    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid var(--border)}
-    .modal-title{font-weight:900;font-size:18px}
+  .backdrop{position:fixed;inset:0;background:rgba(17,19,24,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .backdrop.show{display:flex}
 
-    /* viewer */
-    .viewer{position:relative;background:#000;display:grid;place-items:center}
-    #viewerSlot{
-      width:100%;height:100%;justify-self:stretch;align-self:stretch;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .viewer img{max-width:100%;max-height:calc(100vh - 320px);object-fit:contain;background:#000}
+  /* ★ 변경: overflow:auto 로 하단 텍스트/메모 보이게 */
+  .modal{
+    width:min(1200px,100%);
+    max-height:calc(100vh - 120px);
+    background:#000;border:1px solid var(--border);border-radius:20px;
+    box-shadow:var(--shadow);
+    overflow:auto; /* was hidden */
+    display:grid;grid-template-rows:auto 1fr auto
+  }
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid var(--border)}
+  .modal-title{font-weight:900;font-size:18px}
 
-    /* ★ 단일 영상 크게: 16:9 래퍼 (aspect-ratio + padding fallback) */
-    .video-wrap{position:relative;width:100%;max-width:100%;background:#000;aspect-ratio:16/9}
-    .video-wrap::before{content:"";display:block;padding-top:56.25%}
-    .video-wrap iframe{position:absolute;inset:0;border:0;width:100%;height:100%;background:#000}
+  /* ★ 변경: viewer 높이 제한으로 영상이 모달을 다 먹지 않게 */
+  .viewer{
+    position:relative;background:#000;display:grid;place-items:center;
+    max-height:calc(100vh - 280px); /* 헤더+푸터 여유 */
+  }
+  #viewerSlot{
+    width:100%;height:100%;
+    justify-self:stretch;align-self:stretch;
+    display:flex;align-items:center;justify-content:center;
+  }
 
-    /* 캐러셀 컨트롤 */
-    .nav-btn{position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.85);width:50px;height:50px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
-    .nav-btn:hover{background:#fff}
-    .nav-prev{left:16px}
-    .nav-next{right:16px}
-    .thumbstrip{display:flex;gap:8px;overflow:auto;padding:8px 12px;background:#0b0b0b;border-top:1px solid rgba(255,255,255,.08)}
-    .thumbstrip img{width:90px;height:60px;object-fit:cover;border:2px solid transparent;border-radius:6px;cursor:pointer;opacity:.8}
-    .thumbstrip img.active{border-color:var(--brand);opacity:1}
+  .viewer img{max-width:100%;max-height:100%;object-fit:contain;background:#000}
 
-    /* 하단 텍스트(좌측 강조) + 메모 박스 */
-    .modal-footer{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px 0 20px 0;background:#fff;border-top:1px solid var(--border)}
-    .counter{font-size:14px;color:var(--muted);padding-left:20px}
-    .desc{font-size:15px;line-height:1.7;text-align:left;padding-left:20px;padding-right:20px;max-width:800px}
-    .desc strong{font-weight:800;color:#111}
-    .desc .thin{font-weight:300;color:#6b7280}
+  .video-wrap{position:relative;width:100%;max-width:100%;background:#000;aspect-ratio:16/9}
+  .video-wrap::before{content:"";display:block;padding-top:56.25%}
+  .video-wrap iframe{position:absolute;inset:0;border:0;width:100%;height:100%;background:#000}
 
-    .note-box{width:100%;max-width:840px;margin-left:20px;margin-right:20px}
-    .note-label{font-size:13px;color:var(--muted);margin:8px 0 4px 2px}
-    .note-input{
-      width:100%;min-height:110px;border:1px solid var(--border);border-radius:10px;
-      padding:12px;font-size:14px;line-height:1.6;resize:vertical;outline:none
-    }
-    .note-input:focus{box-shadow:0 0 0 3px rgba(255,0,51,.08);border-color:#fca5a5}
-    .note-status{font-size:12px;color:var(--muted);margin-top:6px;margin-left:2px}
+  .nav-btn{position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.85);width:50px;height:50px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
+  .nav-btn:hover{background:#fff}
+  .nav-prev{left:16px}
+  .nav-next{right:16px}
+  .thumbstrip{display:flex;gap:8px;overflow:auto;padding:8px 12px;background:#0b0b0b;border-top:1px solid rgba(255,255,255,.08)}
+  .thumbstrip img{width:90px;height:60px;object-fit:cover;border:2px solid transparent;border-radius:6px;cursor:pointer;opacity:.8}
+  .thumbstrip img.active{border-color:var(--brand);opacity:1}
 
-    /* 하단 탭 */
-    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
-    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
-    .tab svg{width:22px;height:22px}
-    .tab.active{color:var(--brand);font-weight:800}
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1>레퍼런스</h1>
-    <div class="caption">영상은 단일 16:9로 크게, 이미지는 캐러셀. 텍스트는 좌측 정렬·강조. 카드별 메모 저장 지원.</div>
+  .modal-footer{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:14px 0 20px 0;background:#fff;border-top:1px solid var(--border)}
+  .counter{font-size:14px;color:var(--muted);padding-left:20px}
+  .desc{font-size:15px;line-height:1.7;text-align:left;padding-left:20px;padding-right:20px;max-width:800px}
+  .desc strong{font-weight:800;color:#111}
+  .desc .thin{font-weight:300;color:#6b7280}
 
-    <div id="refGrid" class="grid">
-      <!-- 이미지 단일 + 텍스트 -->
-      <a class="card" href="#" role="button"
-         data-title="p. 12 단일 이미지 예시"
-         data-text="<strong>p. 12 키 프레임</strong><br><span class='thin'>광원은 우상향, 인물 강조.</span><br>도입부 핵심 씬."
-         data-key="img-one"
-         data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme01.png">
-        <div class="thumb" style="background-image:url('https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme01.png')"></div>
-        <div class="card-body"><div class="card-title">단일 이미지 예시</div><div class="card-meta">Image</div></div>
-      </a>
+  .note-box{width:100%;max-width:840px;margin-left:20px;margin-right:20px}
+  .note-label{font-size:13px;color:var(--muted);margin:8px 0 4px 2px}
+  .note-input{width:100%;min-height:110px;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:14px;line-height:1.6;resize:vertical;outline:none}
+  .note-input:focus{box-shadow:0 0 0 3px rgba(255,0,51,.08);border-color:#fca5a5}
+  .note-status{font-size:12px;color:var(--muted);margin-top:6px;margin-left:2px}
 
-      <!-- 이미지 여러 장(캐러셀) + 텍스트 -->
-      <a class="card" href="#" role="button"
-         data-title="p. 34~36 여러 이미지 예시"
-         data-text="<strong>콘티 구성</strong><br>① 와이드 → ② 미디엄 → ③ 클로즈업<br><span class='thin'>톤은 뉴트럴, 하이라이트 85~90%</span>"
-         data-key="img-multi"
-         data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme02.png, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme03.jpg">
-        <div class="thumb" style="background-image:url('https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme02.png')"></div>
-        <div class="card-body"><div class="card-title">여러 이미지 예시</div><div class="card-meta">Image × 2</div></div>
-      </a>
-
-      <!-- 영상 단일(캐러셀 X) + 텍스트 -->
-      <a class="card" href="#" role="button"
-         data-title="인트로 영상"
-         data-text="<strong>인트로 컷</strong><br>‘헬로 월드’ 인사 후 0.8s에 로고 등장.<br><span class='thin'>비트 2-4-4 전환.</span>"
-         data-key="vid-intro"
-         data-video="https://www.youtube.com/watch?v=Dz_EkjVNWFU&t=55s">
-        <div class="thumb" style="background-image:url('https://img.youtube.com/vi/Dz_EkjVNWFU/hqdefault.jpg')"></div>
-        <div class="card-body"><div class="card-title">단일 영상 예시(크게)</div><div class="card-meta">YouTube · 16:9</div></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- 모달 -->
-  <div id="backdrop" class="backdrop" aria-hidden="true">
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-header">
-        <div id="modalTitle" class="modal-title">제목</div>
-        <button class="close-x" id="closeX" aria-label="닫기">
-          <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        </button>
-      </div>
-
-      <div class="viewer">
-        <button class="nav-btn nav-prev" id="btnPrev" aria-label="이전">
-          <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        </button>
-        <div id="viewerSlot"></div>
-        <button class="nav-btn nav-next" id="btnNext" aria-label="다음">
-          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-        </button>
-      </div>
-
-      <div class="thumbstrip" id="thumbstrip" aria-label="썸네일"></div>
-
-      <div class="modal-footer">
-        <div class="counter" id="counter">1 / 1</div>
-        <div class="desc" id="modalDesc"></div>
-
-        <!-- ✍️ 메모 박스 -->
-        <div class="note-box">
-          <div class="note-label">메모</div>
-          <textarea id="noteInput" class="note-input" placeholder="여기에 참고 메모를 적어주세요. (자동 저장)"></textarea>
-          <div id="noteStatus" class="note-status">작성한 내용이 자동 저장됩니다.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 하단 탭 -->
-  <nav class="tabs" aria-label="하단 메뉴">
-    <a class="tab" href="index.html">
-      <svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>
-      대시보드
-    </a>
-    <a class="tab" href="meme.html">
-      <svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      밈
-    </a>
-    <a class="tab active" href="reference.html" aria-current="page">
-      <svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      레퍼런스
-    </a>
-    <a class="tab" href="behind.html">
-      <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      비하인드
-    </a>
-    <a class="tab" href="revenue.html">
-      <svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-      수익창출
-    </a>
-  </nav>
-
-  <script>
-    const grid=document.getElementById('refGrid');
-    const backdrop=document.getElementById('backdrop');
-    const viewerSlot=document.getElementById('viewerSlot');
-    const modalTitle=document.getElementById('modalTitle');
-    const modalDesc=document.getElementById('modalDesc');
-    const counter=document.getElementById('counter');
-    const thumbstrip=document.getElementById('thumbstrip');
-    const btnPrev=document.getElementById('btnPrev');
-    const btnNext=document.getElementById('btnNext');
-    const closeX=document.getElementById('closeX');
-
-    const noteInput=document.getElementById('noteInput');
-    const noteStatus=document.getElementById('noteStatus');
-
-    let slides=[]; let idx=0; let currentIframe=null; let isVideo=false; let currentKey='';
-
-    function toYouTubeEmbed(url){
-      try{
-        const u=new URL(url);
-        let start='';
-        if(u.searchParams.has('t')){
-          const t=u.searchParams.get('t').replace('s','');
-          start=`?start=${parseInt(t)}`;
-        }
-        if(u.hostname.includes('youtube.com')){
-          const v=u.searchParams.get('v');
-          if(v) return {embed:`https://www.youtube.com/embed/${v}${start}`,id:v};
-        }
-        if(u.hostname.includes('youtu.be')){
-          const id=u.pathname.slice(1);
-          if(id) return {embed:`https://www.youtube.com/embed/${id}${start}`,id};
-        }
-      }catch(e){}
-      return null;
-    }
-
-    const parseList = (attr) => (attr||'').split(',').map(s=>s.trim()).filter(Boolean);
-    const parseImages = (a) => parseList(a.dataset.images).map(src=>({src,thumb:src}));
-
-    function mountImage(src){
-      viewerSlot.innerHTML='';
-      currentIframe=null;
-      const img=document.createElement('img');
-      img.alt='이미지';
-      img.src=src;
-      viewerSlot.appendChild(img);
-    }
-
-    function mountVideo(url){
-      viewerSlot.innerHTML='';
-      currentIframe=null;
-      const yt=toYouTubeEmbed(url);
-      const wrap=document.createElement('div');
-      wrap.className='video-wrap';
-      const iframe=document.createElement('iframe');
-      iframe.src=yt? yt.embed : url; // autoplay 없음
-      iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-      iframe.referrerPolicy='strict-origin-when-cross-origin';
-      iframe.allowFullscreen=true;
-      wrap.appendChild(iframe);
-      viewerSlot.appendChild(wrap);
-      currentIframe=iframe;
-    }
-
-    function buildThumbs(){
-      thumbstrip.innerHTML='';
-      slides.forEach((s,n)=>{
-        const t=document.createElement('img');
-        t.src=s.thumb; t.alt=`썸네일 ${n+1}`;
-        t.addEventListener('click',e=>{e.stopPropagation();show(n)});
-        thumbstrip.appendChild(t);
-      });
-    }
-
-    function show(i){
-      if(!slides.length) return;
-      idx=(i+slides.length)%slides.length;
-      mountImage(slides[idx].src);
-      counter.textContent=`${idx+1} / ${slides.length}`;
-      [...thumbstrip.querySelectorAll('img')].forEach((el,n)=>el.classList.toggle('active',n===idx));
-    }
-
-    // 저장/불러오기 (로컬)
-    const keyFor = (a)=> 'refnote:' + (a.dataset.key || (a.dataset.title || a.querySelector('.card-title')?.textContent || ''));
-    const loadNote = (key)=> localStorage.getItem(key) || '';
-    const saveNote = (key,val)=> { localStorage.setItem(key,val); noteStatus.textContent='저장됨'; };
-    function debounce(fn,ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args),ms); }; }
-    const debouncedSave = debounce(saveNote, 400);
-
-    function openModal(a){
-      modalTitle.textContent=a.dataset.title||a.querySelector('.card-title')?.textContent||'';
-      modalDesc.innerHTML=a.dataset.text||'';
-
-      currentKey = keyFor(a);
-      const prev = loadNote(currentKey);
-      noteInput.value = prev;
-      noteStatus.textContent = prev ? '불러옴' : '작성한 내용이 자동 저장됩니다.';
-
-      const videoUrl=a.dataset.video;
-      isVideo=!!videoUrl;
-
-      if(isVideo){
-        btnPrev.style.display='none'; btnNext.style.display='none';
-        thumbstrip.style.display='none'; counter.textContent='';
-        slides=[]; mountVideo(videoUrl);
-      }else{
-        slides=parseImages(a);
-        btnPrev.style.display=''; btnNext.style.display='';
-        thumbstrip.style.display='';
-        buildThumbs(); show(0);
-      }
-      backdrop.classList.add('show');
-      backdrop.setAttribute('aria-hidden','false');
-    }
-
-    function closeModal(){
-      backdrop.classList.remove('show');
-      backdrop.setAttribute('aria-hidden','true');
-      if(currentIframe){currentIframe.src='about:blank';currentIframe=null}
-    }
-
-    // 이벤트
-    grid.addEventListener('click',e=>{
-      const a=e.target.closest('a.card'); if(!a) return;
-      e.preventDefault(); openModal(a);
-    });
-    btnPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isVideo) show(idx-1)});
-    btnNext.addEventListener('click',e=>{e.stopPropagation(); if(!isVideo) show(idx+1)});
-    closeX.addEventListener('click',e=>{e.stopPropagation(); closeModal()});
-    backdrop.addEventListener('click',e=>{ if(e.target===backdrop) closeModal() });
-    document.addEventListener('keydown',e=>{
-      if(!backdrop.classList.contains('show')) return;
-      if(e.key==='Escape') closeModal();
-      if(!isVideo){
-        if(e.key==='ArrowLeft') show(idx-1);
-        if(e.key==='ArrowRight') show(idx+1);
-      }
-    });
-
-    // 메모 자동 저장
-    noteInput.addEventListener('input', ()=>{
-      noteStatus.textContent='저장 중...';
-      debouncedSave(currentKey, noteInput.value);
-    });
-  </script>
-</body>
-</html>
+  .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
+  .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
+  .tab svg{width:22px;height:22px}
+  .tab.active{color:var(--brand);font-weight:800}
+</style>
