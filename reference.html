@@ -58,6 +58,11 @@
 
     .close-x{border:none;background:transparent;cursor:pointer}
     .close-x svg{width:24px;height:24px}
+      .video-cover{position:relative;display:grid;place-items:center;width:100%;}
+    .video-cover img{max-width:100%;max-height:calc(100vh - 320px);object-fit:contain;background:#000}
+    .play-btn{position:absolute;display:grid;place-items:center;width:86px;height:86px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,.9);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+    .play-btn svg{width:34px;height:34px;transform:translateX(2px)}
+    .play-btn:hover{background:#fff}
   </style>
 </head>
 <body>
@@ -174,6 +179,15 @@
       }catch(e){}
       return null;
     }
+    function getYouTubeInfoFromEmbed(embed){
+      // embed URL에서 id 추출 (…/embed/VIDEOID?…)
+      try{
+        const u=new URL(embed);
+        const parts=u.pathname.split('/');
+        const id=parts[parts.length-1];
+        return {id:id.split('?')[0], embed};
+      }catch(e){ return {id:'', embed}; }
+    }
 
     function parseList(attr){return (attr||'').split(',').map(s=>s.trim()).filter(Boolean)}
 
@@ -202,13 +216,33 @@
         img.src=src;
         viewerSlot.appendChild(img);
       }else if(type==='youtube'){
-        const iframe=document.createElement('iframe');
-        iframe.src=src;
-        iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-        iframe.referrerPolicy='strict-origin-when-cross-origin';
-        iframe.allowFullscreen=true;
-        viewerSlot.appendChild(iframe);
-        currentIframe=iframe;
+        // 수동 재생: 썸네일 + 플레이 버튼 렌더링 후 클릭 시 iframe 주입
+        const info = getYouTubeInfoFromEmbed(src);
+        const cover=document.createElement('div');
+        cover.className='video-cover';
+        const thumb=document.createElement('img');
+        thumb.alt=title||'동영상 썸네일';
+        thumb.src=`https://img.youtube.com/vi/${info.id}/hqdefault.jpg`;
+        const btn=document.createElement('button');
+        btn.className='play-btn';
+        btn.setAttribute('aria-label','영상 재생');
+        btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7-11-7z" fill="currentColor"/></svg>';
+        function start(){
+          const iframe=document.createElement('iframe');
+          iframe.src = info.embed + (info.embed.includes('?') ? '&' : '?') + 'autoplay=1';
+          iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+          iframe.referrerPolicy='strict-origin-when-cross-origin';
+          iframe.allowFullscreen=true;
+          viewerSlot.innerHTML='';
+          viewerSlot.appendChild(iframe);
+          currentIframe=iframe;
+        }
+        cover.appendChild(thumb);
+        cover.appendChild(btn);
+        btn.addEventListener('click', (e)=>{ e.stopPropagation(); start(); });
+        // 썸네일 아무 곳 클릭해도 재생
+        cover.addEventListener('click', (e)=>{ e.stopPropagation(); start(); });
+        viewerSlot.appendChild(cover);
       }
     }
 
