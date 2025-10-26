@@ -4,24 +4,144 @@
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>미스터리 브이로그 — 비하인드</title>
   <style>
-    :root{--border:#e6e8eb;--brand:#ff0033}
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
+    :root{
+      --bg:#fff;--text:#111318;--muted:#6b7280;--border:#e6e8eb;--brand:#ff0033;
+      --card:#fafafa;--shadow:0 1px 2px rgba(0,0,0,.06);--r:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
     .wrap{max-width:720px;margin:0 auto;padding:16px 16px 88px}
-    h1{margin:8px 0 12px}
-    .panel{border:1px solid var(--border);border-radius:16px;padding:16px}
-    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px}
-    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
+    h1{margin:8px 0 12px;font-size:22px}
+    .sub{margin:0 0 16px;color:var(--muted);font-size:14px}
+
+    /* 리스트(카드=행) */
+    .list{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;background:#fff}
+    .item{
+      display:grid;grid-template-columns:96px 1fr auto;align-items:center;
+      gap:12px;padding:14px 16px;border-top:1px solid var(--border);
+      text-decoration:none;color:inherit;background:#fff;cursor:pointer;
+    }
+    .item:first-child{border-top:none}
+    .item:hover{background:var(--card)}
+    .code{font-variant-numeric:tabular-nums;color:#6b7280;font-size:12px}
+    .title{font-size:15px;line-height:1.35}
+    .badge{
+      font-size:11px;color:#fff;background:#111318;border-radius:999px;padding:4px 8px;
+    }
+    .chev{width:18px;height:18px;color:#9aa1a9}
+
+    /* 모달 */
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;opacity:0;
+      transition:opacity .18s ease;z-index:50;
+    }
+    .overlay.show{display:block;opacity:1}
+    .modal{
+      position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);
+      width:min(680px,92vw);max-height:80vh;overflow:auto;background:#fff;border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,.18);padding:18px;display:none;z-index:51;
+      transition:transform .18s ease,opacity .18s ease;opacity:0;
+    }
+    .modal.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1)}
+    .modal-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .modal-code{font-size:12px;color:var(--muted)}
+    .modal-title{font-size:18px;font-weight:700}
+    .modal-body{font-size:14px;line-height:1.6;color:#333;white-space:pre-wrap}
+    .close{
+      margin-left:auto;border:1px solid var(--border);background:#fff;border-radius:12px;
+      padding:6px 10px;cursor:pointer;font-size:13px;
+    }
+    .meta{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px;margin:6px 0 12px}
+
+    /* 하단 탭 */
+    .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);
+      display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
+    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+      font-size:12px;color:#333;text-decoration:none}
     .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
+
+    /* 유틸 */
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>비하인드</h1>
-    <div class="panel">
-      촬영 비하인드/작업 노트/스틸 등을 여기에 추가하세요.
+    <p class="sub">촬영 비하인드 · 작업 노트 · 스틸을 간단한 카드(행)로 정리했어. 항목을 누르면 팝업으로 상세를 보여줘.</p>
+
+    <div class="list" role="list">
+      <!-- 예시 아이템들: data-*로 팝업 내용 주입 -->
+      <button class="item" role="listitem"
+        data-code="2025-09-c"
+        data-title="밀리의 서재 문학강좌촬영 — 천명관(고래) 텍스트"
+        data-tags="촬영, 편집중"
+        data-body="촬영일: 2025-09-21
+장소: 합정 스튜디오 B
+카메라: FX3 + 24-70GM
+메모: 클랩 싱크 오류 02:11~02:14 구간 보정 필요.
+스틸: 스튜디오 조명 설정값 저장함(프리셋 #mvlog_0921).">
+        <span class="code">2025-09-c</span>
+        <span class="title">밀리의 서재 문학강좌촬영 — 천명관(고래) 텍스트</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+
+      <button class="item" role="listitem"
+        data-code="2025-09-b"
+        data-title="엠디랩프레스 행사 사이트"
+        data-tags="웹, 디자인"
+        data-body="작업범위: 와이어→비주얼→정적 배포
+메모: 히어로 카피 A/B 테스트 필요. 폰트 로딩 최적화 남음.">
+        <span class="code">2025-09-b</span>
+        <span class="title">엠디랩프레스 행사 사이트</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+
+      <button class="item" role="listitem"
+        data-code="2025-08-i"
+        data-title="2025 디자인캠프 in 영등포"
+        data-tags="행사, 기록"
+        data-body="패널 토크 스틸 업로드 대기.
+캠 리그: a7C II / 35mm f2.8
+노트: Q&A 하이라이트 12:33 타임코드.">
+        <span class="code">2025-08-i</span>
+        <span class="title">2025 디자인캠프 in 영등포</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+
+      <button class="item" role="listitem"
+        data-code="2025-08-f"
+        data-title="Riso + Foil The Palette Index"
+        data-tags="프린트, 리소"
+        data-body="테스트 인쇄: Blue+Fluo Pink
+주의: 포일면 지문 자국 쉬움 → 면장갑 필수.">
+        <span class="code">2025-08-f</span>
+        <span class="title">Riso + Foil The Palette Index</span>
+        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
     </div>
   </div>
 
+  <!-- 모달(팝업) -->
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+  <section class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+    <div class="modal-header">
+      <div>
+        <div class="modal-code" id="modal-code">2025-09-c</div>
+        <div class="modal-title" id="modal-title">제목</div>
+      </div>
+      <button class="close" id="closeBtn" aria-label="팝업 닫기">닫기</button>
+    </div>
+    <div class="meta" id="modal-tags">
+      <!-- 태그/뱃지 들어감 -->
+    </div>
+    <div class="modal-body" id="modal-desc">
+      내용
+    </div>
+  </section>
+
+  <!-- 하단 탭 -->
   <nav class="tabs" aria-label="하단 메뉴">
     <a class="tab" href="index.html"><svg viewBox="0 0 24 24"><path d="M4 12.5a1 1 0 0 1 .4-.8l7-5a1 1 0 0 1 1.2 0l7 5a1 1 0 0 1 .4.8V19a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-6.5Z" fill="currentColor"/></svg>대시보드</a>
     <a class="tab" href="meme.html"><svg viewBox="0 0 24 24"><path d="M3 7h18M7 3v18M3 12h18M3 17h12" stroke="currentColor" stroke-width="2" fill="none"/></svg>밈</a>
@@ -29,5 +149,80 @@
     <a class="tab active" href="behind.html" aria-current="page"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none"/></svg>비하인드</a>
     <a class="tab" href="revenue.html"><svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>수익창출</a>
   </nav>
+
+  <script>
+  (function(){
+    const $ = (s, p=document)=>p.querySelector(s);
+    const $$ = (s, p=document)=>Array.from(p.querySelectorAll(s));
+
+    const overlay = $("#overlay");
+    const modal = $("#modal");
+    const mCode = $("#modal-code");
+    const mTitle = $("#modal-title");
+    const mTags = $("#modal-tags");
+    const mDesc = $("#modal-desc");
+    const closeBtn = $("#closeBtn");
+    let lastFocused = null;
+
+    function openModal({code,title,tags,body}){
+      lastFocused = document.activeElement;
+
+      mCode.textContent = code || "";
+      mTitle.textContent = title || "";
+      mDesc.textContent = body || "";
+
+      // 태그 뱃지들 렌더
+      mTags.innerHTML = "";
+      if(tags){
+        tags.split(",").map(s=>s.trim()).filter(Boolean).forEach(t=>{
+          const b=document.createElement("span");
+          b.className="badge"; b.textContent=t;
+          mTags.appendChild(b);
+        });
+      }
+
+      document.body.style.overflow = "hidden";
+      overlay.classList.add("show");
+      modal.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+      closeBtn.focus();
+    }
+
+    function closeModal(){
+      overlay.classList.remove("show");
+      modal.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+      if(lastFocused) lastFocused.focus();
+    }
+
+    // 리스트 아이템 클릭 → 모달 열기
+    $$(".item").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        openModal({
+          code: btn.dataset.code,
+          title: btn.dataset.title,
+          tags: btn.dataset.tags || "",
+          body: btn.dataset.body || ""
+        });
+      });
+    });
+
+    // 닫기 동작
+    closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", closeModal);
+    window.addEventListener("keydown", (e)=>{
+      if(e.key==="Escape") closeModal();
+      // 간단한 포커스 트랩
+      if(e.key==="Tab" && modal.classList.contains("show")){
+        const focusables = $$("#modal button, #modal a, #modal [tabindex]:not([tabindex='-1'])");
+        if(!focusables.length) return;
+        const first = focusables[0], last = focusables[focusables.length-1];
+        if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
+        else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
+      }
+    });
+  })();
+  </script>
 </body>
 </html>
