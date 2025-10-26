@@ -45,7 +45,7 @@
       background:var(--surface);
       border:none;
       border-radius:14px;
-      box-shadow:0 0 0 1px var(--line);  /* 얇은 회색 라인 */
+      box-shadow:0 0 0 1px var(--line);  /* 얇은 회색 라인만 */
       cursor:pointer;
       transition:background .15s, box-shadow .15s;
     }
@@ -84,6 +84,10 @@
     .video16x9{position:relative;width:100%;padding-top:56.25%}
     .video16x9>*{position:absolute;inset:0;width:100%;height:100%;border:none}
 
+    /* 갤러리(여러 장 이미지) */
+    .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+    @media (max-width:640px){.gallery{grid-template-columns:1fr}}
+
     /* 하단 탭 */
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
       display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
@@ -94,7 +98,7 @@
 <body>
   <div class="container">
     <h1 class="page-title">비하인드</h1>
-    <p class="page-sub">YouTube Studio 스타일의 상단 카드 + 라운드 처리된 깔끔한 리스트</p>
+    <p class="page-sub">YouTube Studio 스타일 카드 + 라운드 처리 리스트. 클릭 시 팝업.</p>
 
     <!-- 상단 카드 -->
     <div class="stat-grid">
@@ -110,62 +114,59 @@
 
     <!-- 목록 -->
     <div class="list">
+      <!-- 텍스트 -->
       <button class="row"
         data-page="016" data-title="번아웃"
         data-type="text"
         data-text="쓰는 사람이 번아웃을 맞은 채로 글을 쓰다 보니 인물들이 다들 지쳐있다. 다음 작품부터는 작가와 작중인물이 분리될 수 있도록 노력하겠다.">
-        <div class="page"><small>p.</small>16</div>
+        <div class="page"><small>p.</small>016</div>
         <div class="title">번아웃</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-            <button class="row"
+      <!-- 텍스트 -->
+      <button class="row"
         data-page="022" data-title="인기 급상승 동영상"
         data-type="text"
         data-text="유튜브의 인기 급상승 동영상은 책이 출간되고 석달 만인 2025년 7월 삭제되었다. 애석할 따름이다.">
-        <div class="page"><small>p.</small>22</div>
+        <div class="page"><small>p.</small>022</div>
         <div class="title">인기 급상승 동영상</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-                  <button class="row"
+      <!-- 텍스트 긴 설명 -->
+      <button class="row"
         data-page="025" data-title="남산 타워 폭파 테러"
         data-type="text"
         data-text="평행우주에서 넘어온 권, 오, 원 세 사람이 전세계에 테러를 일으킨다는 최초의 설정이 있었다. 에펠탑, 금문교, 자유의 여신상 등 랜드마크를 노리는 전세계적 테러를 생각했지만 청소년 소설로 개작하면서 스케일을 줄였다. 이 테러에 영향을 받아 희망의 오빠 기적이 모방범죄로 방화를 한다는 설정도 수정되었다. 남산 타워로 설정한 이유는 서울의 랜드마크라고 생각해서였다.">
-        <div class="page"><small>p.</small>25</div>
+        <div class="page"><small>p.</small>025</div>
         <div class="title">남산 타워 폭파 테러</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
+      <!-- 여러 장 이미지 (data-images 콤마구분) -->
       <button class="row"
         data-page="026" data-title="주먹만 한 크기의 갯지렁이인지 개불인지 모를 것들"
-        data-type="image"
-  data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind01.jpg, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind02.jpg, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind03.jpg">
+        data-type="images"
+        data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind01.jpg, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind02.jpg, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind03.jpg"
         data-text="최초의 구상에서는 미래 양식의 결과로 초대형 개불이 애니메이션 〈파워 디지몬〉에 나오는 어둠의 탑 사이즈로 성장한다고 설정했다. 그렇게 거대한 개불들로 지구가 뒤덮히는 상상. 더 나아가 지구 바깥에서 보면 Covid-19의 모양처럼 지구가 보일 지도 모른다는 상상까지 확장되었다. 그러나 청소년 소설로 개작하면서 개불의 역할이 축소되었고, 일종의 이스터에그로 남겨두었다.">
         <div class="page"><small>p.</small>026</div>
         <div class="title">주먹만 한 크기의 갯지렁이인지 개불인지 모를 것들</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-                  <button class="row"
-        data-page="046" data-title="육군하사 우기적"
-        data-type="text"
-        data-text="작중 우기적은 병장 때 전문하사를 지원한다. 하사로 시작한 부사관과는 맥락이 다르다.">
-        <div class="page"><small>p.</small>46</div>
-        <div class="title">육군하사 우기적</div>
-        <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-      </button>
-
-            <button class="row"
+      <!-- 단일 이미지 -->
+      <button class="row"
         data-page="048" data-title="우기적의 방화"
         data-type="image"
-  data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind04.png">
+        data-img="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/behind04.png"
         data-text="최초의 설정은 의정부의 한 아파트 옥상에서 희망의 물건을 태우면서 방화를 하는 우기적이었다. AI로 구현한 이미지처럼 기름을 다 부어놓고 담배를 탁 튕겨 박스에 던지면 불이 붙는 영화적 연출을 고려했었다. 하지만 최종 수정본에서는 놀이터에서 불장난한 찌질이로 변경되었다.">
         <div class="page"><small>p.</small>048</div>
         <div class="title">우기적의 방화</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
+      <!-- 영상 -->
       <button class="row"
         data-page="096" data-title="2025 디자인캠프 in 영등포"
         data-type="video"
@@ -175,7 +176,6 @@
         <div class="title">2025 디자인캠프 in 영등포</div>
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
-
     </div>
   </div>
 
@@ -207,40 +207,63 @@
   const overlay=$("#overlay"), modal=$("#modal"), mCode=$("#modal-code"), mTitle=$("#modal-title"), mDesc=$("#modal-desc"), closeBtn=$("#closeBtn");
   let lastFocused=null, openedBy=null;
 
+  function pad3(n){ return String(n||"").padStart(3,"0"); }
+
+  function renderText(text){
+    const p=document.createElement("p");
+    p.textContent=(text||"").trim() || "내용이 없습니다.";
+    mDesc.appendChild(p);
+  }
+
+  function renderImage(src, alt){
+    const block=document.createElement("div"); block.className="media";
+    const el=document.createElement("img"); el.src=src; el.alt=alt||"image";
+    block.appendChild(el); mDesc.appendChild(block);
+  }
+
+  function renderImages(urls, alt){
+    const wrap=document.createElement("div"); wrap.className="gallery";
+    urls.forEach(u=>{
+      const img=document.createElement("img");
+      img.src=u.trim(); img.alt=alt||"image";
+      img.style.width="100%"; img.style.height="auto"; img.style.borderRadius="10px";
+      wrap.appendChild(img);
+    });
+    mDesc.appendChild(wrap);
+  }
+
+  function renderVideo(video, title){
+    const block=document.createElement("div"); block.className="media";
+    const wrap=document.createElement("div"); wrap.className="video16x9"; let node;
+    if(/(youtube\.com|youtu\.be)/i.test(video)){
+      node=document.createElement("iframe");
+      node.src=video.includes("embed")?video:`https://www.youtube.com/embed/${video}`;
+      node.title=title||"video"; node.frameBorder="0";
+      node.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      node.allowFullscreen=true;
+    }else{
+      node=document.createElement("video"); node.src=video; node.controls=true; node.playsInline=true; node.preload="metadata";
+    }
+    wrap.appendChild(node); block.appendChild(wrap); mDesc.appendChild(block);
+  }
+
   function renderContent(btn){
     const type=(btn.dataset.type||"text").toLowerCase();
-    const page=String(btn.dataset.page||"").padStart(3,"0");
+    const page=pad3(btn.dataset.page);
     const title=btn.dataset.title||"";
-    const text=(btn.dataset.text||"").trim();
+    const text=btn.dataset.text||"";
     const img=btn.dataset.img||"";
+    const images=(btn.dataset.images||"").split(",").map(s=>s.trim()).filter(Boolean);
     const video=btn.dataset.video||"";
 
     mCode.textContent=`p. ${page}`;
     mTitle.textContent=title;
     mDesc.innerHTML="";
 
-    if(type==="text"){
-      const p=document.createElement("p"); p.textContent=text||"내용이 없습니다."; mDesc.appendChild(p);
-    }else if(type==="image"){
-      if(img){ const b=document.createElement("div"); b.className="media";
-        const el=document.createElement("img"); el.src=img; el.alt=title||"image";
-        b.appendChild(el); mDesc.appendChild(b); }
-      if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
-    }else if(type==="video"){
-      if(video){ const b=document.createElement("div"); b.className="media";
-        const wrap=document.createElement("div"); wrap.className="video16x9"; let node;
-        if(/(youtube\.com|youtu\.be)/i.test(video)){
-          node=document.createElement("iframe");
-          node.src=video.includes("embed")?video:`https://www.youtube.com/embed/${video}`;
-          node.title=title||"video"; node.frameBorder="0";
-          node.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-          node.allowFullscreen=true;
-        }else{
-          node=document.createElement("video"); node.src=video; node.controls=true; node.playsInline=true; node.preload="metadata";
-        }
-        wrap.appendChild(node); b.appendChild(wrap); mDesc.appendChild(b); }
-      if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
-    }
+    if(type==="text"){ renderText(text); }
+    else if(type==="image"){ if(img) renderImage(img, title); renderText(text); }
+    else if(type==="images"){ if(images.length) renderImages(images, title); renderText(text); }
+    else if(type==="video"){ if(video) renderVideo(video, title); renderText(text); }
   }
 
   function openModal(btn){
@@ -259,7 +282,11 @@
     openedBy=null;
   }
 
+  // 페이지 숫자 표시 보정(항목 내부도 3자리 패딩으로 교체)
   $$(".row").forEach(row=>{
+    const p = row.querySelector(".page");
+    if (p) p.innerHTML = `<small>p.</small>${pad3(row.dataset.page)}`;
+
     row.addEventListener("click",(e)=>{
       e.preventDefault();
       if(openedBy===row && modal.classList.contains("show")){ closeModal(); return; }
@@ -267,6 +294,7 @@
       openModal(row);
     });
   });
+
   closeBtn.addEventListener("click",closeModal);
   overlay.addEventListener("click",closeModal);
   window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
