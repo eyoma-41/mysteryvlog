@@ -24,21 +24,27 @@
     .card-title{font-weight:800;font-size:18px;line-height:1.4}
     .card-meta{margin-top:6px;font-size:13px;color:var(--muted)}
 
-.viewer img {
-  max-width: 100%;
-  max-height: calc(100vh - 280px); /* 상단/하단 여백 고려 */
-  object-fit: contain;
-  background: #000;
+/* 기존 .viewer 규칙을 이걸로 교체 */
+.viewer{
+  position:relative;
+  background:#000;
+  display:grid;
+  place-items:center;
+  /* 가용 높이는 JS로 넣어줌 */
+  overflow:hidden; /* 초과 영역 안 보이게 (이미지는 contain으로 축소됨) */
 }
 
-.viewer {
-  position: relative;
-  background: #000;
-  display: grid;
-  place-items: center;
-  max-height: calc(100vh - 280px);
-  overflow: hidden; /* 초과 영역 잘라냄 */
+/* 이미지/영상 공통: 가로는 100%, 세로는 JS가 넣어주는 max-height 안에서 contain */
+.viewer img{
+  max-width:100%;
+  height:auto;
+  object-fit:contain;
+  background:#000;
 }
+.viewer iframe{ /* 여전히 16:9 래퍼 안에서 동작 */
+  background:#000;
+}
+
 
     
 
@@ -242,6 +248,8 @@
       const img=document.createElement('img');
       img.alt='이미지'; img.src=src;
       viewerSlot.appendChild(img);
+
+        fitMedia();  // ★ 이 줄만 추가!
     }
 
     function mountVideo(url){
@@ -255,6 +263,8 @@
       iframe.allowFullscreen=true;
       wrap.appendChild(iframe); viewerSlot.appendChild(wrap);
       currentIframe=iframe;
+
+        fitMedia();  // ★ 이 줄만 추가!
     }
 
     function buildThumbs(){
@@ -273,6 +283,8 @@
       mountImage(slides[idx].src);
       counter.textContent=`${idx+1} / ${slides.length}`;
       [...thumbstrip.querySelectorAll('img')].forEach((el,n)=>el.classList.toggle('active',n===idx));
+
+        fitMedia();  // ★ 이 줄만 추가!
     }
 
     function openModal(a){
@@ -299,6 +311,8 @@
       }
       backdrop.classList.add('show');
       backdrop.setAttribute('aria-hidden','false');
+
+        fitMedia(); // ✅ 모달 띄운 후 반응형 사이즈 조정
     }
 
     function closeModal(){
@@ -324,6 +338,31 @@
         if(e.key==='ArrowRight') show(idx+1);
       }
     });
+
+function fitMedia() {
+  // 모달 구성 요소 높이 합산 → 사용 가능 높이 계산
+  const headerH = document.querySelector('.modal-header')?.offsetHeight || 0;
+  const footerH = document.querySelector('.modal-footer')?.offsetHeight || 0;
+  const thumbsVisible = thumbstrip && thumbstrip.style.display !== 'none';
+  const thumbsH = thumbsVisible ? thumbstrip.offsetHeight : 0;
+
+  // 여유 여백(상하 패딩/그림자 여지)
+  const safety = 40;
+  const avail = Math.max(240, window.innerHeight - (headerH + footerH + thumbsH + safety));
+
+  // viewer와 내부 미디어에 적용
+  const viewer = document.querySelector('.viewer');
+  if (viewer) viewer.style.maxHeight = avail + 'px';
+
+  const media = viewerSlot.querySelector('img, iframe');
+  if (media) {
+    media.style.maxHeight = avail + 'px';
+    media.style.maxWidth = '100%';
+    media.style.width = 'auto';
+  }
+}
+
+    window.addEventListener('resize', fitMedia);
   </script>
 </body>
 </html>
