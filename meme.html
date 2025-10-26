@@ -143,6 +143,17 @@
       </a>
 
       <!-- 유튜브 카드 -->
+
+      <a class="card"
+         href="https://www.youtube.com/watch?v=Dz_EkjVNWFU&t=55s"
+         data-title="p. 22 헬로 월드!"
+         data-text="<strong>p. 22 헬로 월드!</strong><br><span class="thin">하이드 온 월드의 유튜브 인트로 인사말은 세 사람의 것을 합쳤다. 프리스타일 랩을 하는 마이크스웨거의 호스트 허클베리피가 내뱉는 시그니쳐 사운드 ‘헬로 월드’에 인터넷 방송인 우왁굳의 ‘안녕하세요. 사랑하는 유튜브 시청자 여러분들’이 더하고, 그 뒤에는 쫀득TV의 ‘오늘 할 콘텐츠!’를 합쳤다.</span>"
+         data-source="YouTube" target="_blank" rel="noopener">
+        <div class="thumb" style="background-image:url('https://www.youtube.com/watch?v=Dz_EkjVNWFU')"></div>
+        <div class="card-title">p136 무… 무슨</div>
+        <div class="card-meta">YouTube</div>
+      </a>
+        
       <a class="card"
          href="https://www.youtube.com/watch?v=MZcAnvE4gQ4"
          data-title="p136 무… 무슨"
@@ -193,20 +204,26 @@
   </div>
 
   <script>
-    function toYouTubeEmbed(url){
-      try{
-        const u=new URL(url);
-        if(u.hostname.includes('youtube.com')){
-          const v=u.searchParams.get('v');
-          if(v) return `https://www.youtube.com/embed/${v}`;
-        }
-        if(u.hostname.includes('youtu.be')){
-          const id=u.pathname.slice(1);
-          if(id) return `https://www.youtube.com/embed/${id}`;
-        }
-      }catch(e){}
-      return null;
+function toYouTubeEmbed(url){
+  try{
+    const u = new URL(url);
+    let start = '';
+    if (u.searchParams.has('t')) {
+      const t = u.searchParams.get('t').replace('s','');
+      start = `?start=${parseInt(t)}`;
     }
+    if (u.hostname.includes('youtube.com')) {
+      const v = u.searchParams.get('v');
+      if (v) return `https://www.youtube.com/embed/${v}${start}`;
+    }
+    if (u.hostname.includes('youtu.be')) {
+      const id = u.pathname.slice(1);
+      if (id) return `https://www.youtube.com/embed/${id}${start}`;
+    }
+  } catch(e){}
+  return null;
+}
+
 
     function isImageUrl(url){
       return /\.(png|jpe?g|webp|gif|bmp|avif)(\?.*)?$/i.test(url||'');
