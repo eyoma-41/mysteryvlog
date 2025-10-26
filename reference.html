@@ -49,9 +49,9 @@
     .desc strong{font-weight:800;color:#111}
     .desc .thin{font-weight:300;color:#6b7280}
 
-    /* ★ 단일 영상(유튜브) 크게: 16:9 래퍼로 고정 */
-    .video-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#000}
-    .video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    /* ★ 단일 영상 크게: 보편 호환 16:9 래퍼(padding-top) */
+    .video-wrap{position:relative;width:100%;background:#000;padding-top:56.25%; /* 16:9 */ }
+    .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
     /* 하단 탭 */
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
@@ -204,7 +204,7 @@
       currentIframe=null;
       const yt=toYouTubeEmbed(url);
       const wrap=document.createElement('div');
-      wrap.className='video-wrap';         // ★ 16:9 크게
+      wrap.className='video-wrap';         // ★ 16:9 크게(패딩 방식)
       const iframe=document.createElement('iframe');
       iframe.src=yt? yt.embed : url;       // autoplay 없음
       iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
