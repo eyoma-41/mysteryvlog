@@ -59,12 +59,12 @@
       position:relative;z-index:1;user-select:none;touch-action: pan-x;
         -ms-overflow-style: none;     /* IE/Edge */
   scrollbar-width: none;        /* Firefox */
-    cursor: grab;   
+    cursor: grab;   }
       
 .cards:active{ cursor: grabbing; }   
 .cards::-webkit-scrollbar{
   display: none;                /* Chrome/Safari */
-}
+
     }
     .card{
       flex:0 0 auto;scroll-snap-align:start;width:160px;height:110px;
@@ -587,8 +587,8 @@ function onPointerUp(e){
     drag.raf = requestAnimationFrame(step);
   }
   if (Math.abs(v) > 0.5) step();
-+ // 드래그 후 발생하는 클릭을 막기 위해 잠깐 유지했다가 해제
-+ if (drag.moved) setTimeout(()=>{ drag.moved = false; }, 50);
+// 드래그 후 발생하는 클릭을 막기 위해 잠깐 유지했다가 해제
+if (drag.moved) setTimeout(()=>{ drag.moved = false; }, 50);
   
 }
 
