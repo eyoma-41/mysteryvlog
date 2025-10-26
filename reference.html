@@ -24,6 +24,25 @@
     .card-title{font-weight:800;font-size:18px;line-height:1.4}
     .card-meta{margin-top:6px;font-size:13px;color:var(--muted)}
 
+.viewer img {
+  max-width: 100%;
+  max-height: calc(100vh - 280px); /* 상단/하단 여백 고려 */
+  object-fit: contain;
+  background: #000;
+}
+
+.viewer {
+  position: relative;
+  background: #000;
+  display: grid;
+  place-items: center;
+  max-height: calc(100vh - 280px);
+  overflow: hidden; /* 초과 영역 잘라냄 */
+}
+
+    
+
+    
     /* 백드롭 & 모달 */
     .backdrop{position:fixed;inset:0;background:rgba(17,19,24,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
     .backdrop.show{display:flex}
