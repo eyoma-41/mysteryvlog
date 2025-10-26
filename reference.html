@@ -16,10 +16,9 @@
     h1{margin:8px 0 12px}
     .caption{font-size:13px;color:var(--muted);margin-bottom:12px}
 
-    /* 카드 그리드 — 크게, 2열 기본 */
+    /* 카드 2열 큰 사이즈 */
     .grid{display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:24px}
     @media (min-width:680px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
-    @media (min-width:1200px){ .grid{grid-template-columns:repeat(2,minmax(0,1fr));} }
 
     .card{display:block;border:1px solid var(--border);border-radius:20px;background:#fff;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s}
     .card:hover{transform:translateY(-4px)}
@@ -28,23 +27,22 @@
     .card-title{font-weight:800;font-size:18px;line-height:1.4}
     .card-meta{margin-top:6px;font-size:13px;color:var(--muted)}
 
-    /* 하단 탭 */
+    .modal-desc strong{font-weight:800}
+    .modal-desc .thin{font-weight:300;color:#6b7280}
+
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
     .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
     .tab svg{width:22px;height:22px}
     .tab.active{color:var(--brand);font-weight:800}
 
-    /* 모달 */
     .backdrop{position:fixed;inset:0;background:rgba(17,19,24,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
     .backdrop.show{display:flex}
 
     .modal{width:min(1200px,100%);max-height:calc(100vh - 120px);background:#000;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-rows:auto 1fr auto auto}
     .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid var(--border)}
     .modal-title{font-weight:900;font-size:18px}
-
     .viewer{position:relative;background:#000;display:grid;place-items:center}
     .viewer img,.viewer iframe{max-width:100%;max-height:calc(100vh - 320px);object-fit:contain;background:#000}
-
     .nav-btn{position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.85);width:50px;height:50px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
     .nav-btn:hover{background:#fff}
     .nav-prev{left:16px}
@@ -60,20 +58,18 @@
 
     .close-x{border:none;background:transparent;cursor:pointer}
     .close-x svg{width:24px;height:24px}
-
-    .sr-only{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>레퍼런스</h1>
-    <div class="caption">카드 크기를 키워 2열로 배치했습니다. 이미지/영상 캐러셀 팝업 지원.</div>
+    <div class="caption">카드 크기를 키워 2열로 배치했습니다. 이미지/영상 캐러셀 팝업 지원. strong / thin 텍스트 스타일 가능.</div>
 
     <div id="refGrid" class="grid">
-      <!-- 예시 1: 이미지 단일 -->
+      <!-- 예시 1: 단일 이미지 -->
       <a class="card" href="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme01.png"
          data-title="샘플 — 단일 이미지"
-         data-text="<strong>단일 이미지</strong> 예시 설명입니다."
+         data-text="<strong>단일 이미지</strong> <span class='thin'>얇은 텍스트 예시</span>"
          data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme01.png">
         <div class="thumb" style="background-image:url('https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme01.png')"></div>
         <div class="card-body">
@@ -82,10 +78,22 @@
         </div>
       </a>
 
-      <!-- 예시 2: 영상 단일 -->
+      <!-- 예시 2: 여러 이미지 -->
+      <a class="card" href="#"
+         data-title="샘플 — 여러 이미지"
+         data-text="<strong>여러 이미지</strong> <span class='thin'>캐러셀 예시</span>"
+         data-images="https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme02.png, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme03.jpg, https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme04.jpg">
+        <div class="thumb" style="background-image:url('https://raw.githubusercontent.com/eyoma-41/mysteryvlog/main/img/meme02.png')"></div>
+        <div class="card-body">
+          <div class="card-title">샘플 — 여러 이미지</div>
+          <div class="card-meta">Image × 3</div>
+        </div>
+      </a>
+
+      <!-- 예시 3: 단일 영상 -->
       <a class="card" href="https://www.youtube.com/watch?v=Dz_EkjVNWFU&t=55s"
          data-title="샘플 — 단일 영상"
-         data-text="<strong>단일 영상</strong> 예시."
+         data-text="<strong>단일 영상</strong> <span class='thin'>유튜브 타임스탬프 지원</span>"
          data-videos="https://www.youtube.com/watch?v=Dz_EkjVNWFU&t=55s">
         <div class="thumb" style="background-image:url('https://img.youtube.com/vi/Dz_EkjVNWFU/hqdefault.jpg')"></div>
         <div class="card-body">
@@ -113,7 +121,6 @@
           <svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         </button>
       </div>
-
       <div class="viewer">
         <button class="nav-btn nav-prev" id="btnPrev" aria-label="이전">
           <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
@@ -123,12 +130,10 @@
           <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         </button>
       </div>
-
       <div class="thumbstrip" id="thumbstrip" aria-label="썸네일"></div>
-
       <div class="modal-footer">
         <div class="counter" id="counter">1 / 1</div>
-        <div class="desc" id="modalDesc"></div>
+        <div class="desc modal-desc" id="modalDesc"></div>
       </div>
     </div>
   </div>
@@ -252,8 +257,3 @@
     btnPrev.addEventListener('click',e=>{e.stopPropagation();show(idx-1)});
     btnNext.addEventListener('click',e=>{e.stopPropagation();show(idx+1)});
     closeX.addEventListener('click',e=>{e.stopPropagation();closeModal()});
-    backdrop.addEventListener('click',closeModal);
-    modal.addEventListener('click',e=>e.stopPropagation());
-  </script>
-</body>
-</html>
