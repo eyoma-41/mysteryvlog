@@ -1,82 +1,94 @@
 <!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>미스터리 브이로그 — 비하인드</title>
-  <style>
-    :root{
-      --bg:#fafafa;--surface:#ffffff;--text:#111318;--muted:#6b7280;--line:#eeeeee;--brand:#ff0033;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>미스터리 브이로그 — 비하인드</title>
+<style>
+  :root{
+    --bg:#f7f7f8; --surface:#fff; --text:#111318; --muted:#6b7280; --line:#eee; --brand:#ff0033;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,system-ui,"Noto Sans KR",sans-serif}
+  .container{max-width:920px;margin:0 auto;padding:20px 16px 96px}
 
-    .container{max-width:720px;margin:0 auto;padding:20px 16px 92px}
+  /* 페이지 타이틀 */
+  .page-title{font-size:22px;font-weight:800;margin:4px 0 10px}
+  .page-sub{color:var(--muted);font-size:14px;margin:0 0 18px}
 
-    .page-title{font-size:22px;font-weight:800;margin:4px 0 10px}
-    .page-sub{color:var(--muted);font-size:14px;margin:0 0 18px}
+  /* 상단 2개 카드 (YouTube Studio 느낌) */
+  .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-bottom:18px}
+  .stat-card{
+    background:var(--surface);
+    border:1px solid var(--line);       /* 테두리 연하게 */
+    border-radius:18px;
+    padding:14px 16px;
+  }
+  .stat-k{font-size:12px;color:var(--muted)}
+  .stat-v{font-size:28px;font-weight:800;margin-top:6px}
+  @media (max-width:640px){.stat-grid{grid-template-columns:1fr}}
 
-    /* 리스트: 테두리 제거, 구분선만 매우 연하게 */
-    .list{display:flex;flex-direction:column;background:var(--surface);border:none;border-radius:12px;overflow:hidden}
-    .row{
-      display:grid;grid-template-columns:88px 1fr auto;
-      align-items:center;gap:10px;
-      padding:14px 12px;
-      border-top:1px solid var(--line);   /* 연한 회색 라인 */
-      cursor:pointer;background:var(--surface);
-      transition:background .15s ease;
-    }
-    .row:first-child{border-top:none}
-    .row:hover{background:#f8f9fb}
-    .page{font-variant-numeric:tabular-nums;font-weight:700}
-    .page small{display:block;color:#374151;font-weight:600;font-size:11px;opacity:.7}
-    .title{font-size:15px;line-height:1.35}
-    .chev{width:18px;height:18px;color:#9aa1a9}
+  /* 리스트(검은 테두리 제거, 얇은 분리선만) */
+  .list{display:flex;flex-direction:column;background:var(--surface);border:none;border-radius:14px;overflow:hidden}
+  .row{
+    display:grid;grid-template-columns:88px 1fr auto;align-items:center;gap:10px;
+    padding:14px 12px;background:var(--surface);
+    border-top:1px solid var(--line);   /* 아주 연한 구분선 */
+    cursor:pointer; transition:background .15s;
+  }
+  .row:first-child{border-top:none}
+  .row:hover{background:#f8f9fb}
+  .page{font-variant-numeric:tabular-nums;font-weight:700}
+  .page small{display:block;color:#374151;font-weight:600;font-size:11px;opacity:.7}
+  .title{font-size:15px;line-height:1.35}
+  .chev{width:18px;height:18px;color:#9aa1a9}
 
-    /* 팝업: 테두리/검은 외곽선 삭제, 라운드만 */
-    .overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,.25);
-      opacity:0;visibility:hidden;transition:.18s;z-index:50;
-    }
-    .overlay.show{opacity:1;visibility:visible}
-    .modal{
-      position:fixed;left:50%;top:50%;
-      transform:translate(-50%,-50%) scale(.98);
-      opacity:0;visibility:hidden;
-      width:min(820px,94vw);max-height:84vh;overflow:auto;
-      background:#fff;border:none;border-radius:16px;  /* 테두리 제거 */
-      transition:.18s;z-index:51;
-    }
-    .modal.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
-    .modal-header{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
-    .modal-code{font-size:12px;color:var(--muted)}
-    .modal-title{font-size:18px;font-weight:800}
-    .close{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px 10px;cursor:pointer;font-size:13px}
-    .modal-body{font-size:14px;line-height:1.65;color:#333;padding:16px 18px}
+  /* 팝업(외곽선/검은 테두리 없음) */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);opacity:0;visibility:hidden;transition:.18s;z-index:50}
+  .overlay.show{opacity:1;visibility:visible}
+  .modal{
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(.98);
+    opacity:0;visibility:hidden;width:min(820px,94vw);max-height:84vh;overflow:auto;
+    background:#fff;border:none;border-radius:16px;transition:.18s;z-index:51
+  }
+  .modal.show{opacity:1;visibility:visible;transform:translate(-50%,-50%) scale(1)}
+  .modal-header{display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .modal-code{font-size:12px;color:var(--muted)}
+  .modal-title{font-size:18px;font-weight:800}
+  .close{margin-left:auto;border:1px solid var(--line);background:#fff;border-radius:12px;padding:6px 10px;cursor:pointer;font-size:13px}
+  .modal-body{font-size:14px;line-height:1.65;color:#333;padding:16px 18px}
 
-    /* 미디어: 검은 배경/테두리 제거, 이미지만 깔끔하게 */
-    .media{border:none;border-radius:8px;overflow:hidden;margin:0 0 14px;background:transparent}
-    .media img{display:block;width:100%;height:auto}
-    .media .video16x9{position:relative;width:100%;padding-top:56.25%}
-    .media .video16x9>*{position:absolute;inset:0;width:100%;height:100%;border:none}
+  /* 미디어(썸네일 느낌, 테두리/검정배경 없음) */
+  .media{border:none;border-radius:10px;overflow:hidden;margin:0 0 14px;background:transparent}
+  .media img{display:block;width:100%;height:auto}
+  .video16x9{position:relative;width:100%;padding-top:56.25%}
+  .video16x9>*{position:absolute;inset:0;width:100%;height:100%;border:none}
 
-    /* 하단 탭(그대로) */
-    .tabs{
-      position:fixed;left:0;right:0;bottom:0;
-      background:#fff;border-top:1px solid var(--line);
-      display:grid;grid-template-columns:repeat(5,1fr);
-      height:72px;z-index:40
-    }
-    .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
-    .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
-  </style>
+  /* 하단 탭 */
+  .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);
+    display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
+  .tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;color:#333;text-decoration:none}
+  .tab svg{width:22px;height:22px}.tab.active{color:var(--brand);font-weight:800}
+</style>
 </head>
 <body>
   <div class="container">
     <h1 class="page-title">비하인드</h1>
-    <p class="page-sub">유튜브 스튜디오 톤 유지. 검은 테두리 없이 깔끔한 리스트 + 팝업.</p>
+    <p class="page-sub">YouTube Studio 톤의 상단 카드 + 검은 테두리 없는 깔끔한 리스트. 항목 클릭 시 팝업.</p>
 
+    <!-- 상단 2개 카드 -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-k">최근 28일 등록</div>
+        <div class="stat-v">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-k">최근 28일 스틸</div>
+        <div class="stat-v">0</div>
+      </div>
+    </div>
+
+    <!-- 목록 -->
     <div class="list">
       <!-- 텍스트 -->
       <button class="row"
@@ -90,7 +102,7 @@
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-      <!-- 이미지 + 텍스트 (유튜브 스튜디오 느낌의 썸네일 유지) -->
+      <!-- 이미지 -->
       <button class="row"
         data-page="118" data-title="엠디랩프레스 행사 사이트"
         data-type="image"
@@ -101,7 +113,7 @@
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-      <!-- 동영상 + 텍스트 -->
+      <!-- 영상 -->
       <button class="row"
         data-page="096" data-title="2025 디자인캠프 in 영등포"
         data-type="video"
@@ -112,7 +124,7 @@
         <svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
       </button>
 
-      <!-- 이미지 + 텍스트 -->
+      <!-- 이미지 -->
       <button class="row"
         data-page="084" data-title="Riso + Foil The Palette Index"
         data-type="image"
@@ -147,85 +159,75 @@
     <a class="tab" href="revenue.html"><svg viewBox="0 0 24 24"><path d="M4 18s3-6 8-6 8 6 8 6M10 9a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z" stroke="currentColor" stroke-width="2" fill="none"/></svg>수익창출</a>
   </nav>
 
-  <script>
-    const $ = (s,p=document)=>p.querySelector(s);
-    const $$ = (s,p=document)=>Array.from(p.querySelectorAll(s));
+<script>
+  const $=(s,p=document)=>p.querySelector(s);
+  const $$=(s,p=document)=>Array.from(p.querySelectorAll(s));
+  const overlay=$("#overlay"), modal=$("#modal"), mCode=$("#modal-code"), mTitle=$("#modal-title"), mDesc=$("#modal-desc"), closeBtn=$("#closeBtn");
+  let lastFocused=null, openedBy=null;
 
-    const overlay=$("#overlay"),modal=$("#modal"),mCode=$("#modal-code"),mTitle=$("#modal-title"),mDesc=$("#modal-desc"),closeBtn=$("#closeBtn");
-    let lastFocused=null,openedBy=null;
+  function renderContent(btn){
+    const type=(btn.dataset.type||"text").toLowerCase();
+    const page=String(btn.dataset.page||"").padStart(3,"0");
+    const title=btn.dataset.title||"";
+    const text=(btn.dataset.text||"").trim();
+    const img=btn.dataset.img||"";
+    const video=btn.dataset.video||"";
 
-    function renderContent(btn){
-      const type=(btn.dataset.type||"text").toLowerCase();
-      const page=String(btn.dataset.page).padStart(3,'0');
-      const title=btn.dataset.title||"";
-      const text=(btn.dataset.text||"").trim();
-      const img=btn.dataset.img||"";
-      const video=btn.dataset.video||"";
+    mCode.textContent=`p. ${page}`;
+    mTitle.textContent=title;
+    mDesc.innerHTML="";
 
-      mCode.textContent=`p. ${page}`;
-      mTitle.textContent=title;
-      mDesc.innerHTML="";
-
-      if(type==="text"){
-        const p=document.createElement("p");
-        p.textContent=text||"내용이 없습니다.";
-        mDesc.appendChild(p);
-      }else if(type==="image"){
-        if(img){
-          const block=document.createElement("div");block.className="media";
-          const el=document.createElement("img");el.src=img;el.alt=title||"image";
-          block.appendChild(el);mDesc.appendChild(block);
+    if(type==="text"){
+      const p=document.createElement("p"); p.textContent=text||"내용이 없습니다."; mDesc.appendChild(p);
+    }else if(type==="image"){
+      if(img){ const b=document.createElement("div"); b.className="media";
+        const el=document.createElement("img"); el.src=img; el.alt=title||"image";
+        b.appendChild(el); mDesc.appendChild(b); }
+      if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
+    }else if(type==="video"){
+      if(video){ const b=document.createElement("div"); b.className="media";
+        const wrap=document.createElement("div"); wrap.className="video16x9"; let node;
+        if(/(youtube\.com|youtu\.be)/i.test(video)){
+          node=document.createElement("iframe");
+          node.src=video.includes("embed")?video:`https://www.youtube.com/embed/${video}`;
+          node.title=title||"video"; node.frameBorder="0";
+          node.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+          node.allowFullscreen=true;
+        }else{
+          node=document.createElement("video"); node.src=video; node.controls=true; node.playsInline=true; node.preload="metadata";
         }
-        if(text){const t=document.createElement("p");t.textContent=text;mDesc.appendChild(t);}
-      }else if(type==="video"){
-        if(video){
-          const block=document.createElement("div");block.className="media";
-          const wrap=document.createElement("div");wrap.className="video16x9";
-          let node;
-          if(/(youtube\.com|youtu\.be)/i.test(video)){
-            node=document.createElement("iframe");
-            node.src=video.includes("embed")?video:`https://www.youtube.com/embed/${video}`;
-            node.title=title||"video";
-            node.frameBorder="0";
-            node.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-            node.allowFullscreen=true;
-          }else{
-            node=document.createElement("video");
-            node.src=video;node.controls=true;node.playsInline=true;node.preload="metadata";
-          }
-          wrap.appendChild(node);block.appendChild(wrap);mDesc.appendChild(block);
-        }
-        if(text){const t=document.createElement("p");t.textContent=text;mDesc.appendChild(t);}
-      }
+        wrap.appendChild(node); b.appendChild(wrap); mDesc.appendChild(b); }
+      if(text){ const t=document.createElement("p"); t.textContent=text; mDesc.appendChild(t); }
     }
+  }
 
-    function openModal(btn){
-      lastFocused=document.activeElement;openedBy=btn;
-      renderContent(btn);
-      document.body.style.overflow="hidden";
-      overlay.classList.add("show");modal.classList.add("show");
-      overlay.setAttribute("aria-hidden","false");
-      closeBtn.focus();
-    }
-    function closeModal(){
-      overlay.classList.remove("show");modal.classList.remove("show");
-      overlay.setAttribute("aria-hidden","true");
-      document.body.style.overflow="";
-      if(lastFocused) lastFocused.focus();
-      openedBy=null;
-    }
+  function openModal(btn){
+    lastFocused=document.activeElement; openedBy=btn;
+    renderContent(btn);
+    document.body.style.overflow="hidden";
+    overlay.classList.add("show"); modal.classList.add("show");
+    overlay.setAttribute("aria-hidden","false");
+    closeBtn.focus();
+  }
+  function closeModal(){
+    overlay.classList.remove("show"); modal.classList.remove("show");
+    overlay.setAttribute("aria-hidden","true");
+    document.body.style.overflow="";
+    if(lastFocused) lastFocused.focus();
+    openedBy=null;
+  }
 
-    $$(".row").forEach(row=>{
-      row.addEventListener("click",(e)=>{
-        e.preventDefault();
-        if(openedBy===row && modal.classList.contains("show")){closeModal();return;}
-        if(modal.classList.contains("show")){renderContent(row);openedBy=row;return;}
-        openModal(row);
-      });
+  $$(".row").forEach(row=>{
+    row.addEventListener("click",(e)=>{
+      e.preventDefault();
+      if(openedBy===row && modal.classList.contains("show")){ closeModal(); return; }
+      if(modal.classList.contains("show")){ renderContent(row); openedBy=row; return; }
+      openModal(row);
     });
-    closeBtn.addEventListener("click",closeModal);
-    overlay.addEventListener("click",closeModal);
-    window.addEventListener("keydown",(e)=>{if(e.key==="Escape")closeModal();});
-  </script>
+  });
+  closeBtn.addEventListener("click",closeModal);
+  overlay.addEventListener("click",closeModal);
+  window.addEventListener("keydown",(e)=>{ if(e.key==="Escape") closeModal(); });
+</script>
 </body>
 </html>
