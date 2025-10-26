@@ -549,8 +549,11 @@ const MIN_V = 0.25;     // 관성 정지 임계 속도(px/frame)
 
 // 클릭 억제: 드래그한 프레임에 클릭이 전파되지 않도록
 listEl.addEventListener('click', (e)=>{
-  if (drag.moved) { e.preventDefault(); e.stopPropagation(); 
-                      drag.moved = false; // ✅ 이 줄만 추가!}
+  if (drag.moved) { 
+    e.preventDefault(); 
+    e.stopPropagation(); 
+    drag.moved = false; // ✅ 이 줄만 추가!
+  }
 }, true);
 
 // Pointer Events로 통합(마우스+터치)
