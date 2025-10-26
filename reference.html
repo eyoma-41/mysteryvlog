@@ -45,6 +45,26 @@
   background:#000;
 }
 
+.video-wrap {
+  position: relative;
+  width: 100%;
+  background: #000;
+}
+
+.video-wrap::before {
+  content: "";
+  display: block;
+  padding-top: 56.25%; /* 16:9 비율 유지 */
+}
+
+.video-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+}
 
     
 
@@ -515,7 +535,7 @@ function fitMedia() {
   const viewer = document.querySelector('.viewer');
   if (viewer) viewer.style.maxHeight = avail + 'px';
 
-  const media = viewerSlot.querySelector('img, iframe');
+  const media = viewerSlot.querySelector('img');
   if (media) {
     media.style.maxHeight = avail + 'px';
     media.style.maxWidth = '100%';
