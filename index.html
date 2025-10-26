@@ -558,7 +558,6 @@ function onPointerDown(e){
   drag.lastX = e.clientX;
   drag.lastT = performance.now();
   drag.vx = 0;
-  listEl.setPointerCapture?.(e.pointerId);
   cancelAnimationFrame(drag.raf);
 }
 function onPointerMove(e){
@@ -577,7 +576,6 @@ function onPointerMove(e){
 function onPointerUp(e){
   if(!drag.down) return;
   drag.down = false;
-  listEl.releasePointerCapture?.(e.pointerId);
 
   // px/ms -> px/frame(약 16.67ms 기준)
   let v = drag.vx * 16.67;
@@ -589,6 +587,9 @@ function onPointerUp(e){
     drag.raf = requestAnimationFrame(step);
   }
   if (Math.abs(v) > 0.5) step();
++ // 드래그 후 발생하는 클릭을 막기 위해 잠깐 유지했다가 해제
++ if (drag.moved) setTimeout(()=>{ drag.moved = false; }, 50);
+  
 }
 
 // 이벤트 바인딩
