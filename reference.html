@@ -30,10 +30,38 @@
     .modal{width:min(1200px,100%);max-height:calc(100vh - 120px);background:#000;border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);overflow:hidden;display:grid;grid-template-rows:auto 1fr auto}
     .modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#fff;border-bottom:1px solid var(--border)}
     .modal-title{font-weight:900;font-size:18px}
-    .viewer{position:relative;background:#000;display:grid;place-items:center}
-    .viewer img,.viewer iframe{max-width:100%;object-fit:contain;background:#000}
 
-    /* 이미지 캐러셀 전용 컨트롤 */
+    /* viewer: 내부 컨텐츠를 가로세로 꽉 차게 */
+    .viewer{position:relative;background:#000;display:grid;place-items:center}
+    #viewerSlot{
+      width:100%;
+      height:100%;
+      justify-self:stretch;   /* ← 가로 꽉 */
+      align-self:stretch;     /* ← 세로 꽉 */
+      display:flex;           /* 자식이 자연스럽게 늘어나도록 */
+      align-items:center;
+      justify-content:center;
+    }
+
+    /* 이미지는 자동 맞춤 */
+    .viewer img{max-width:100%;max-height:calc(100vh - 320px);object-fit:contain;background:#000}
+
+    /* ★ 단일 영상 크게: 16:9 래퍼 (aspect-ratio + padding fallback) */
+    .video-wrap{
+      position:relative;
+      width:100%;
+      max-width:100%;
+      background:#000;
+      aspect-ratio:16/9;              /* 신형 브라우저 */
+    }
+    /* 구형 브라우저 fallback */
+    .video-wrap::before{content:"";display:block;padding-top:56.25%;}
+    .video-wrap iframe{
+      position:absolute;inset:0;border:0;width:100%;height:100%;
+      background:#000;
+    }
+
+    /* 캐러셀 컨트롤 */
     .nav-btn{position:absolute;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.85);width:50px;height:50px;border-radius:50%;display:grid;place-items:center;cursor:pointer}
     .nav-btn:hover{background:#fff}
     .nav-prev{left:16px}
@@ -42,16 +70,12 @@
     .thumbstrip img{width:90px;height:60px;object-fit:cover;border:2px solid transparent;border-radius:6px;cursor:pointer;opacity:.8}
     .thumbstrip img.active{border-color:var(--brand);opacity:1}
 
-    /* 모달 하단 텍스트: 좌측 정렬 + 강조 */
+    /* 하단 텍스트(좌측 강조) */
     .modal-footer{display:flex;align-items:flex-start;gap:10px;justify-content:flex-start;flex-direction:column;padding:14px 0 20px 0;background:#fff;border-top:1px solid var(--border)}
     .counter{font-size:14px;color:var(--muted);padding-left:20px}
     .desc{font-size:15px;line-height:1.7;text-align:left;padding-left:20px;padding-right:20px;max-width:800px}
     .desc strong{font-weight:800;color:#111}
     .desc .thin{font-weight:300;color:#6b7280}
-
-    /* ★ 단일 영상 크게: 보편 호환 16:9 래퍼(padding-top) */
-    .video-wrap{position:relative;width:100%;background:#000;padding-top:56.25%; /* 16:9 */ }
-    .video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
 
     /* 하단 탭 */
     .tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(5,1fr);height:72px;z-index:40}
@@ -106,7 +130,6 @@
       </div>
 
       <div class="viewer">
-        <!-- 이미지 캐러셀용 버튼(영상일 땐 자동 숨김) -->
         <button class="nav-btn nav-prev" id="btnPrev" aria-label="이전">
           <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" fill="none"/></svg>
         </button>
@@ -116,7 +139,6 @@
         </button>
       </div>
 
-      <!-- 이미지 캐러셀일 때만 표시 -->
       <div class="thumbstrip" id="thumbstrip" aria-label="썸네일"></div>
 
       <div class="modal-footer">
@@ -162,10 +184,7 @@
     const btnNext=document.getElementById('btnNext');
     const closeX=document.getElementById('closeX');
 
-    let slides=[];   // 이미지 캐러셀일 때만 사용
-    let idx=0;
-    let currentIframe=null;
-    let isVideo=false;
+    let slides=[]; let idx=0; let currentIframe=null; let isVideo=false;
 
     function toYouTubeEmbed(url){
       try{
@@ -187,8 +206,8 @@
       return null;
     }
 
-    function parseList(attr){return (attr||'').split(',').map(s=>s.trim()).filter(Boolean)}
-    function parseImages(a){return parseList(a.dataset.images).map(src=>({src, thumb:src}))}
+    const parseList = (attr) => (attr||'').split(',').map(s=>s.trim()).filter(Boolean);
+    const parseImages = (a) => parseList(a.dataset.images).map(src=>({src,thumb:src}));
 
     function mountImage(src){
       viewerSlot.innerHTML='';
@@ -204,9 +223,9 @@
       currentIframe=null;
       const yt=toYouTubeEmbed(url);
       const wrap=document.createElement('div');
-      wrap.className='video-wrap';         // ★ 16:9 크게(패딩 방식)
+      wrap.className='video-wrap';
       const iframe=document.createElement('iframe');
-      iframe.src=yt? yt.embed : url;       // autoplay 없음
+      iframe.src=yt? yt.embed : url; // autoplay 없음
       iframe.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
       iframe.referrerPolicy='strict-origin-when-cross-origin';
       iframe.allowFullscreen=true;
@@ -236,28 +255,19 @@
     function openModal(a){
       modalTitle.textContent=a.dataset.title||a.querySelector('.card-title')?.textContent||'';
       modalDesc.innerHTML=a.dataset.text||'';
-
-      const videoUrl=a.dataset.video; // 단일만 허용
+      const videoUrl=a.dataset.video;
       isVideo=!!videoUrl;
 
       if(isVideo){
-        // 비디오는 캐러셀 비활성: 컨트롤/썸네일 숨김
-        btnPrev.style.display='none';
-        btnNext.style.display='none';
-        thumbstrip.style.display='none';
-        counter.textContent='';
-        slides=[]; // 비우기
-        mountVideo(videoUrl);
+        btnPrev.style.display='none'; btnNext.style.display='none';
+        thumbstrip.style.display='none'; counter.textContent='';
+        slides=[]; mountVideo(videoUrl);
       }else{
-        // 이미지는 캐러셀 활성
         slides=parseImages(a);
-        btnPrev.style.display='';
-        btnNext.style.display='';
+        btnPrev.style.display=''; btnNext.style.display='';
         thumbstrip.style.display='';
-        buildThumbs();
-        show(0);
+        buildThumbs(); show(0);
       }
-
       backdrop.classList.add('show');
       backdrop.setAttribute('aria-hidden','false');
     }
@@ -268,12 +278,9 @@
       if(currentIframe){currentIframe.src='about:blank';currentIframe=null}
     }
 
-    // 이벤트
     grid.addEventListener('click',e=>{
-      const a=e.target.closest('a.card');
-      if(!a) return;
-      e.preventDefault();
-      openModal(a);
+      const a=e.target.closest('a.card'); if(!a) return;
+      e.preventDefault(); openModal(a);
     });
     btnPrev.addEventListener('click',e=>{e.stopPropagation(); if(!isVideo) show(idx-1)});
     btnNext.addEventListener('click',e=>{e.stopPropagation(); if(!isVideo) show(idx+1)});
