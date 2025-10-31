@@ -114,7 +114,7 @@
   <script>
     // ---- Settings ---------------------------------------------------------
     // 기본 이동 경로 (현재 인트로 앞에 두고 싶은 페이지 경로로 교체)
-    const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'intro.html';
+    const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'index.html';
 
     // ---- Theme toggle -----------------------------------------------------
     const themeBtn = document.getElementById('themeBtn');
