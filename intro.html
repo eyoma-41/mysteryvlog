@@ -4,15 +4,17 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Intro · EYOMA</title>
-  <meta name="description" content="Text-only pre-intro for Mystery Vlog"/>
+  <meta name="description" content="미스터리 브이로그 프리 인트로 페이지"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
   <style>
-    :root{ --bg:#0b0c0f; --text:#f6f7fb; --muted:#a7adbb; --brand:#ff0033; --line:rgba(255,255,255,.12);}
-    *{ box-sizing:border-box }
-    html,body{ height:100% }
+    :root{
+      --bg:#0b0c0f; --text:#f6f7fb; --muted:#a7adbb; --brand:#ff0033; --line:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;padding:0;}
     body{
-      margin:0; background:
+      background:
         radial-gradient(1200px 600px at 80% 10%,rgba(255,0,51,.08),transparent),
         radial-gradient(900px 480px at 10% 90%,rgba(255,0,51,.06),transparent),
         var(--bg);
@@ -21,77 +23,75 @@
       overflow:hidden;
     }
 
-    .wrap{ height:100%; display:grid; place-items:center }
+    .wrap{height:100%;display:grid;place-items:center}
     .stack{
-      display:grid; gap:18px; text-align:center; max-width:960px; padding:24px;
-      transform: translateY(10px); opacity:0; animation:fadeIn .8s ease forwards;
+      display:grid;gap:18px;text-align:center;max-width:960px;padding:24px;
+      transform:translateY(10px);opacity:0;animation:fadeIn .8s ease forwards;
     }
-    .kicker{ letter-spacing:.18em; text-transform:uppercase; color:var(--muted); font-size:12px }
-    h1{ margin:0; font-size:clamp(28px,6vw,64px); line-height:1.08; font-weight:900; cursor:pointer }
-    .sub{ color:var(--muted); font-size:clamp(13px,2.3vw,18px) }
+    .kicker{letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-size:12px}
+    h1{margin:0;font-size:clamp(28px,6vw,64px);line-height:1.08;font-weight:900;cursor:pointer}
+    .sub{color:var(--muted);font-size:clamp(13px,2.3vw,18px)}
 
     .type{
-      margin:6px auto 0; width:ch; white-space:nowrap; border-right:2px solid var(--text);
-      overflow:hidden; font-weight:700; font-size:clamp(16px,2.8vw,24px);
-      animation: typing 1.8s steps(24,end) 0.6s both, caret .9s step-end infinite;
+      margin:6px auto 0;width:ch;white-space:nowrap;border-right:2px solid var(--text);
+      overflow:hidden;font-weight:700;font-size:clamp(16px,2.8vw,24px);
+      animation:typing 1.8s steps(24,end) 0.6s both,caret .9s step-end infinite;
     }
 
-    .cta{ margin-top:10px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap }
+    .cta{margin-top:10px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
     .btn{
-      appearance:none; border:none; cursor:pointer; padding:12px 16px; border-radius:999px;
-      background:var(--text); color:#0b0c0f; font-weight:800; font-size:14px;
-      transition: transform .12s ease, opacity .2s ease;
+      appearance:none;border:none;cursor:pointer;padding:12px 16px;border-radius:999px;
+      background:var(--text);color:#0b0c0f;font-weight:800;font-size:14px;
+      transition:transform .12s ease,opacity .2s ease;
     }
-    .btn.ghost{ background:transparent; color:var(--text); border:1px solid rgba(246,247,251,.2) }
-    .btn:active{ transform:translateY(1px) }
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(246,247,251,.2)}
+    .btn:active{transform:translateY(1px)}
 
-    .line{ opacity:0; transform:translateY(6px) }
-    .line.show{ animation:reveal .6s ease forwards }
+    .line{opacity:0;transform:translateY(6px)}
+    .line.show{animation:reveal .6s ease forwards}
 
-    .hint{ position:fixed; left:16px; bottom:18px; color:var(--muted); font-size:12px }
-
-    /* ---- Info panel ---- */
+    /* Info panel */
     .panel{
-      position:fixed; left:0; right:0; bottom:-65vh; height:65vh; background:rgba(14,16,20,.92);
-      border-top:1px solid var(--line); backdrop-filter:saturate(120%) blur(6px);
-      transition:transform .35s ease, bottom .35s ease; transform:translateY(0);
-      display:grid; grid-template-rows:auto 1fr; box-shadow:0 -8px 20px rgba(0,0,0,.35);
+      position:fixed;left:0;right:0;bottom:-65vh;height:65vh;
+      background:rgba(14,16,20,.92);border-top:1px solid var(--line);
+      backdrop-filter:saturate(120%) blur(6px);
+      transition:bottom .35s ease;
+      display:grid;grid-template-rows:auto 1fr;
+      box-shadow:0 -8px 20px rgba(0,0,0,.35);
     }
-    .panel.open{ bottom:0 }
+    .panel.open{bottom:0}
     .panel header{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:12px 16px; border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 16px;border-bottom:1px solid var(--line);
     }
-    .tabs{ display:flex; gap:6px; flex-wrap:wrap }
+    .tabs{display:flex;gap:6px;flex-wrap:wrap}
     .tab{
-      padding:8px 10px; border:1px solid var(--line); color:var(--text); border-radius:10px; font-size:12px; cursor:pointer;
+      padding:8px 10px;border:1px solid var(--line);
+      color:var(--text);border-radius:10px;font-size:12px;cursor:pointer;
       background:transparent;
     }
-    .tab[aria-selected="true"]{ background:var(--text); color:#0b0c0f; font-weight:800 }
-    .panel .body{ overflow:auto; padding:14px 16px }
-    .section{ display:none }
-    .section.active{ display:block }
-
-    .chips{ display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 10px }
-    .chip{ border:1px solid var(--line); border-radius:999px; padding:6px 10px; font-size:12px; color:var(--muted); cursor:pointer }
-    .chip.active{ color:#0b0c0f; background:var(--text); font-weight:800 }
-
-    .meter{ height:8px; border-radius:999px; background:#1b1f27; overflow:hidden; border:1px solid var(--line); margin:10px 0 2px }
-    .meter > i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,#ff4d6d,#ff0033); transition:width .5s ease }
-
-    /* exit overlay */
-    .wipe{ position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none }
-
-    @keyframes reveal{ to{ opacity:1; transform:none } }
-    @keyframes fadeIn{ to{ transform:none; opacity:1 } }
-    @keyframes typing{ from{ width:0 } to{ width:24ch } }
-    @keyframes caret{ 50%{ border-color:transparent } }
-    @keyframes out { to{ opacity:1 } }
-
-    @media (max-width:420px){
-      .cta{ gap:8px } .btn{ padding:10px 14px; font-size:13px }
-      .panel{ height:72vh }
+    .tab[aria-selected="true"]{background:var(--text);color:#0b0c0f;font-weight:800}
+    .panel .body{overflow:auto;padding:14px 16px}
+    .section{display:none}
+    .section.active{display:block}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px}
+    .chip{
+      border:1px solid var(--line);border-radius:999px;padding:6px 10px;
+      font-size:12px;color:var(--muted);cursor:pointer;
     }
+    .chip.active{color:#0b0c0f;background:var(--text);font-weight:800}
+    .meter{height:8px;border-radius:999px;background:#1b1f27;overflow:hidden;border:1px solid var(--line);margin:10px 0 2px}
+    .meter>i{display:block;height:100%;width:0%;background:linear-gradient(90deg,#ff4d6d,#ff0033);transition:width .5s ease}
+    .hint{position:fixed;left:16px;bottom:18px;color:var(--muted);font-size:12px}
+    .wipe{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
+
+    @keyframes reveal{to{opacity:1;transform:none}}
+    @keyframes fadeIn{to{transform:none;opacity:1}}
+    @keyframes typing{from{width:0}to{width:24ch}}
+    @keyframes caret{50%{border-color:transparent}}
+    @keyframes out{to{opacity:1}}
+
+    @media(max-width:420px){.panel{height:72vh}.btn{font-size:13px;padding:10px 14px}}
   </style>
 </head>
 <body>
@@ -104,7 +104,6 @@
       <div class="line type" id="typeLine">EYOMA · MYSTERY VLOG</div>
       <div class="line cta">
         <button class="btn" id="enterBtn">Enter →</button>
-        <button class="btn ghost" id="skipBtn">Skip</button>
         <button class="btn ghost" id="infoBtn">Info</button>
       </div>
     </div>
@@ -116,153 +115,92 @@
       <div class="tabs" role="tablist" aria-label="info tabs">
         <button class="tab" role="tab" aria-selected="true" data-target="about">개요</button>
         <button class="tab" role="tab" aria-selected="false" data-target="structure">구성</button>
-        <button class="tab" role="tab" aria-selected="false" data-target="guide">읽기 가이드</button>
       </div>
       <button class="btn" id="closePanel">Close</button>
     </header>
     <div class="body">
       <section class="section active" id="about">
-        <p><strong>《미스터리 브이로그》는 “책에 관한 책에 관한 책”</strong>이다. 
-        실제로 존재하는 이야기, 그 이야기를 만드는 과정, 그리고 그 과정을 읽는 독자의 참여까지 — 
-        세 겹의 프레임을 한 화면에서 겹쳐보는 메타북.</p>
+        <p><strong>《미스터리 브이로그》</strong>는 “책에 관한 책에 관한 책”이다.<br>
+        실제로 존재하는 이야기, 그 이야기를 만드는 과정, 그리고 그 과정을 읽는 독자의 참여까지 — 세 겹의 프레임을 한 화면에서 겹쳐보는 메타북.</p>
         <div class="chips" id="aboutChips">
           <span class="chip active">메타서사</span>
           <span class="chip">제작일지</span>
           <span class="chip">독자참여</span>
-          <span class="chip">수익모델 실험</span>
+          <span class="chip">수익모델</span>
         </div>
-        <div class="meter" title="진행률(체감)"><i id="meterBar"></i></div>
+        <div class="meter"><i id="meterBar"></i></div>
         <small id="meterLabel" style="color:var(--muted)">진행률 0%</small>
       </section>
-
       <section class="section" id="structure">
         <p>이 사이트는 네 개의 레이어로 엮였다:</p>
         <ul>
-          <li><strong>Dashboard</strong> — 전체 맵과 진행 현황의 스냅샷.</li>
-          <li><strong>Behind</strong> — 레퍼런스/제작 노트. 편집 타임라인과 근거들.</li>
-          <li><strong>Meme</strong> — 장면 카드·유튜브 클립·스틸컷의 썸네일 보드.</li>
-          <li><strong>Revenue</strong> — 서점/쿠팡 제휴 링크로 실험하는 지속가능성.</li>
+          <li><strong>Dashboard</strong> — 전체 맵과 진행 현황의 스냅샷</li>
+          <li><strong>Behind</strong> — 제작 노트와 레퍼런스</li>
+          <li><strong>Meme</strong> — 장면 카드와 유튜브 클립</li>
+          <li><strong>Revenue</strong> — 서점/쿠팡 제휴 실험</li>
         </ul>
-        <p style="color:var(--muted)">※ 인트로에서는 이동을 제한하고, <em>Enter</em>로만 메인(index)으로 넘어가도록 설계됨.</p>
-      </section>
-
-      <section class="section" id="guide">
-        <p><strong>읽는 법(상호작용):</strong></p>
-        <ul>
-          <li><kbd>Enter</kbd> — 메인으로 이동</li>
-          <li><kbd>?</kbd> 또는 <em>Info</em> — 이 패널 열기/닫기</li>
-          <li><kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd> — 제목 문구 바꾸기(무드 전환)</li>
-          <li>타이틀 클릭 — 상단/하단 문구 서로 스왑</li>
-          <li>아래 칩(메타서사·제작일지…) 클릭 — 진행률 게이지가 가중치 반영</li>
-        </ul>
-        <p class="sub">방해받지 않게, 패널을 열면 자동 이동 타이머는 멈춘다.</p>
       </section>
     </div>
   </aside>
 
   <div class="wipe" id="wipe"></div>
-  <div class="hint" id="hint">Press Enter · ?=Info</div>
+  <div class="hint">Press Enter · ?=Info</div>
 
   <script>
-    // ====== settings ======
-    const NEXT = 'index.html';          // 유일 목적지
-    const AUTO_AFTER_MS = 3500;         // 마지막 라인 이후 자동 이동
+  console.log('인트로 시작됨 ✅');
+  const NEXT='index.html';const AUTO_AFTER_MS=3500;
+  const lines=[...document.querySelectorAll('.line')];
+  const delay=[200,600,1100,1500,1900,2400];
+  lines.forEach((el,i)=>setTimeout(()=>el.classList.add('show'),delay[i]||0));
+  const wipe=document.getElementById('wipe');
+  let autoTimer;
+  function goNext(){console.log('➡ 이동중...');wipe.style.animation='out .35s ease forwards';setTimeout(()=>location.href=NEXT,340);}
+  function startAuto(){clearTimeout(autoTimer);autoTimer=setTimeout(()=>goNext(),(delay.at(-1)||2000)+AUTO_AFTER_MS);}
+  function pauseAuto(){clearTimeout(autoTimer);}
+  document.getElementById('enterBtn').addEventListener('click',goNext);
+  document.addEventListener('keydown',e=>{if(e.key==='Enter')goNext();if(e.key==='?')togglePanel();pauseAuto();});
+  document.addEventListener('pointerdown',pauseAuto);
 
-    // ====== staged reveal ======
-    const lines = Array.from(document.querySelectorAll('.line'));
-    const delay = [200, 600, 1100, 1500, 1900, 2400];
-    lines.forEach((el, i)=> setTimeout(()=> el.classList.add('show'), delay[i]||0));
-
-    // ====== go next with white wipe ======
-    const wipe = document.getElementById('wipe');
-    let autoTimer;
-    function goNext(){
-      wipe.style.animation = 'out .35s ease forwards';
-      setTimeout(()=> location.href = NEXT, 340);
-    }
-
-    function startAuto(){
-      clearTimeout(autoTimer);
-      autoTimer = setTimeout(()=> goNext(), (delay[delay.length-1]||2000) + AUTO_AFTER_MS);
-    }
-    function pauseAuto(){ clearTimeout(autoTimer); }
-
-    // 버튼/키보드
-    document.getElementById('enterBtn').addEventListener('click', goNext);
-    document.getElementById('skipBtn').addEventListener('click', goNext);
-    document.addEventListener('keydown', e=>{
-      if(e.key==='Enter') goNext();
-      if(e.key==='?') togglePanel();
-      if(['1','2','3'].includes(e.key)) cycleTitles(parseInt(e.key,10));
+  // Info Panel
+  const panel=document.getElementById('panel');
+  const infoBtn=document.getElementById('infoBtn');
+  const closeBtn=document.getElementById('closePanel');
+  infoBtn.addEventListener('click',togglePanel);
+  closeBtn.addEventListener('click',togglePanel);
+  function togglePanel(){
+    const open=!panel.classList.contains('open');
+    panel.classList.toggle('open',open);
+    panel.setAttribute('aria-hidden',!open);
+    console.log(open?'패널 열림':'패널 닫힘');
+    if(open)pauseAuto();else startAuto();
+  }
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected','false'));
+      tab.setAttribute('aria-selected','true');
+      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+      document.getElementById(tab.dataset.target).classList.add('active');
       pauseAuto();
     });
-    document.addEventListener('pointerdown', pauseAuto);
-    document.addEventListener('mousemove', ()=>{ /* 작은 움직임도 타이머 해제 */ pauseAuto(); }, { once:true });
-
-    // ====== Info panel ======
-    const panel = document.getElementById('panel');
-    const infoBtn = document.getElementById('infoBtn');
-    const closeBtn = document.getElementById('closePanel');
-    infoBtn.addEventListener('click', togglePanel);
-    closeBtn.addEventListener('click', togglePanel);
-    function togglePanel(){
-      const open = !panel.classList.contains('open');
-      panel.classList.toggle('open', open);
-      panel.setAttribute('aria-hidden', String(!open));
-      if(open) { pauseAuto(); } else { startAuto(); }
-    }
-
-    // Tabs
-    document.querySelectorAll('.tab').forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab').forEach(t=> t.setAttribute('aria-selected','false'));
-        tab.setAttribute('aria-selected','true');
-        document.querySelectorAll('.section').forEach(s=> s.classList.remove('active'));
-        document.getElementById(tab.dataset.target).classList.add('active');
-        pauseAuto();
-      });
-    });
-
-    // Chips -> progress meter
-    const chipWrap = document.getElementById('aboutChips');
-    const bar = document.getElementById('meterBar');
-    const meterLabel = document.getElementById('meterLabel');
-    chipWrap.addEventListener('click', (e)=>{
-      const c = e.target.closest('.chip');
-      if(!c) return;
-      c.classList.toggle('active');
-      const actives = chipWrap.querySelectorAll('.chip.active').length;
-      const pct = Math.min(10 + actives*22, 100); // 가중치: 기본 10% + 칩당 22%
-      bar.style.width = pct + '%';
-      meterLabel.textContent = '진행률 ' + pct + '%';
-      pauseAuto();
-    });
-
-    // Title interactions
-    const t1 = document.getElementById('titleTop');
-    const t2 = document.getElementById('titleBottom');
-    t1.addEventListener('click', swapTitles);
-    t2.addEventListener('click', swapTitles);
-    function swapTitles(){
-      const a = t1.textContent; t1.textContent = t2.textContent; t2.textContent = a;
-    }
-    function cycleTitles(mode){
-      if(mode===1){ t1.textContent='이 책은 책에 관한 책'; t2.textContent='그 책을 읽는 우리에 관한 이야기'; }
-      if(mode===2){ t1.textContent='기록과 상상, 메모와 서사'; t2.textContent='한 화면에서 겹쳐 읽기'; }
-      if(mode===3){ t1.textContent='브이로그처럼'; t2.textContent='소설처럼'; }
-    }
-
-    // Type line small shuffle on click
-    const typeLine = document.getElementById('typeLine');
-    const tags = ['EYOMA · MYSTERY VLOG','BOOK-IN-BOOK','META · MAKING · MEME','AUTHOR · DESIGNER · BUILDER'];
-    typeLine.addEventListener('click', ()=>{
-      const i = (tags.indexOf(typeLine.textContent)+1) % tags.length;
-      typeLine.textContent = tags[i];
-      pauseAuto();
-    });
-
-    // Kick off auto
-    startAuto();
+  });
+  // Chips
+  const chipWrap=document.getElementById('aboutChips');
+  const bar=document.getElementById('meterBar');
+  const meterLabel=document.getElementById('meterLabel');
+  chipWrap.addEventListener('click',e=>{
+    const c=e.target.closest('.chip');if(!c)return;
+    c.classList.toggle('active');
+    const actives=chipWrap.querySelectorAll('.chip.active').length;
+    const pct=Math.min(10+actives*22,100);
+    bar.style.width=pct+'%';
+    meterLabel.textContent='진행률 '+pct+'%';
+    pauseAuto();
+  });
+  // Title swap
+  const t1=document.getElementById('titleTop'),t2=document.getElementById('titleBottom');
+  t1.addEventListener('click',swapTitles);t2.addEventListener('click',swapTitles);
+  function swapTitles(){const a=t1.textContent;t1.textContent=t2.textContent;t2.textContent=a;}
+  startAuto();
   </script>
 </body>
 </html>
