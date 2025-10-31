@@ -538,6 +538,9 @@
     buttons.set(key,{btn:b,data:item});
   });
 
+    const defaultKey = slug(replayData[0].title); // 또는 slug("타임라인")
+  openKey(defaultKey);
+
 // ===== 부드러운 가로 드래그 + 관성 스크롤 =====
 const drag = {
   down:false, startX:0, startLeft:0, moved:false,
