@@ -4,9 +4,10 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Intro · EYOMA</title>
-  <meta name="description" content="Pre‑intro landing for Mystery Vlog / Eyoma"/>
+  <meta name="description" content="Pre-intro landing for Mystery Vlog / Eyoma"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+
   <style>
     :root{
       --bg:#ffffff;--text:#111318;--muted:#6b7280;--brand:#ff0033;--line:#e6e8eb;
@@ -44,29 +45,23 @@
     .links{display:flex;flex-wrap:wrap;gap:10px}
     .link{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:inherit;text-decoration:none}
 
-    /* cursor hint */
     .hint{position:fixed;inset:auto 16px 80px auto;pointer-events:none;color:var(--muted);font-size:12px}
-
-    /* enter animation */
     .page{opacity:1;transform:translateY(0);transition:opacity .35s ease, transform .35s ease}
     .page.out{opacity:0;transform:translateY(6px)}
-
-    /* subtle bg */
     .bgfx{position:fixed;inset:0;pointer-events:none;background:radial-gradient(1200px 600px at 80% 10%,var(--accent),transparent),radial-gradient(800px 400px at 10% 90%,var(--accent),transparent)}
-
-    /* tiny preferences */
     .prefs{display:flex;align-items:center;gap:8px}
     .toggle{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:12px}
   </style>
 </head>
+
 <body>
   <div class="bgfx"></div>
   <div class="wrap page" id="page">
     <header class="topbar">
       <span class="badge"><span class="dot"></span> EYOMA · Mystery Vlog</span>
       <div class="prefs">
-        <button class="toggle" id="themeBtn" aria-label="Toggle theme">Theme</button>
-        <button class="toggle" id="enterBtnTop" aria-label="Enter">Enter →</button>
+        <button class="toggle" id="themeBtn">Theme</button>
+        <button class="toggle" id="enterBtnTop">Enter →</button>
       </div>
     </header>
 
@@ -82,28 +77,16 @@
       </div>
     </main>
 
-    <section class="grid" aria-label="quick nav">
-      <a class="card" href="#" data-jump="dashboard.html">
-        <h3>Dashboard</h3>
-        <p>전체 맵과 진행 현황</p>
-      </a>
-      <a class="card" href="#" data-jump="behind.html">
-        <h3>Behind</h3>
-        <p>제작 노트 · 레퍼런스</p>
-      </a>
-      <a class="card" href="#" data-jump="meme.html">
-        <h3>Meme</h3>
-        <p>장면 카드 · 유튜브</p>
-      </a>
-      <a class="card" href="#" data-jump="revenue.html">
-        <h3>Revenue</h3>
-        <p>서점/쿠팡 어필리에이트</p>
-      </a>
+    <section class="grid">
+      <a class="card" href="#" data-jump="dashboard.html"><h3>Dashboard</h3><p>전체 맵과 진행 현황</p></a>
+      <a class="card" href="#" data-jump="behind.html"><h3>Behind</h3><p>제작 노트 · 레퍼런스</p></a>
+      <a class="card" href="#" data-jump="meme.html"><h3>Meme</h3><p>장면 카드 · 유튜브</p></a>
+      <a class="card" href="#" data-jump="revenue.html"><h3>Revenue</h3><p>서점/쿠팡 어필리에이트</p></a>
     </section>
 
     <footer class="footer">
       <div class="links">
-        <a class="link" href="https://www.instagram.com/eyoma_mag/" target="_blank" rel="noopener">Instagram</a>
+        <a class="link" href="https://www.instagram.com/eyoma_mag/" target="_blank">Instagram</a>
         <a class="link" href="mailto:eyoma@naver.com">Email</a>
         <a class="link" href="#" id="copyUrl">Copy URL</a>
       </div>
@@ -112,62 +95,47 @@
   </div>
 
   <script>
-// ---- Settings ---------------------------------------------------------
-// 기본 이동 경로 (인트로 페이지 뒤로 넘어갈 실제 메인 페이지로)
-const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'index.html';
-
-    // ---- Theme toggle -----------------------------------------------------
-    const themeBtn = document.getElementById('themeBtn');
-    const saved = localStorage.getItem('eyoma-theme');
-    if(saved) document.documentElement.setAttribute('data-theme', saved);
-    themeBtn.addEventListener('click', ()=>{
-      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', cur);
-      localStorage.setItem('eyoma-theme', cur);
-    });
-
-    // ---- Enter navigation -------------------------------------------------
+    const NEXT_PATH = 'index.html';
     const page = document.getElementById('page');
     const goNext = (href)=>{
       page.classList.add('out');
       setTimeout(()=>{ location.href = href || NEXT_PATH; }, 320);
     };
 
-    const enterBtn = document.getElementById('enterBtn');
-    const enterBtnTop = document.getElementById('enterBtnTop');
-    enterBtn.addEventListener('click', ()=> goNext());
-    enterBtnTop.addEventListener('click', ()=> goNext());
-    document.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') goNext(); });
+    // Enter 버튼 클릭, 키보드 Enter, 상단 버튼 모두 index로 이동
+    document.getElementById('enterBtn').addEventListener('click', ()=>goNext());
+    document.getElementById('enterBtnTop').addEventListener('click', ()=>goNext());
+    document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
 
-    // Quick nav cards
+    // 카드 클릭 이동
     document.querySelectorAll('.card[data-jump]').forEach(card=>{
-      card.addEventListener('click', (e)=>{ e.preventDefault(); goNext(card.dataset.jump); });
+      card.addEventListener('click', e=>{ e.preventDefault(); goNext(card.dataset.jump); });
     });
 
-    // About: 간단한 안내 모달 대체 알럿
+    // Theme toggle
+    const themeBtn = document.getElementById('themeBtn');
+    const saved = localStorage.getItem('eyoma-theme');
+    if(saved) document.documentElement.setAttribute('data-theme', saved);
+    themeBtn.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      localStorage.setItem('eyoma-theme', cur);
+    });
+
+    // About 버튼
     document.getElementById('aboutBtn').addEventListener('click', ()=>{
-      alert('《미스터리 브이로그》의 메타 공간입니다. 대시보드에서 전체 맵을 보고, Behind/Meme/Revenue로 이동하세요.');
+      alert('《미스터리 브이로그》의 메타 공간입니다. Enter를 눌러 대시보드로 이동하세요.');
     });
 
-    // Copy URL helper
-    document.getElementById('copyUrl').addEventListener('click', (e)=>{
+    // URL 복사
+    document.getElementById('copyUrl').addEventListener('click', e=>{
       e.preventDefault();
       navigator.clipboard.writeText(location.href).then(()=>{
-        const hint = document.getElementById('hint');
-        hint.textContent = 'URL Copied';
-        setTimeout(()=> hint.textContent = 'Press Enter', 1200);
+        const hint=document.getElementById('hint');
+        hint.textContent='URL Copied';
+        setTimeout(()=>hint.textContent='Press Enter',1200);
       });
     });
   </script>
-  <script>
-    // Enter 버튼 클릭 시 index.html로 돌아가기
-    document.getElementById('enterBtn').addEventListener('click', ()=>{
-      window.location.href = 'index.html';
-    });
-  </script>
-</body>
-</html>
-
-
 </body>
 </html>
