@@ -112,9 +112,9 @@
   </div>
 
   <script>
-    // ---- Settings ---------------------------------------------------------
-    // 기본 이동 경로 (현재 인트로 앞에 두고 싶은 페이지 경로로 교체)
-    const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'index.html';
+// ---- Settings ---------------------------------------------------------
+// 기본 이동 경로 (인트로 페이지 뒤로 넘어갈 실제 메인 페이지로)
+const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'index.html';
 
     // ---- Theme toggle -----------------------------------------------------
     const themeBtn = document.getElementById('themeBtn');
