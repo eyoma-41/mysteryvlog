@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Intro · EYOMA</title>
+  <meta name="description" content="Pre‑intro landing for Mystery Vlog / Eyoma"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#ffffff;--text:#111318;--muted:#6b7280;--brand:#ff0033;--line:#e6e8eb;
+      --accent:rgba(255,0,51,.05);
+    }
+    [data-theme="dark"]{--bg:#0b0c0f;--text:#f7f8fa;--muted:#a1a1aa;--line:#1f2127;--accent:rgba(255,0,51,.12)}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,sans-serif;background:var(--bg);color:var(--text)}
+
+    .wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr auto}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);backdrop-filter:saturate(120%) blur(4px)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;font-size:12px}
+    .dot{width:6px;height:6px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 4px var(--accent)}
+
+    .hero{display:grid;place-items:center;padding:40px 16px}
+    .hero-inner{max-width:860px;width:100%;display:grid;gap:16px;text-align:center}
+    .kicker{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    h1{margin:0;font-weight:900;line-height:1.08;font-size:clamp(28px,6vw,64px)}
+    .sub{color:var(--muted);font-size:clamp(14px,2.6vw,18px)}
+
+    .cta{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:8px}
+    .btn{appearance:none;border:none;cursor:pointer;padding:14px 18px;border-radius:14px;font-weight:700;background:var(--text);color:var(--bg);transition:transform .12s ease, box-shadow .2s ease}
+    .btn:active{transform:translateY(1px)}
+    .ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:860px;margin:28px auto 0;padding:0 16px}
+    @media (min-width:720px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    .card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    [data-theme="dark"] .card{background:#0e1116}
+    .card h3{margin:0 0 6px;font-size:14px}
+    .card p{margin:0;color:var(--muted);font-size:12px}
+
+    .footer{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 16px;border-top:1px solid var(--line)}
+    .links{display:flex;flex-wrap:wrap;gap:10px}
+    .link{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line);border-radius:12px;font-size:13px;color:inherit;text-decoration:none}
+
+    /* cursor hint */
+    .hint{position:fixed;inset:auto 16px 80px auto;pointer-events:none;color:var(--muted);font-size:12px}
+
+    /* enter animation */
+    .page{opacity:1;transform:translateY(0);transition:opacity .35s ease, transform .35s ease}
+    .page.out{opacity:0;transform:translateY(6px)}
+
+    /* subtle bg */
+    .bgfx{position:fixed;inset:0;pointer-events:none;background:radial-gradient(1200px 600px at 80% 10%,var(--accent),transparent),radial-gradient(800px 400px at 10% 90%,var(--accent),transparent)}
+
+    /* tiny preferences */
+    .prefs{display:flex;align-items:center;gap:8px}
+    .toggle{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="bgfx"></div>
+  <div class="wrap page" id="page">
+    <header class="topbar">
+      <span class="badge"><span class="dot"></span> EYOMA · Mystery Vlog</span>
+      <div class="prefs">
+        <button class="toggle" id="themeBtn" aria-label="Toggle theme">Theme</button>
+        <button class="toggle" id="enterBtnTop" aria-label="Enter">Enter →</button>
+      </div>
+    </header>
+
+    <main class="hero">
+      <div class="hero-inner">
+        <div class="kicker">Author · Designer · Builder</div>
+        <h1>이요마의 세계로<br/>들어갈 준비가 되었다면</h1>
+        <p class="sub">대시보드, 비하인드, 밈, 수익, 레퍼런스… 하나의 메타책으로 엮인 인터랙티브 공간.</p>
+        <div class="cta">
+          <button class="btn" id="enterBtn">Enter →</button>
+          <button class="btn ghost" id="aboutBtn">About</button>
+        </div>
+      </div>
+    </main>
+
+    <section class="grid" aria-label="quick nav">
+      <a class="card" href="#" data-jump="dashboard.html">
+        <h3>Dashboard</h3>
+        <p>전체 맵과 진행 현황</p>
+      </a>
+      <a class="card" href="#" data-jump="behind.html">
+        <h3>Behind</h3>
+        <p>제작 노트 · 레퍼런스</p>
+      </a>
+      <a class="card" href="#" data-jump="meme.html">
+        <h3>Meme</h3>
+        <p>장면 카드 · 유튜브</p>
+      </a>
+      <a class="card" href="#" data-jump="revenue.html">
+        <h3>Revenue</h3>
+        <p>서점/쿠팡 어필리에이트</p>
+      </a>
+    </section>
+
+    <footer class="footer">
+      <div class="links">
+        <a class="link" href="https://www.instagram.com/eyoma_mag/" target="_blank" rel="noopener">Instagram</a>
+        <a class="link" href="mailto:eyoma@naver.com">Email</a>
+        <a class="link" href="#" id="copyUrl">Copy URL</a>
+      </div>
+      <div class="hint" id="hint">Press Enter</div>
+    </footer>
+  </div>
+
+  <script>
+    // ---- Settings ---------------------------------------------------------
+    // 기본 이동 경로 (현재 인트로 앞에 두고 싶은 페이지 경로로 교체)
+    const NEXT_PATH = new URLSearchParams(location.search).get('next') || 'intro.html';
+
+    // ---- Theme toggle -----------------------------------------------------
+    const themeBtn = document.getElementById('themeBtn');
+    const saved = localStorage.getItem('eyoma-theme');
+    if(saved) document.documentElement.setAttribute('data-theme', saved);
+    themeBtn.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', cur);
+      localStorage.setItem('eyoma-theme', cur);
+    });
+
+    // ---- Enter navigation -------------------------------------------------
+    const page = document.getElementById('page');
+    const goNext = (href)=>{
+      page.classList.add('out');
+      setTimeout(()=>{ location.href = href || NEXT_PATH; }, 320);
+    };
+
+    const enterBtn = document.getElementById('enterBtn');
+    const enterBtnTop = document.getElementById('enterBtnTop');
+    enterBtn.addEventListener('click', ()=> goNext());
+    enterBtnTop.addEventListener('click', ()=> goNext());
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') goNext(); });
+
+    // Quick nav cards
+    document.querySelectorAll('.card[data-jump]').forEach(card=>{
+      card.addEventListener('click', (e)=>{ e.preventDefault(); goNext(card.dataset.jump); });
+    });
+
+    // About: 간단한 안내 모달 대체 알럿
+    document.getElementById('aboutBtn').addEventListener('click', ()=>{
+      alert('《미스터리 브이로그》의 메타 공간입니다. 대시보드에서 전체 맵을 보고, Behind/Meme/Revenue로 이동하세요.');
+    });
+
+    // Copy URL helper
+    document.getElementById('copyUrl').addEventListener('click', (e)=>{
+      e.preventDefault();
+      navigator.clipboard.writeText(location.href).then(()=>{
+        const hint = document.getElementById('hint');
+        hint.textContent = 'URL Copied';
+        setTimeout(()=> hint.textContent = 'Press Enter', 1200);
+      });
+    });
+  </script>
+</body>
+</html>
