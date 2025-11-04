@@ -7,9 +7,22 @@
   <title>미스터리 브이로그 — 대시보드</title>
 
 <script>
-  // 무조건 intro로 보냄
-  window.location.replace('/intro.html');
+(function () {
+  // 현재 페이지가 index일 때만 동작
+  var path = location.pathname;
+  var isIndex = path === "/" || /\/index\.html$/.test(path);
+  if (!isIndex) return;
+
+  // URL에 skipintro가 있으면 인트로로 보내지 않음
+  var params = new URLSearchParams(location.search);
+  if (params.has("skipintro")) return;
+
+  // 인트로로 이동 (다음 경로를 next 파라미터로 전달)
+  var next = encodeURIComponent("/index.html?skipintro=1");
+  location.replace("/intro.html?next=" + next);
+})();
 </script>
+
 
   
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
