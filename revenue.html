@@ -171,17 +171,17 @@
           </div>
         </div>
 
-        <!-- 쿠팡 -->
-        <div class="item" data-key="coupang" data-url="https://link.coupang.com/a/cY8u44">
-          <div class="badge">C</div>
+        <!-- 리디 -->
+        <div class="item" data-key="ridi" data-url="https://ridibooks.com/books/754045790?_s=search&_q=%EB%AF%B8%EC%8A%A4%ED%84%B0%EB%A6%AC+%EB%B8%8C%EC%9D%B4%EB%A1%9C%EA%B7%B8&_rdt_sid=SearchBookListWithTab">
+          <div class="badge">R</div>
           <div class="meta">
-            <div class="name">쿠팡</div>
-            <div class="muted"><span data-count="coupang">0</span> 클릭 · 최근 <span data-last="coupang">-</span></div>
-            <div class="bar"><span data-bar="coupang" style="width:0%"></span></div>
+            <div class="name">리디</div>
+            <div class="muted"><span data-count="ridi">0</span> 클릭 · 최근 <span data-last="ridi">-</span></div>
+            <div class="bar"><span data-bar="ridi" style="width:0%"></span></div>
           </div>
           <div class="actions">
-            <button class="btn primary" data-open="coupang" aria-label="쿠팡 열기">열기</button>
-            <button class="btn" data-copy="coupang" aria-label="쿠팡 링크 복사">복사</button>
+            <button class="btn primary" data-open="ridi" aria-label="리디 열기">열기</button>
+            <button class="btn" data-copy="ridi" aria-label="리디 링크 복사">복사</button>
           </div>
         </div>
       </section>
@@ -202,7 +202,7 @@
 
   <script>
     // ====== 데이터/유틸 ======
-    const keys = ['aladin','yes24','kyobo','coupang'];
+    const keys = ['aladin','yes24','kyobo','ridi']; // 쿠팡 -> 리디
     const lsKey = (k)=>`revstat:${k}`;
     const pad=(n)=>String(n).padStart(2,'0');
     const fmt=(ts)=> ts ? `${new Date(ts).getFullYear()}.${pad(new Date(ts).getMonth()+1)}.${pad(new Date(ts).getDate())}` : '-';
@@ -217,7 +217,6 @@
       return data;
     }
     function pushTodayHit(){
-      // 하루에 여러 번 열어도 누적(간단 모형)
       const d = seed7d();
       d[d.length-1] = (d[d.length-1]||0)+1;
       localStorage.setItem('revstat:7d', JSON.stringify(d));
@@ -225,14 +224,13 @@
 
     // ====== 스파크라인 ======
     function drawSpark(){
-      const svg = document.getElementById('spark');
       const poly = document.getElementById('poly');
       const data = seed7d();
       const max = Math.max(1, ...data);
       const step = 300/(data.length-1);
       const pts = data.map((v,i)=>{
         const x = i*step;
-        const y = 100 - (v/max)*90 - 5; // 상하 여백
+        const y = 100 - (v/max)*90 - 5;
         return `${x},${y}`;
       }).join(' ');
       poly.setAttribute('points', pts);
@@ -308,11 +306,11 @@
       b.addEventListener('click',()=>copyKey(b.getAttribute('data-copy')));
     });
 
-    // 단축키: 1~4 열기, C 복사(선택된 첫 항목)
+    // 단축키: 1~4 열기, C 복사(기본: 알라딘)
     window.addEventListener('keydown',(e)=>{
-      const map={'1':'aladin','2':'yes24','3':'kyobo','4':'coupang'};
+      const map={'1':'aladin','2':'yes24','3':'kyobo','4':'ridi'}; // 4번 = 리디
       if(map[e.key]){ openKey(map[e.key]); }
-      if(e.key==='c' || e.key==='C'){ copyKey('aladin'); } // 기본 복사 대상을 알라딘으로
+      if(e.key==='c' || e.key==='C'){ copyKey('aladin'); }
     });
 
     // 토스트
