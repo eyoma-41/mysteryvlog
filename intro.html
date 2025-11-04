@@ -10,7 +10,6 @@
   <style>
     :root{
       --bg:#0b0c0f; --text:#f6f7fb; --muted:#a7adbb; --brand:#ff0033; --line:rgba(255,255,255,.12);
-      --r:18px;
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0}
@@ -25,60 +24,57 @@
     }
 
     .wrap{height:100%;max-width:1100px;margin:0 auto;padding:24px 16px;display:grid;grid-template-rows:auto 1fr auto;gap:16px}
-    /* 제목 */
-    .title{font-weight:900;letter-spacing:.02em;line-height:1.04;
-      font-size:clamp(36px,8vw,72px);margin:0 0 4px}
-    /* 본문 영역 — 줄바꿈 보호 + 넉넉한 행간 */
-    .lead{max-width:880px}
-    .lead p{margin:10px 0 0;font-size:clamp(15px,2.5vw,20px);line-height:1.65;color:var(--text)}
-    .lead .muted{color:var(--muted)}
-    .nowrap{white-space:nowrap}
 
-    /* 클릭 가능한 텍스트 */
-    .exp{
-      position:relative; cursor:pointer; font-weight:800;
-      border-bottom:2px dotted rgba(255,255,255,.35);
-    }
+    /* 타이틀 */
+    .title{font-weight:900;letter-spacing:.02em;line-height:1.04;
+      font-size:clamp(36px,8vw,72px);margin:0 0 6px}
+
+    /* 본문 */
+    .lead{max-width:880px}
+    .lead p{margin:10px 0 0;font-size:clamp(15px,2.5vw,20px);line-height:1.65;color:var(--text);
+      word-break:keep-all}
+    .lead .muted{color:var(--muted)}
+
+    /* 클릭 트리거 */
+    .exp{position:relative;cursor:pointer;font-weight:800;border-bottom:2px dotted rgba(255,255,255,.35)}
     .exp:hover{color:#fff}
-    /* 확장 블록(줄 사이에서 자연스럽게 밀어내기) */
-    .expand{
-      max-height:0; overflow:hidden; opacity:0; transform:translateY(-4px);
-      transition:max-height .35s ease, opacity .3s ease, transform .3s ease;
-    }
-    .expand.open{opacity:1; transform:none}
+
+    /* 확장 패널 */
+    .expand{max-height:0;overflow:hidden;opacity:0;transform:translateY(-4px);
+      transition:max-height .35s ease, opacity .3s ease, transform .3s ease}
+    .expand.open{opacity:1;transform:none}
     .panel{
-      margin:12px 0 0; padding:14px 16px; border:1px solid var(--line); border-radius:12px;
+      margin:12px 0 0;padding:14px 16px;border:1px solid var(--line);border-radius:12px;
       background:linear-gradient(0deg,rgba(255,255,255,.02),rgba(255,255,255,.02));
       box-shadow:0 1px 2px rgba(0,0,0,.25);
-      color:#e9ebf2; font-size:clamp(14px,2.2vw,18px); line-height:1.7;
+      color:#e9ebf2;font-size:clamp(14px,2.2vw,18px);line-height:1.7
     }
     .panel em{font-style:normal;color:#ff697d;font-weight:800}
     .panel a{color:#dbe2ff;text-decoration:underline}
 
-    /* 중앙 버튼 */
+    /* 중앙 CTA */
     .cta{display:grid;place-items:center;margin:8px 0 18px}
     .play{
       display:inline-grid;gap:4px;place-items:center;text-align:center;
       padding:16px 22px;border-radius:16px;border:1px solid var(--line);
       background:#ffffff0e;color:#fff;font-weight:900;letter-spacing:.02em;
-      line-height:1.2; font-size:18px;
+      line-height:1.2;font-size:18px;
       box-shadow:0 1px 2px rgba(0,0,0,.25);
-      transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
+      transition:transform .12s ease,box-shadow .2s ease,background .2s ease
     }
     .play:hover{background:#ffffff18;box-shadow:0 3px 10px rgba(0,0,0,.25)}
     .play:active{transform:translateY(1px)}
 
-    /* 하단 힌트 */
     .hint{color:var(--muted);font-size:12px;text-align:center;margin:0 0 6px}
 
-    /* 타이핑(1~3줄만) */
+    /* 타이핑 효과(끝나면 JS가 자연 폭으로 풀어줌) */
     .typing{overflow:hidden;border-right:2px solid rgba(255,255,255,.7)}
     .t1{width:0;animation:typing1 1.2s steps(22,end) .15s forwards, caret .9s step-end infinite}
     .t2{width:0;animation:typing2 1.4s steps(28,end) 1.4s forwards, caret .9s step-end infinite}
-    .t3{width:0;animation:typing3 1.6s steps(36,end) 3.0s forwards, caret .9s step-end infinite}
+    .t3{width:0;animation:typing3 1.6s steps(40,end) 3.0s forwards, caret .9s step-end infinite}
     @keyframes typing1{from{width:0}to{width:22ch}}
     @keyframes typing2{from{width:0}to{width:28ch}}
-    @keyframes typing3{from{width:0}to{width:36ch}}
+    @keyframes typing3{from{width:0}to{width:40ch}}
     @keyframes caret{50%{border-color:transparent}}
 
     @media (max-width:560px){
@@ -90,62 +86,54 @@
 </head>
 <body>
   <div class="wrap" aria-live="polite">
-    <!-- 타이틀 -->
     <h1 class="title">MYSTERY VLOG</h1>
 
-    <!-- 본문(클릭 확장 트리거 포함) -->
     <div class="lead" id="lead">
-      <p class="typing t1"><span class="nowrap">이 책이 책에 관한 책이라면</span></p>
-      <p class="typing t2"><span class="nowrap">이 책의 부록은 책에 관한 책의 부록입니다.</span></p>
-
+      <p class="typing t1">이 책이 책에 관한 책이라면</p>
+      <p class="typing t2">이 책의 부록은 책에 관한 책의 부록입니다.</p>
       <p class="typing t3">
-        <span class="nowrap">
-          <span class="exp" data-key="mv">《미스터리 브이로그》</span>의
-          리플레이와 비하인드를 만나보세요.
-        </span>
+        <span class="exp" data-key="mv">《미스터리 브이로그》</span>의
+        <span> </span><span class="exp" data-key="replay">리플레이</span>와
+        <span class="exp" data-key="behind">비하인드</span>를 만나보세요.
       </p>
 
+      <!-- MV -->
       <div class="expand" id="mvExp">
         <div class="panel">
           <strong>《미스터리 브이로그》</strong>는 명랑×호러×미스터리×스릴러×추리×판타지×모험에
-          SF 향을 살짝 얹은 <em>사변소설이자 청소년소설</em>입니다.  
-          마음 편하게 아주 먼 곳으로 떠나고 싶은 분이라면 이 이야기를 펼쳐보세요.  
-          다 읽고 나면 <em>기대했던 것보다 더 먼 곳</em>에 도착해 있을 겁니다.
-          <br/><br/>
-          또한, 아래 키워드도 눌러 보세요:
-          <span class="exp" data-key="replay">리플레이</span>,
-          <span class="exp" data-key="behind">비하인드</span>,
-          <span class="exp" data-key="eyoma">이요마</span>
+          SF 향을 더한 <em>사변소설이자 청소년소설</em>입니다.  
+          아주 먼 곳으로 떠나고 싶은 분이라면 이 책을 펼쳐보세요.  
+          다 읽고 나면 <em>기대했던 것보다 더 먼 곳</em>에 도착해 있을 것입니다.
         </div>
       </div>
 
-      <!-- 리플레이/비하인드 설명은 같은 문단 아래에서 열리도록 이어서 배치 -->
+      <!-- Replay -->
       <div class="expand" id="replayExp">
         <div class="panel">
-          <strong>《미스터리 브이로그: 리플레이》</strong>는
-          《미스터리 브이로그》가 나오기까지의 여정을 <em>되돌려 보기</em>처럼 따라가는 이야기입니다.
-          부끄럽지만 <em>지금 이 순간에만</em> 쓸 수 있기에 용기를 내어 적었습니다.
-          지지부진한 시간에 갇힌 분들에게 작은 추진력이 되길 바랍니다.
+          <strong>《미스터리 브이로그: 리플레이》</strong>는 본편이 나오기까지의 여정을
+          <em>되돌려 보기</em>처럼 따라가는 기록입니다. 지금 이 순간에만 쓸 수 있기에 용기를 내어 적었습니다.
+          지지부진한 시간 속에 있는 분들께 작은 추진력이 되길 바랍니다.
         </div>
       </div>
 
+      <!-- Behind -->
       <div class="expand" id="behindExp">
         <div class="panel">
-          <strong>《미스터리 브이로그: 비하인드》</strong>는 한 편의 장편이 나오기까지
-          작가가 보고·듣고·고민했던 자료를 모은 <em>제작 아카이브</em>입니다.
-          본편과 나란히 가이드북처럼 읽거나, 리플레이와 함께 무슨 마음으로 썼는지 살펴봐도 좋습니다.
+          <strong>《미스터리 브이로그: 비하인드》</strong>는 한 편의 장편이 나오기까지 보고·듣고·고민했던
+          모든 레퍼런스를 모은 <em>제작 아카이브</em>입니다. 본편과 나란히 가이드북처럼 읽어도 좋고,
+          리플레이와 함께 어떤 마음으로 썼는지 살펴봐도 좋습니다.
           <br/><em>다만! 스포일러가 있을 수 있습니다.</em>
         </div>
       </div>
 
-      <p class="muted">— <span class="exp" data-key="eyoma">이요마</span></p>
-
+      <!-- sign -->
+      <p class="lead muted">— <span class="exp" data-key="eyoma">이요마</span></p>
       <div class="expand" id="eyomaExp">
         <div class="panel">
-          문학을 좋아하는 친구들과 함께 기획·창작 집단 <strong>엠디랩프레스</strong>를 운영합니다.
+          문학을 좋아하는 친구들과 기획·창작 집단 <strong>엠디랩프레스</strong>를 운영합니다.
           한국문학 아카이빙 잡지 <strong>〔글리프〕</strong> 시리즈를 만들고,
           <em>교훈보다는 재미</em>, <em>확인보다는 확장</em>을 지향하는 이야기를 씁니다.
-          요즘은 한국소설 베스트셀러가 어떻게 만들어지는지 공부하며
+          요즘은 베스트셀러의 메커니즘을 공부하며
           <strong>2010~2020’s 한국소설 아카이빙 프로젝트</strong>를 진행 중입니다.
           <br/><br/>
           인스타그램:
@@ -155,7 +143,6 @@
       </div>
     </div>
 
-    <!-- 중앙 CTA -->
     <div class="cta">
       <button class="play" id="enterBtn" type="button" aria-label="메인으로 이동">
         <span>《미스터리 브이로그》</span>
@@ -163,11 +150,11 @@
       </button>
     </div>
 
-    <p class="hint">클릭하여 소개 열기/닫기 · Enter → 메인(index.html)</p>
+    <p class="hint">클릭하여 소개 열기/닫기 · Enter → 메인(/index.html)</p>
   </div>
 
   <script>
-    // --------- 확장 토글 로직 (한 번에 하나만) ------------
+    // ----- 확장 토글 -----
     const expands = {
       mv: document.getElementById('mvExp'),
       replay: document.getElementById('replayExp'),
@@ -181,47 +168,54 @@
         el.classList.add('open');
         el.style.maxHeight = el.scrollHeight + 'px';
       }else{
-        el.style.maxHeight = el.scrollHeight + 'px'; // 키워드: 즉시 측정
-        // 다음 프레임에서 0으로 줄여 부드럽게 닫힘
+        el.style.maxHeight = el.scrollHeight + 'px';
         requestAnimationFrame(()=>{ el.style.maxHeight = '0px'; el.classList.remove('open'); });
       }
     }
 
     let currentKey = null;
     function toggle(key){
-      // 같은 키 재클릭 → 닫기
-      if(currentKey === key){
-        setOpen(expands[key], false);
-        currentKey = null;
-        return;
-      }
-      // 열려 있는 것 닫기
-      if(currentKey && expands[currentKey]){
-        setOpen(expands[currentKey], false);
-      }
-      // 새로 열기
+      if(currentKey === key){ setOpen(expands[key], false); currentKey = null; return; }
+      if(currentKey && expands[currentKey]) setOpen(expands[currentKey], false);
       setOpen(expands[key], true);
       currentKey = key;
     }
 
-    // 모든 트리거에 이벤트
     document.querySelectorAll('.exp').forEach(el=>{
       const key = el.dataset.key;
       if(!key) return;
       el.addEventListener('click', ()=> toggle(key));
-      // 접근성: 키보드 포커스 가능
       el.tabIndex = 0;
-      el.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); toggle(key); }});
+      el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(key);} });
     });
 
-    // --------- 이동(Enter 버튼/키) ------------
-    const NEXT = 'index.html';
-    const goNext = ()=> { window.location.href = NEXT; };
-    document.getElementById('enterBtn').addEventListener('click', goNext);
-    document.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') goNext(); });
+    // 초기값 보장
+    Object.values(expands).forEach(el=> el.style.maxHeight='0px');
 
-    // 초기: 모든 패널은 높이 0으로 보장
-    Object.values(expands).forEach(el=>{ el.style.maxHeight='0px'; });
+    // ----- 타이핑 끝나면 글자 잘림 방지: width:auto + caret 제거 -----
+    document.querySelectorAll('.typing').forEach(el=>{
+      el.addEventListener('animationend', ()=>{
+        // 마지막 typing3은 steps 이후 caret 애니메이션도 끝날 때 여러 번 호출될 수 있음 → 한 번만 처리
+        if(el.dataset.done) return;
+        el.style.width = 'auto';
+        el.style.borderRight = '0';
+        el.classList.remove('typing','t1','t2','t3');
+        el.dataset.done = '1';
+      });
+    });
+
+    // ----- 이동 -----
+    const NEXT = '/index.html';
+    const goNext = ()=> { window.location.assign(NEXT); };
+    document.getElementById('enterBtn').addEventListener('click', goNext);
+    document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
+
+    // 반응형에서 열려있는 패널 높이 보정
+    window.addEventListener('resize', ()=>{
+      if(currentKey && expands[currentKey] && expands[currentKey].classList.contains('open')){
+        expands[currentKey].style.maxHeight = expands[currentKey].scrollHeight + 'px';
+      }
+    });
   </script>
 </body>
 </html>
