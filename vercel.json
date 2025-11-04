@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    { "source": "/", "destination": "/intro.html" }
+  ],
+  "redirects": [
+    { "source": "/index.html", "destination": "/main.html", "permanent": false }
+  ],
   "headers": [
     {
       "source": "/behind.html",
