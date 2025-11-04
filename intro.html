@@ -150,72 +150,102 @@
       </button>
     </div>
 
-    <p class="hint">클릭하여 소개 열기/닫기 · Enter → 메인(/index.html)</p>
   </div>
 
-  <script>
-    // ----- 확장 토글 -----
-    const expands = {
-      mv: document.getElementById('mvExp'),
-      replay: document.getElementById('replayExp'),
-      behind: document.getElementById('behindExp'),
-      eyoma: document.getElementById('eyomaExp')
-    };
+<script>
+  // ===== 확장(토글) =====
+  const expands = {
+    mv: document.getElementById('mvExp'),
+    replay: document.getElementById('replayExp'),
+    behind: document.getElementById('behindExp'),
+    eyoma: document.getElementById('eyomaExp')
+  };
 
-    function setOpen(el, open){
-      if(!el) return;
-      if(open){
-        el.classList.add('open');
-        el.style.maxHeight = el.scrollHeight + 'px';
-      }else{
-        el.style.maxHeight = el.scrollHeight + 'px';
-        requestAnimationFrame(()=>{ el.style.maxHeight = '0px'; el.classList.remove('open'); });
-      }
-    }
-
-    let currentKey = null;
-    function toggle(key){
-      if(currentKey === key){ setOpen(expands[key], false); currentKey = null; return; }
-      if(currentKey && expands[currentKey]) setOpen(expands[currentKey], false);
-      setOpen(expands[key], true);
-      currentKey = key;
-    }
-
-    document.querySelectorAll('.exp').forEach(el=>{
-      const key = el.dataset.key;
-      if(!key) return;
-      el.addEventListener('click', ()=> toggle(key));
-      el.tabIndex = 0;
-      el.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(key);} });
-    });
-
-    // 초기값 보장
-    Object.values(expands).forEach(el=> el.style.maxHeight='0px');
-
-    // ----- 타이핑 끝나면 글자 잘림 방지: width:auto + caret 제거 -----
-    document.querySelectorAll('.typing').forEach(el=>{
-      el.addEventListener('animationend', ()=>{
-        // 마지막 typing3은 steps 이후 caret 애니메이션도 끝날 때 여러 번 호출될 수 있음 → 한 번만 처리
-        if(el.dataset.done) return;
-        el.style.width = 'auto';
-        el.style.borderRight = '0';
-        el.classList.remove('typing','t1','t2','t3');
-        el.dataset.done = '1';
+  function setOpen(el, open){
+    if(!el) return;
+    if(open){
+      el.classList.add('open');
+      el.style.maxHeight = el.scrollHeight + 'px';
+    }else{
+      // 현재 높이를 고정해둔 뒤 프레임 다음에 0으로 줄여 자연스러운 수축
+      el.style.maxHeight = el.scrollHeight + 'px';
+      requestAnimationFrame(()=>{
+        el.style.maxHeight = '0px';
+        el.classList.remove('open');
       });
-    });
+    }
+  }
 
-    // ----- 이동 -----
-    const NEXT = '/index.html';
-    const goNext = ()=> { window.location.assign(NEXT); };
-    document.getElementById('enterBtn').addEventListener('click', goNext);
-    document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
+  let currentKey = null;
+  function toggle(key){
+    if(!key || !expands[key]) return;
+    // 같은 키면 접기
+    if(currentKey === key){
+      setOpen(expands[key], false);
+      currentKey = null;
+      return;
+    }
+    // 기존 열린 패널 닫기
+    if(currentKey && expands[currentKey]) setOpen(expands[currentKey], false);
+    // 새 패널 열기
+    setOpen(expands[key], true);
+    currentKey = key;
+  }
 
-    // 반응형에서 열려있는 패널 높이 보정
-    window.addEventListener('resize', ()=>{
-      if(currentKey && expands[currentKey] && expands[currentKey].classList.contains('open')){
-        expands[currentKey].style.maxHeight = expands[currentKey].scrollHeight + 'px';
+  // 토글 트리거 연결 (.exp 요소의 data-key 값으로 구분)
+  document.querySelectorAll('.exp').forEach(el=>{
+    const key = el.dataset.key;
+    if(!key) return;
+    el.addEventListener('click', ()=> toggle(key));
+    el.tabIndex = 0;
+    el.addEventListener('keydown', e=>{
+      if(e.key==='Enter' || e.key===' '){
+        e.preventDefault();
+        toggle(key);
       }
     });
-  </script>
+  });
+
+  // 초기 높이 0으로(접힘 상태 보장)
+  Object.values(expands).forEach(el=> { if(el){ el.style.maxHeight='0px'; } });
+
+  // ===== 타이핑 끝난 뒤 글자 짤림 방지 =====
+  // typing 애니메이션 끝나면 width:auto로 풀고 caret 제거
+  document.querySelectorAll('.typing').forEach(el=>{
+    el.addEventListener('animationend', ()=>{
+      if(el.dataset.done) return;         // 중복 방지
+      el.style.width = 'auto';            // 폭 고정 해제 → 줄바꿈/리플로우 허용
+      el.style.borderRight = '0';         // 커서 제거
+      el.classList.remove('typing','t1','t2','t3');
+      el.dataset.done = '1';
+    });
+  });
+
+  // ===== 인덱스로 이동 (인트로 루프 방지) =====
+  // 인덱스에서 intro로 다시 튕기지 않도록 skipintro 파라미터 부여
+  const NEXT = '/index.html?skipintro=1';
+
+  function goNext(){
+    // 부드러운 페이드아웃(선택)
+    document.body.style.transition = 'opacity .35s ease';
+    document.body.style.opacity = '0';
+    setTimeout(()=> { window.location.assign(NEXT); }, 320);
+  }
+
+  const enterBtn = document.getElementById('enterBtn');
+  if(enterBtn){
+    enterBtn.addEventListener('click', goNext);
+  }
+  // 키보드 Enter로도 이동
+  document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
+
+  // ===== 반응형: 열린 패널 높이 보정 =====
+  window.addEventListener('resize', ()=>{
+    if(currentKey && expands[currentKey] && expands[currentKey].classList.contains('open')){
+      expands[currentKey].style.maxHeight = expands[currentKey].scrollHeight + 'px';
+    }
+  });
+</script>
+
 </body>
 </html>
