@@ -2,15 +2,15 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Intro · EYOMA</title>
-<meta name="description" content="미스터리 브이로그 프리 인트로 — 텍스트 타이핑 & 인터랙션"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MYSTERY VLOG · Intro</title>
+<meta name="description" content="텍스트로 여는 프리 인트로 — Mystery Vlog"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0b0c0f; --text:#f6f7fb; --muted:#a7adbb; --brand:#ff0033; --line:rgba(255,255,255,.14);
-  --r:14px;
+  --r:16px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -23,188 +23,165 @@ body{
   font-family:"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Pretendard,sans-serif;
 }
 .wrap{min-height:100%;display:grid;grid-template-rows:auto 1fr auto}
-.header{padding:22px 16px 8px;max-width:920px;margin:0 auto}
-.kicker{letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-size:12px}
-h1{margin:4px 0 0;font-size:clamp(26px,5.6vw,56px);line-height:1.08;font-weight:900}
-
-/* Typer */
-.typer{max-width:920px;margin:22px auto 8px;padding:0 16px}
-.type-line{
-  white-space:nowrap;overflow:hidden;border-right:2px solid var(--text);
-  width:0ch;font-weight:700;font-size:clamp(15px,2.6vw,22px);
-}
-.type-line.done{border-right-color:transparent}
-.subtle{color:var(--muted);font-weight:400}
-
-/* Script area */
-.main{max-width:920px;margin:10px auto 80px;padding:0 16px;display:grid;gap:10px}
-.line{position:relative;border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:rgba(255,255,255,.02)}
-.line b{font-weight:900;cursor:pointer}
-.line b:hover{background:rgba(255,255,255,.06);border-radius:8px}
-.pane{
-  overflow:hidden;max-height:0;opacity:.0;transition:max-height .32s ease, opacity .28s ease, margin-top .28s ease;
-  color:var(--muted)
-}
-.pane.open{margin-top:8px;opacity:1}
-.pane p{margin:0 0 8px}
+.header{max-width:980px;margin:0 auto;padding:28px 16px 4px}
+h1{margin:0;font-size:clamp(28px,6vw,64px);line-height:1.06;font-weight:900}
+.subtle{color:var(--muted)}
+/* typer */
+.typer{max-width:980px;margin:14px auto 8px;padding:0 16px}
+.type-line{display:block;min-height:1.8em;font-size:clamp(15px,2.6vw,22px);font-weight:700}
+.type-line.subtle{font-weight:400;color:var(--muted)}
+.caret{display:inline-block;width:1px;height:1em;background:var(--text);vertical-align:-.1em;margin-left:2px;animation:blink .9s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+/* main paragraph with inline expanders */
+.main{max-width:980px;margin:18px auto 48px;padding:0 16px;display:grid;gap:16px}
+.p{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;background:rgba(255,255,255,.02)}
+.exp{font-weight:900;border-bottom:1px dotted var(--text);cursor:pointer}
+.exp:hover{background:rgba(255,255,255,.06)}
+.inline{overflow:hidden;max-height:0;opacity:0;transition:max-height .32s ease,opacity .28s ease,margin-top .28s ease;color:var(--muted)}
+.inline.open{margin-top:10px;opacity:1}
+.inline p{margin:0 0 8px}
 .red{color:#ff4d6d;font-weight:700}
-
-/* Footer */
-.footer{display:flex;justify-content:space-between;gap:10px;align-items:center;
-  padding:12px 16px;border-top:1px solid var(--line);backdrop-filter:saturate(120%) blur(4px)}
-.hint{color:var(--muted);font-size:12px}
-.btn{
-  appearance:none;border:1px solid var(--line);background:var(--text);color:#0b0c0f;
-  font-weight:800;border-radius:999px;padding:12px 16px;cursor:pointer
+/* center CTA */
+.footer{display:grid;place-items:center;padding:32px 16px 48px}
+.play{
+  display:inline-grid;place-items:center;gap:2px;
+  padding:16px 22px;border-radius:999px;font-weight:900;text-align:center;
+  background:var(--text);color:#0b0c0f;border:1px solid var(--line);cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,.15)
 }
-.btn:active{transform:translateY(1px)}
-a.link{color:inherit;text-decoration:underline dotted}
-
-/* Enter wipe */
+.play:active{transform:translateY(1px)}
+.play .l1{font-size:clamp(14px,2.2vw,18px)}
+.play .l2{font-size:clamp(12px,2vw,16px);letter-spacing:.04em}
+/* enter wipe */
 .wipe{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none}
-@keyframes wipeOut{to{opacity:1}}
-
+@keyframes wipe{to{opacity:1}}
 /* reduce motion */
 @media (prefers-reduced-motion:reduce){
-  .pane,.type-line{transition:none;animation:none}
+  .inline,.caret{animation:none;transition:none}
 }
 </style>
 </head>
 <body>
-  <div class="wrap">
-    <!-- Header -->
-    <header class="header">
-      <div class="kicker">AUTHOR · DESIGNER · BUILDER</div>
-      <h1>텍스트로 여는 프리-인트로</h1>
-    </header>
+<div class="wrap">
+  <!-- Header -->
+  <header class="header">
+    <h1>MYSTERY VLOG</h1>
+  </header>
 
-    <!-- Typer -->
-    <section class="typer" aria-live="polite">
-      <div class="type-line" data-text="이 책이 책에 관한 책이라면"></div>
-      <div class="type-line subtle" data-text="이 책의 부록은 책에 관한 책의 부록입니다."></div>
-      <div class="type-line" data-text="《미스터리 브이로그》의 리플레이와 비하인드를 만나보세요."></div>
-      <div class="type-line subtle" data-text="— 이요마 드림"></div>
-    </section>
+  <!-- Typer (문장 짤림 없이 JS로 글자 수 만큼 출력) -->
+  <section class="typer" aria-live="polite">
+    <span class="type-line" data-text="이 책이 책에 관한 책이라면"></span>
+    <span class="type-line subtle" data-text="이 책의 부록은 책에 관한 책의 부록입니다."></span>
+    <span class="type-line" data-text="《미스터리 브이로그》의 리플레이와 비하인드를 만나보세요."></span>
+    <span class="type-line subtle" data-text="— 이요마!"></span>
+  </section>
 
-    <!-- Interactive script -->
-    <main class="main">
-      <div class="line">
-        <span>먼저 <b data-expands="mv">《미스터리 브이로그》</b> 를 소개할게요.</span>
-        <div class="pane" id="mv">
-          <p>《미스터리 브이로그》는 명랑X호러X미스터리X스릴러X추리X판타지X모험 + SF향이 첨가된
-          사변소설이자 청소년소설입니다. 마음 편하게 아주 먼 곳으로 떠나버리고 싶은 분들은 이 이야기를 펼쳐보세요.
-          이 책을 다 읽고 나면 기대했던 것보다는 아주 먼 곳에 도착해있을 것입니다.</p>
-        </div>
+  <!-- 문장 속 특정 단어 클릭 → 같은 줄 아래로 내용이 ‘밀려’ 등장/접힘 -->
+  <main class="main">
+    <div class="p">
+      먼저 <span class="exp" data-target="mv">《미스터리 브이로그》</span> 를 소개할게요.
+      <div class="inline" id="mv">
+        <p>《미스터리 브이로그》는 명랑X호러X미스터리X스릴러X추리X판타지X모험 + SF향이 첨가된 사변소설이자 청소년소설입니다.
+        마음 편하게 아주 먼 곳으로 떠나버리고 싶은 분들은 이 이야기를 펼쳐보세요. 이 책을 다 읽고 나면 기대했던 것보다는
+        아주 먼 곳에 도착해있을 것입니다.</p>
       </div>
+    </div>
 
-      <div class="line">
-        <span>그리고 여정의 복기인 <b data-expands="replay">리플레이</b>가 있어요.</span>
-        <div class="pane" id="replay">
-          <p>《미스터리 브이로그: 리플레이》는 《미스터리 브이로그》가 나오기까지의 여정을
-          리플레이하듯 되돌아 본 이야기입니다. 부끄럽지만 바로 지금 이 순간에만 쓸 수 있는 글이기에
-          용기를 내어 적어내려갔습니다. 지지부진하고 지난한 상황에 빠져있는 분들께 이 책이 힘이 되길 바랍니다.</p>
-        </div>
+    <div class="p">
+      그리고 여정의 복기인 <span class="exp" data-target="replay">리플레이</span>가 있어요.
+      <div class="inline" id="replay">
+        <p>《미스터리 브이로그: 리플레이》는 《미스터리 브이로그》가 나오기까지의 여정을 리플레이하듯 되돌아 본 이야기입니다.
+        부끄럽지만 바로 지금 이 순간에만 쓸 수 있는 글이기에 용기를 내어 적어내려갔습니다. 지지부진하고 지난한 상황에
+        빠져있는 분들께 이 책이 힘이 되길 바랍니다.</p>
       </div>
+    </div>
 
-      <div class="line">
-        <span>제작의 모든 자료를 모은 <b data-expands="behind">비하인드</b>도 준비되어 있어요.</span>
-        <div class="pane" id="behind">
-          <p>《미스터리 브이로그: 비하인드》는 한 편의 장편 소설이 나오기까지 작가가 보고, 듣고, 고민했던 모든 자료를 모은 책입니다.
-          《미스터리 브이로그》와 나란히 펼쳐두고 가이드북처럼 읽어도 좋고,
-          《미스터리 브이로그: 리플레이》와 함께 어떤 마음으로 책을 썼을지 살펴봐도 좋습니다.
-          <span class="red">다만! 스포일러가 있을 수 있습니다.</span></p>
-        </div>
+    <div class="p">
+      제작의 모든 자료를 모은 <span class="exp" data-target="behind">비하인드</span>도 준비되어 있어요.
+      <div class="inline" id="behind">
+        <p>《미스터리 브이로그: 비하인드》는 한 편의 장편 소설이 나오기까지 작가가 보고, 듣고, 고민했던 모든 자료를 모은 책입니다.
+        《미스터리 브이로그》와 나란히 펼쳐두고 가이드북처럼 읽어도 좋고, 《미스터리 브이로그: 리플레이》와 함께
+        어떤 마음으로 책을 썼을지 살펴봐도 좋습니다. <span class="red">다만! 스포일러가 있을 수 있습니다.</span></p>
       </div>
+    </div>
 
-      <div class="line">
-        <span>끝으로 저 <b data-expands="eyoma">이요마</b>에 대해 간단히.</span>
-        <div class="pane" id="eyoma">
-          <p>문학을 좋아하는 친구들과 함께 기획·창작 집단 엠디랩프레스를 운영한다. 한국문학 아카이빙 잡지 〔글리프〕 시리즈를 만든다.
-          교훈보다는 재미를, 확인보다는 확장을 지향하는 이야기를 쓴다. 요즘은 한국소설 베스트셀러는 어떻게 만들어지는지를 공부하면서
-          2010~2020’s 한국소설 아카이빙 프로젝트를 진행중이다.</p>
-          <p>
-            인스타그램: <a class="link" href="https://www.instagram.com/hako_eyoma/" target="_blank" rel="noopener">@hako_eyoma</a> ·
-            인스타매거진: <a class="link" href="https://www.instagram.com/eyoma_mag/" target="_blank" rel="noopener">@eyoma_mag</a>
-          </p>
-        </div>
+    <div class="p">
+      끝으로 저 <span class="exp" data-target="eyoma">이요마</span>에 대해 간단히.
+      <div class="inline" id="eyoma">
+        <p>문학을 좋아하는 친구들과 함께 기획·창작 집단 엠디랩프레스를 운영한다. 한국문학 아카이빙 잡지 〔글리프〕 시리즈를 만든다.
+        교훈보다는 재미를, 확인보다는 확장을 지향하는 이야기를 쓴다. 요즘은 한국소설 베스트셀러는 어떻게 만들어지는지를 공부하면서
+        2010~2020’s 한국소설 아카이빙 프로젝트를 진행중이다.</p>
+        <p>인스타그램: <a href="https://www.instagram.com/hako_eyoma/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline dotted">@hako_eyoma</a> ·
+        인스타매거진: <a href="https://www.instagram.com/eyoma_mag/" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline dotted">@eyoma_mag</a></p>
       </div>
-    </main>
+    </div>
+  </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <span class="hint">클릭하여 소개 열기/닫기 · Enter → 메인(index.html)</span>
-      <button class="btn" id="enterBtn" aria-label="메인으로 이동">Enter →</button>
-    </footer>
-  </div>
+  <!-- Center CTA -->
+  <footer class="footer">
+    <button class="play" id="playBtn" aria-label="메인으로 이동 (index.html)">
+      <span class="l1">《미스터리 브이로그》</span>
+      <span class="l2">재생하기</span>
+    </button>
+  </footer>
+</div>
 
-  <div class="wipe" id="wipe" aria-hidden="true"></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
 
 <script>
-/* =========================
-   1) Typing sequence
-   ========================= */
-const typerLines = [...document.querySelectorAll('.type-line')];
-const TYPE_SPEED = 28;  // ms per char
-const GAP = 260;        // delay between lines
-
-async function typeLine(el, text){
-  return new Promise(resolve=>{
-    let i=0;
-    const tick = setInterval(()=>{
-      el.style.width = (i+1) + 'ch';
-      el.textContent = text.slice(0, i+1);
+/* ========= 1) 타이핑 (텍스트가 절대 짤리지 않도록 JS로 직접 substring 출력) ========= */
+const lines=[...document.querySelectorAll('.type-line')];
+const TYPE=28, GAP=260;
+function typeInto(el, full){
+  return new Promise(res=>{
+    let i=0, caret=document.createElement('i'); caret.className='caret'; el.textContent='';
+    const timer=setInterval(()=>{
+      el.textContent = full.slice(0, i+1);
       i++;
-      if(i >= text.length){
-        clearInterval(tick);
-        el.classList.add('done');
-        resolve();
-      }
-    }, TYPE_SPEED);
+      if(i>=full.length){ clearInterval(timer); caret.remove(); res(); }
+    }, TYPE);
+    el.appendChild(caret);
   });
 }
 (async()=>{
-  for(const el of typerLines){
-    const text = el.getAttribute('data-text') || '';
-    el.style.width = '0ch';
-    await typeLine(el, text);
+  for (const el of lines){
+    const t = el.getAttribute('data-text') || '';
+    await typeInto(el, t);
     await new Promise(r=>setTimeout(r, GAP));
   }
 })();
 
-/* =========================
-   2) Expandable panes
-   ========================= */
-const triggers = document.querySelectorAll('[data-expands]');
-triggers.forEach(t=>{
-  t.addEventListener('click', ()=>{
-    const id = t.dataset.expands;
-    const pane = document.getElementById(id);
-    const isOpen = pane.classList.contains('open');
-    // close all
-    document.querySelectorAll('.pane.open').forEach(p=>{
-      p.classList.remove('open');
-      p.style.maxHeight = 0;
-    });
-    // toggle current
-    if(!isOpen){
-      pane.classList.add('open');
-      // set to scrollHeight after next paint for smooth transition
-      requestAnimationFrame(()=> pane.style.maxHeight = pane.scrollHeight + 'px');
+/* ========= 2) 문장 속 단어 클릭 → 같은 줄 아래 패널이 부드럽게 열림/닫힘 ========= */
+function toggleInline(pane){
+  const open = pane.classList.contains('open');
+  // 모두 닫고
+  document.querySelectorAll('.inline.open').forEach(n=>{
+    n.classList.remove('open'); n.style.maxHeight = 0;
+  });
+  // 이번 것 토글
+  if(!open){
+    pane.classList.add('open');
+    requestAnimationFrame(()=> pane.style.maxHeight = pane.scrollHeight + 'px');
+  }
+}
+document.querySelectorAll('.exp').forEach(x=>{
+  x.addEventListener('click', ()=>{
+    const pane = document.getElementById(x.dataset.target);
+    if(!pane) return;
+    // 같은 걸 다시 누르면 닫힘
+    if(pane.classList.contains('open')){
+      pane.classList.remove('open'); pane.style.maxHeight = 0;
+    }else{
+      toggleInline(pane);
     }
   });
 });
 
-/* =========================
-   3) Enter → index.html
-   ========================= */
-const NEXT = 'index.html';
-const wipe = document.getElementById('wipe');
-function goNext(){
-  wipe.style.animation = 'wipeOut .35s ease forwards';
-  setTimeout(()=> location.href = NEXT, 340);
-}
-document.getElementById('enterBtn').addEventListener('click', goNext);
-document.addEventListener('keydown', e=>{ if(e.key === 'Enter') goNext(); });
+/* ========= 3) Enter/버튼 → index.html 이동 with white wipe ========= */
+const NEXT='index.html', wipe=document.getElementById('wipe');
+function goNext(){ wipe.style.animation='wipe .35s ease forwards'; setTimeout(()=>location.href=NEXT,340); }
+document.getElementById('playBtn').addEventListener('click', goNext);
+document.addEventListener('keydown', e=>{ if(e.key==='Enter') goNext(); });
 </script>
 </body>
 </html>
